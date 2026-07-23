@@ -1,22 +1,65 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+
+    <title>Contact A.L.I.C.E</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
+
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 
 <body>
-    <h1>Contact</h1>
 
-    <a href="#">Discord Support Server</a>
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top site-navbar">
+        <div class="container">
+            <a class="navbar-brand" href="/index.html">A.L.I.C.E</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu"
+                aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navMenu">
+                <ul class="navbar-nav ms-auto gap-lg-4">
+                    <li class="nav-item"><a class="nav-link" href="/index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/alice-bot-site/about.html">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/alice-bot-site/privacy.html">Privacy</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/alice-bot-site/terms.html">Terms</a></li>
+                    <li class="nav-item"><a class="nav-link active" aria-current="page" href="/alice-bot-site/contact.html">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
-    <a href="#">GitHub</a>
+    <main class="page-section">
+        <div class="container" style="max-width: 800px;" data-aos="fade-up">
+            <h1 class="display-5 fw-bold">Contact</h1>
+            <p class="lead mb-4">
+                Have a question or need support? Reach out through any of the options below.
+            </p>
+            <div class="d-flex flex-column flex-sm-row gap-3 contact-links">
+                <a href="#" class="btn btn-outline-primary btn-lg">Discord Support Server</a>
+                <a href="#" class="btn btn-outline-primary btn-lg">GitHub</a>
+                <a href="mailto:support@example.com" class="btn btn-outline-primary btn-lg">support@example.com</a>
+            </div>
+        </div>
+    </main>
 
-    <a href="#">Email</a>
+    <footer class="site-footer text-center">
+        <div class="container">
+            <p class="mb-0">© 2026 A.L.I.C.E</p>
+        </div>
+    </footer>
 
-    support@example.com
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="/js/script.js"></script>
 </body>
 
 </html>

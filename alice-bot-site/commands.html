@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Commands - A.L.I.C.E</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
+
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top site-navbar">
+        <div class="container">
+            <a class="navbar-brand" href="../index.html">A.L.I.C.E</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu"
+                aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navMenu">
+                <ul class="navbar-nav ms-auto gap-lg-4">
+                    <li class="nav-item"><a class="nav-link" href="../index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link active" aria-current="page" href="commands.html">Commands</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="privacy.html">Privacy</a></li>
+                    <li class="nav-item"><a class="nav-link" href="terms.html">Terms</a></li>
+                    <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="page-section">
+        <div class="container" style="max-width: 900px;" data-aos="fade-up">
+            <h1 class="display-5 fw-bold">Commands</h1>
+            <p class="lead mb-4">
+                Everything A.L.I.C.E can do, grouped by module. Jump to a section below,
+                or just scroll through — every command shown here is a Discord slash command
+                unless noted otherwise.
+            </p>
+
+            <nav class="commands-toc" aria-label="Command sections">
+                <a href="#statbot">📈 Stat Bot</a>
+                <a href="#moderation">🛡 Moderation</a>
+                <a href="#starboard">⭐ Starboard</a>
+                <a href="#setup">⚙️ Server Setup</a>
+                <a href="#economy">💰 Economy</a>
+                <a href="#rpg">⚔️ RPG Game</a>
+                <a href="#emoji">🎭 Emoji Tools</a>
+            </nav>
+
+            <!-- Stat Bot -->
+            <section id="statbot" class="command-module">
+                <h2 class="h3 command-module-header">📈 Stat Bot</h2>
+                <p class="command-module-desc">
+                    Tracks messages and voice activity for every member and reports back
+                    rankings and activity over the last 1, 7, and 14 days.
+                </p>
+                <div class="list-group command-list-group">
+                    <div class="list-group-item">
+                        <div class="command-entry">
+                            <code class="cmd-name">/ping</code>
+                        </div>
+                        <p class="command-desc">Check if the bot is alive and see its current latency.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry">
+                            <code class="cmd-name">/stats [user]</code>
+                        </div>
+                        <p class="command-desc">
+                            Show message and voice activity (1d / 7d / 14d) plus server-wide
+                            rank for yourself or another member.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Moderation -->
+            <section id="moderation" class="command-module">
+                <h2 class="h3 command-module-header">🛡 Moderation</h2>
+                <p class="command-module-desc">
+                    Automatic message filtering plus an anonymous warning system — three
+                    warnings within 24 hours automatically jails the member.
+                </p>
+                <div class="list-group command-list-group">
+                    <div class="list-group-item">
+                        <div class="command-entry">
+                            <code class="cmd-name">/warn &lt;user&gt; &lt;reason&gt; [message_id]</code>
+                            <span class="badge text-bg-secondary">Mods only</span>
+                        </div>
+                        <p class="command-desc">
+                            Anonymously warn a user. Optionally reference a message in the
+                            current channel to delete it along with the warning.
+                        </p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry">
+                            <code class="cmd-name">Warn Message</code>
+                            <span class="badge text-bg-secondary">Mods only</span>
+                            <span class="badge text-bg-dark">Right-click a message</span>
+                        </div>
+                        <p class="command-desc">
+                            Context-menu action — warn a message's author directly, with the
+                            message auto-filled and deleted, same as /warn.
+                        </p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry">
+                            <code class="cmd-name">/warns [user]</code>
+                        </div>
+                        <p class="command-desc">Check how many warnings (out of 3) a user has and when they reset.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry">
+                            <code class="cmd-name">/clearwarns &lt;user&gt;</code>
+                            <span class="badge text-bg-secondary">Mods only</span>
+                        </div>
+                        <p class="command-desc">Clear all warnings for a user.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Starboard -->
+            <section id="starboard" class="command-module">
+                <h2 class="h3 command-module-header">⭐ Starboard</h2>
+                <p class="command-module-desc">
+                    Messages that get enough ⭐ reactions (3 by default) are automatically
+                    reposted into a dedicated starboard channel.
+                </p>
+                <div class="list-group command-list-group">
+                    <div class="list-group-item">
+                        <div class="command-entry">
+                            <code class="cmd-name">/starboard &lt;channel&gt;</code>
+                            <span class="badge text-bg-secondary">Manage Server</span>
+                        </div>
+                        <p class="command-desc">
+                            Set the channel starred messages get posted to. The threshold and
+                            channel can also be set together via <code>/setup starboard</code>.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Server Setup -->
+            <section id="setup" class="command-module">
+                <h2 class="h3 command-module-header">⚙️ Server Setup</h2>
+                <p class="command-module-desc">
+                    One command to configure everything else on this list — moderation
+                    channels, the jailed role, the starboard, and automod exemptions.
+                </p>
+                <div class="list-group command-list-group">
+                    <div class="list-group-item">
+                        <div class="command-entry">
+                            <code class="cmd-name">/setup channels [mod_warn] [hall_of_shame] [general]</code>
+                            <span class="badge text-bg-secondary">Manage Server</span>
+                        </div>
+                        <p class="command-desc">Set the channels used for /warn, full warn details, and light warn notices.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry">
+                            <code class="cmd-name">/setup role &lt;jailed&gt;</code>
+                            <span class="badge text-bg-secondary">Manage Server</span>
+                        </div>
+                        <p class="command-desc">Set the role applied automatically on a member's 3rd warning.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry">
+                            <code class="cmd-name">/setup starboard [channel] [threshold]</code>
+                            <span class="badge text-bg-secondary">Manage Server</span>
+                        </div>
+                        <p class="command-desc">Set the starboard channel and/or how many ⭐ reactions are needed (default 3).</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry">
+                            <code class="cmd-name">/setup spam-exempt &lt;add|remove&gt; &lt;channel&gt;</code>
+                            <span class="badge text-bg-secondary">Manage Server</span>
+                        </div>
+                        <p class="command-desc">Exempt a channel from automod's spam checks (slur and invite detection still apply).</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry">
+                            <code class="cmd-name">/setup view</code>
+                            <span class="badge text-bg-secondary">Manage Server</span>
+                        </div>
+                        <p class="command-desc">View this server's current configuration.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Economy -->
+            <section id="economy" class="command-module">
+                <h2 class="h3 command-module-header">💰 Economy</h2>
+                <p class="command-module-desc">
+                    A wallet-and-bank currency system with daily rewards, transfers, and a
+                    few ways to gamble it all away.
+                </p>
+                <div class="list-group command-list-group">
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/balance [user]</code></div>
+                        <p class="command-desc">Check wallet and bank balance. Bank balances over 100 coins earn 1% interest daily.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/leaderboard</code></div>
+                        <p class="command-desc">See the richest members in the server (wallet + bank combined).</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/daily</code></div>
+                        <p class="command-desc">Claim 500 coins — resets every 24 hours.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/deposit &lt;amount|all&gt;</code></div>
+                        <p class="command-desc">Move coins from your wallet into your bank.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/withdraw &lt;amount|all&gt;</code></div>
+                        <p class="command-desc">Move coins from your bank into your wallet.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/transfer &lt;user&gt; &lt;amount&gt;</code></div>
+                        <p class="command-desc">Send coins from your wallet to another member.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/coinflip &lt;heads|tails&gt; &lt;amount|all&gt;</code></div>
+                        <p class="command-desc">Bet on a coin flip — double or nothing.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/slots &lt;amount|all&gt;</code></div>
+                        <p class="command-desc">Spin a 3-reel slot machine. Two matching symbols pay a small multiplier, three of a kind hits the jackpot.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/blackjack &lt;amount|all&gt;</code></div>
+                        <p class="command-desc">Play blackjack against the dealer using Hit / Stand / Double Down buttons.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- RPG Game -->
+            <section id="rpg" class="command-module">
+                <h2 class="h3 command-module-header">⚔️ RPG Game</h2>
+                <p class="command-module-desc">
+                    A text-based adventure — explore, fight monsters, complete quests,
+                    gear up, and chase achievements across multiple unlockable areas.
+                </p>
+                <div class="list-group command-list-group">
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/start</code></div>
+                        <p class="command-desc">Create your character and begin the adventure.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/rpgstats</code></div>
+                        <p class="command-desc">View your level, XP, gold, HP, attack, and equipped title.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/achievements</code></div>
+                        <p class="command-desc">Browse your unlocked (and still-locked) achievements.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/inventory</code></div>
+                        <p class="command-desc">Browse your inventory by category — weapons, armor, consumables, tools, materials, items, and titles.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/quests</code></div>
+                        <p class="command-desc">View available quests and accept or claim them.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/use &lt;item&gt; [quantity]</code></div>
+                        <p class="command-desc">Use a consumable item from your inventory.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/sell &lt;item&gt; [amount]</code></div>
+                        <p class="command-desc">Sell an item from your inventory for gold.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/equip &lt;item&gt;</code></div>
+                        <p class="command-desc">Equip a weapon or armor piece.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/unequip &lt;slot&gt;</code></div>
+                        <p class="command-desc">Unequip whatever is currently in a gear slot.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/travel &lt;destination&gt;</code></div>
+                        <p class="command-desc">Freely travel between areas you've already discovered (unlocked after defeating the Bear King).</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/progress</code></div>
+                        <p class="command-desc">Move on to the next area, once you meet its level and item requirements.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/resume</code></div>
+                        <p class="command-desc">Resend your last fight, gold find, or exploration result if you lost track of it.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/reset</code></div>
+                        <p class="command-desc">Permanently delete your character so you can /start over.</p>
+                    </div>
+                </div>
+
+                <h3 class="command-subgroup-title">Admin Commands</h3>
+                <div class="list-group command-list-group">
+                    <div class="list-group-item">
+                        <div class="command-entry">
+                            <code class="cmd-name">/give &lt;user&gt; &lt;item&gt; [amount]</code>
+                            <span class="badge text-bg-danger">Admin</span>
+                        </div>
+                        <p class="command-desc">Give an item directly to a player.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry">
+                            <code class="cmd-name">/givetitle &lt;user&gt; &lt;title&gt;</code>
+                            <span class="badge text-bg-danger">Admin</span>
+                        </div>
+                        <p class="command-desc">Give a title directly to a player.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry">
+                            <code class="cmd-name">/setlevel &lt;user&gt; &lt;level&gt;</code>
+                            <span class="badge text-bg-danger">Admin</span>
+                        </div>
+                        <p class="command-desc">Set a player's level directly.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry">
+                            <code class="cmd-name">/fightmonster &lt;monster&gt; [user]</code>
+                            <span class="badge text-bg-danger">Admin</span>
+                        </div>
+                        <p class="command-desc">Start a fight against a specific monster, for yourself or another member.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Emoji Tools -->
+            <section id="emoji" class="command-module">
+                <h2 class="h3 command-module-header">🎭 Emoji Tools</h2>
+                <p class="command-module-desc">
+                    Quickly bring a custom emoji from another server into this one.
+                </p>
+                <div class="list-group command-list-group">
+                    <div class="list-group-item">
+                        <div class="command-entry">
+                            <code class="cmd-name">/steal &lt;emoji&gt; [name]</code>
+                        </div>
+                        <p class="command-desc">Steal a custom emoji into this server, optionally giving it a new name.</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="site-footer text-center">
+        <div class="container">
+            <p class="mb-0">© 2026 A.L.I.C.E</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="../js/script.js"></script>
+</body>
+
+</html>

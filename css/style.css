@@ -134,6 +134,96 @@ body {
   font-weight: bold;
 }
 
+/* Commands page */
+
+.commands-toc {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 50px;
+}
+
+.commands-toc a {
+  display: inline-block;
+  padding: 8px 18px;
+  border-radius: 999px;
+  background: #111b29;
+  border: 1px solid #1d2f47;
+  color: #ffffff;
+  font-weight: 500;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.commands-toc a:hover {
+  color: #4ea5ff;
+  border-color: #4ea5ff;
+  transform: translateY(-2px);
+}
+
+.command-module {
+  scroll-margin-top: 110px;
+  margin-bottom: 60px;
+}
+
+.command-module-header {
+  margin-bottom: 8px;
+}
+
+.command-module-desc {
+  color: #bfc8d4;
+  margin-bottom: 25px;
+}
+
+.command-list-group .list-group-item {
+  background: #111b29;
+  border-color: #1d2f47;
+  padding: 16px 20px;
+}
+
+.command-entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  margin-bottom: 6px;
+}
+
+.cmd-name {
+  color: #4ea5ff;
+  font-weight: 700;
+  font-size: 1rem;
+  background: transparent;
+  padding: 0;
+}
+
+.command-entry .badge {
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.command-desc {
+  color: #bfc8d4;
+  margin-bottom: 0;
+  font-size: 0.95rem;
+}
+
+.command-desc code {
+  color: #4ea5ff;
+  background: transparent;
+  font-weight: 600;
+}
+
+.command-subgroup-title {
+  color: #8d99aa;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  margin: 20px 0 10px;
+}
+
 /* Footer */
 
 .site-footer {

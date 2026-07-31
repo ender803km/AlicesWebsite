@@ -52,6 +52,7 @@
                 <a href="#moderation">🛡 Moderation</a>
                 <a href="#starboard">⭐ Starboard</a>
                 <a href="#setup">⚙️ Server Setup</a>
+                <a href="#counting">🔢 Counting</a>
                 <a href="#economy">💰 Economy</a>
                 <a href="#rpg">⚔️ RPG Game</a>
                 <a href="#emoji">🎭 Emoji Tools</a>
@@ -80,6 +81,15 @@
                             rank for yourself or another member.
                         </p>
                     </div>
+                    <div class="list-group-item">
+                        <div class="command-entry">
+                            <code class="cmd-name">/statleaderboard [count]</code>
+                        </div>
+                        <p class="command-desc">
+                            Show the server's top members by messages and voice activity
+                            (10 per category by default).
+                        </p>
+                    </div>
                 </div>
             </section>
 
@@ -88,7 +98,12 @@
                 <h2 class="h3 command-module-header">🛡 Moderation</h2>
                 <p class="command-module-desc">
                     Automatic message filtering plus an anonymous warning system — three
-                    warnings within 24 hours automatically jails the member.
+                    warnings within 24 hours automatically jails the member for 3 hours.
+                    Automod deletes the message and issues a warning on its own for
+                    blocked words, Discord invite links, emoji spam, excessive caps,
+                    repeated messages, and rapid short-message spam — no command needed.
+                    Channels can be exempted from the spam checks (slurs and invites
+                    still apply everywhere) via <code>/setup spam-exempt</code>.
                 </p>
                 <div class="list-group command-list-group">
                     <div class="list-group-item">
@@ -132,21 +147,11 @@
             <section id="starboard" class="command-module">
                 <h2 class="h3 command-module-header">⭐ Starboard</h2>
                 <p class="command-module-desc">
-                    Messages that get enough ⭐ reactions (3 by default) are automatically
-                    reposted into a dedicated starboard channel.
+                    Messages that get enough ⭐ reactions are automatically reposted into
+                    a dedicated starboard channel, and the post keeps updating live as more
+                    stars come in. Configured entirely through
+                    <code>/setup starboard</code> — see Server Setup below.
                 </p>
-                <div class="list-group command-list-group">
-                    <div class="list-group-item">
-                        <div class="command-entry">
-                            <code class="cmd-name">/starboard &lt;channel&gt;</code>
-                            <span class="badge text-bg-secondary">Manage Server</span>
-                        </div>
-                        <p class="command-desc">
-                            Set the channel starred messages get posted to. The threshold and
-                            channel can also be set together via <code>/setup starboard</code>.
-                        </p>
-                    </div>
-                </div>
             </section>
 
             <!-- Server Setup -->
@@ -154,43 +159,76 @@
                 <h2 class="h3 command-module-header">⚙️ Server Setup</h2>
                 <p class="command-module-desc">
                     One command to configure everything else on this list — moderation
-                    channels, the jailed role, the starboard, and automod exemptions.
+                    channels, the jailed role, the starboard, the counting channel, and
+                    automod exemptions. Every subcommand requires Administrator permission.
                 </p>
                 <div class="list-group command-list-group">
                     <div class="list-group-item">
                         <div class="command-entry">
-                            <code class="cmd-name">/setup channels [mod_warn] [hall_of_shame] [general]</code>
-                            <span class="badge text-bg-secondary">Manage Server</span>
+                            <code class="cmd-name">/setup channels [mod_warn] [hall_of_shame] [general] [logs]</code>
+                            <span class="badge text-bg-secondary">Admin</span>
                         </div>
-                        <p class="command-desc">Set the channels used for /warn, full warn details, and light warn notices.</p>
+                        <p class="command-desc">Set the channels used for /warn, full warn details, light warn notices, and numbered mod-log cases (warn/jail/unjail/timeout).</p>
                     </div>
                     <div class="list-group-item">
                         <div class="command-entry">
                             <code class="cmd-name">/setup role &lt;jailed&gt;</code>
-                            <span class="badge text-bg-secondary">Manage Server</span>
+                            <span class="badge text-bg-secondary">Admin</span>
                         </div>
                         <p class="command-desc">Set the role applied automatically on a member's 3rd warning.</p>
                     </div>
                     <div class="list-group-item">
                         <div class="command-entry">
                             <code class="cmd-name">/setup starboard [channel] [threshold]</code>
-                            <span class="badge text-bg-secondary">Manage Server</span>
+                            <span class="badge text-bg-secondary">Admin</span>
                         </div>
                         <p class="command-desc">Set the starboard channel and/or how many ⭐ reactions are needed (default 3).</p>
                     </div>
                     <div class="list-group-item">
                         <div class="command-entry">
+                            <code class="cmd-name">/setup counting &lt;channel&gt;</code>
+                            <span class="badge text-bg-secondary">Admin</span>
+                        </div>
+                        <p class="command-desc">Set the channel the counting game runs in — required before /count, /buysave, or /saves do anything.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry">
                             <code class="cmd-name">/setup spam-exempt &lt;add|remove&gt; &lt;channel&gt;</code>
-                            <span class="badge text-bg-secondary">Manage Server</span>
+                            <span class="badge text-bg-secondary">Admin</span>
                         </div>
                         <p class="command-desc">Exempt a channel from automod's spam checks (slur and invite detection still apply).</p>
                     </div>
                     <div class="list-group-item">
                         <div class="command-entry">
                             <code class="cmd-name">/setup view</code>
-                            <span class="badge text-bg-secondary">Manage Server</span>
+                            <span class="badge text-bg-secondary">Admin</span>
                         </div>
                         <p class="command-desc">View this server's current configuration.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Counting -->
+            <section id="counting" class="command-module">
+                <h2 class="h3 command-module-header">🔢 Counting</h2>
+                <p class="command-module-desc">
+                    A community counting game in a designated channel (set via
+                    <code>/setup counting</code>) — count up one number at a time, one
+                    member at a time. Post the wrong number, or count twice in a row,
+                    and the count resets to 1 — unless a save covers the mistake.
+                </p>
+                <div class="list-group command-list-group">
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/count</code></div>
+                        <p class="command-desc">Check the server's current count, what's next, and the highest count ever reached.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/buysave</code></div>
+                        <p class="command-desc">Buy a save for 1,000 coins — automatically forgives your next wrong-number or counted-twice mistake without resetting the count.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/saves [user]</code></div>
+                        <p class="command-desc">Check your (or another member's) counting save balance.</p>
                     </div>
                 </div>
             </section>
@@ -199,21 +237,23 @@
             <section id="economy" class="command-module">
                 <h2 class="h3 command-module-header">💰 Economy</h2>
                 <p class="command-module-desc">
-                    A wallet-and-bank currency system with daily rewards, transfers, and a
-                    few ways to gamble it all away.
+                    A wallet-and-bank currency system with daily rewards, a full grind
+                    loop, a shop, heists, and a few ways to gamble it all away.
+                    <strong>Tip:</strong> every command below also works as a
+                    <code>?</code>-prefix shortcut (e.g. <code>?bal</code>,
+                    <code>?daily</code>, <code>?slots 50</code>) — run
+                    <code>/econhelp</code> in Discord for the full alias list.
                 </p>
+
+                <h3 class="command-subgroup-title">Currency &amp; Banking</h3>
                 <div class="list-group command-list-group">
                     <div class="list-group-item">
                         <div class="command-entry"><code class="cmd-name">/balance [user]</code></div>
-                        <p class="command-desc">Check wallet and bank balance. Bank balances over 100 coins earn 1% interest daily.</p>
+                        <p class="command-desc">Check wallet and bank balance. Bank balances over 100 coins earn 1% interest daily (1.5% with the Vault Upgrade).</p>
                     </div>
                     <div class="list-group-item">
                         <div class="command-entry"><code class="cmd-name">/leaderboard</code></div>
                         <p class="command-desc">See the richest members in the server (wallet + bank combined).</p>
-                    </div>
-                    <div class="list-group-item">
-                        <div class="command-entry"><code class="cmd-name">/daily</code></div>
-                        <p class="command-desc">Claim 500 coins — resets every 24 hours.</p>
                     </div>
                     <div class="list-group-item">
                         <div class="command-entry"><code class="cmd-name">/deposit &lt;amount|all&gt;</code></div>
@@ -227,6 +267,58 @@
                         <div class="command-entry"><code class="cmd-name">/transfer &lt;user&gt; &lt;amount&gt;</code></div>
                         <p class="command-desc">Send coins from your wallet to another member.</p>
                     </div>
+                </div>
+
+                <h3 class="command-subgroup-title">Grinding</h3>
+                <div class="list-group command-list-group">
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/daily</code></div>
+                        <p class="command-desc">Claim 500 coins, plus a streak bonus (+5% per consecutive day, capped at +100%). Resets every 24 hours, with a 48-hour grace period to keep your streak alive.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/work</code></div>
+                        <p class="command-desc">Work a shift for a quick, reliable payout.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/apply &lt;job&gt;</code></div>
+                        <p class="command-desc">Apply for a job — purely cosmetic, flavors the results of your /work.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/beg</code></div>
+                        <p class="command-desc">Beg for spare change — low risk, low reward.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/crime</code></div>
+                        <p class="command-desc">Commit a crime for quick cash — riskier than /daily, but a bigger payout if it succeeds. Failing costs a fine.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/dig</code></div>
+                        <p class="command-desc">Dig through the dumpster for whatever you can find.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/search</code></div>
+                        <p class="command-desc">Search around for spare coins — safer than /beg, but a smaller reward.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/fish</code></div>
+                        <p class="command-desc">Cast your line and see what you catch — requires a Fishing Rod from /shop.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/hunt</code></div>
+                        <p class="command-desc">Head into the woods and see what you bag — requires a Rifle from /shop. Can come back empty-handed.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/sell [item] [quantity|all]</code></div>
+                        <p class="command-desc">Sell fish or hunted animals from your inventory for coins — omit the item to open an interactive sell menu.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/fishdex</code></div>
+                        <p class="command-desc">View every fish species, its rarity, catch odds, and sell price.</p>
+                    </div>
+                </div>
+
+                <h3 class="command-subgroup-title">Gambling</h3>
+                <div class="list-group command-list-group">
                     <div class="list-group-item">
                         <div class="command-entry"><code class="cmd-name">/coinflip &lt;heads|tails&gt; &lt;amount|all&gt;</code></div>
                         <p class="command-desc">Bet on a coin flip — double or nothing.</p>
@@ -240,6 +332,54 @@
                         <p class="command-desc">Play blackjack against the dealer using Hit / Stand / Double Down buttons.</p>
                     </div>
                 </div>
+
+                <h3 class="command-subgroup-title">Heist &amp; Protection</h3>
+                <div class="list-group command-list-group">
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/bankrob &lt;user&gt;</code></div>
+                        <p class="command-desc">Attempt to rob a user's bank — works solo, but others can click "Join Heist" within 30 seconds to improve the odds. Failing costs everyone involved a fine.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/passive</code></div>
+                        <p class="command-desc">Toggle Passive Mode — protects you from being robbed, but restricts your own robbing and lowers grind earnings while it's active.</p>
+                    </div>
+                </div>
+
+                <h3 class="command-subgroup-title">Shop &amp; Items</h3>
+                <div class="list-group command-list-group">
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/shop [category]</code></div>
+                        <p class="command-desc">Browse items available to buy — Tools, Consumables, or permanent Upgrades.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/buy &lt;item&gt; [quantity]</code></div>
+                        <p class="command-desc">Buy an item from the shop (quantity is ignored for one-time upgrades).</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/inventory</code></div>
+                        <p class="command-desc">See your tools, consumables, collectables, and upgrades.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/use &lt;item&gt;</code></div>
+                        <p class="command-desc">Use a consumable (Coffee, Lucky Charm, Disguise, etc.) for a one-time boost on your next matching command.</p>
+                    </div>
+                </div>
+
+                <h3 class="command-subgroup-title">Roses &amp; Challenges</h3>
+                <div class="list-group command-list-group">
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/challenges</code></div>
+                        <p class="command-desc">View today's daily challenges (send messages, count correctly, gamble, shop, and more) — complete enough of them and you earn a 🌹 rose.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/gift-rose &lt;user&gt; &lt;amount&gt;</code></div>
+                        <p class="command-desc">Gift roses you've earned to another member. Gifted roses can't be re-gifted, so they can't be passed around indefinitely.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/econhelp</code></div>
+                        <p class="command-desc">Show every economy command, grouped by category, along with its prefix-command aliases.</p>
+                    </div>
+                </div>
             </section>
 
             <!-- RPG Game -->
@@ -247,7 +387,9 @@
                 <h2 class="h3 command-module-header">⚔️ RPG Game</h2>
                 <p class="command-module-desc">
                     A text-based adventure — explore, fight monsters, complete quests,
-                    gear up, and chase achievements across multiple unlockable areas.
+                    gear up (including a blacksmith's forge for crafting weapons and
+                    armor from mined ore), and chase achievements across multiple
+                    unlockable areas.
                 </p>
                 <div class="list-group command-list-group">
                     <div class="list-group-item">
@@ -263,7 +405,11 @@
                         <p class="command-desc">Browse your unlocked (and still-locked) achievements.</p>
                     </div>
                     <div class="list-group-item">
-                        <div class="command-entry"><code class="cmd-name">/inventory</code></div>
+                        <div class="command-entry"><code class="cmd-name">/rpglb</code></div>
+                        <p class="command-desc">Show this server's RPG leaderboard.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/rpginventory</code></div>
                         <p class="command-desc">Browse your inventory by category — weapons, armor, consumables, tools, materials, items, and titles.</p>
                     </div>
                     <div class="list-group-item">
@@ -271,11 +417,11 @@
                         <p class="command-desc">View available quests and accept or claim them.</p>
                     </div>
                     <div class="list-group-item">
-                        <div class="command-entry"><code class="cmd-name">/use &lt;item&gt; [quantity]</code></div>
+                        <div class="command-entry"><code class="cmd-name">/rpguse &lt;item&gt; [quantity]</code></div>
                         <p class="command-desc">Use a consumable item from your inventory.</p>
                     </div>
                     <div class="list-group-item">
-                        <div class="command-entry"><code class="cmd-name">/sell &lt;item&gt; [amount]</code></div>
+                        <div class="command-entry"><code class="cmd-name">/rpgsell &lt;item&gt; [amount]</code></div>
                         <p class="command-desc">Sell an item from your inventory for gold.</p>
                     </div>
                     <div class="list-group-item">

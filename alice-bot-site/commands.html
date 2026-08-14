@@ -49,13 +49,16 @@
 
             <nav class="commands-toc" aria-label="Command sections">
                 <a href="#statbot">📈 Stat Bot</a>
+                <a href="#achievements">🏆 Achievements</a>
                 <a href="#moderation">🛡 Moderation</a>
                 <a href="#starboard">⭐ Starboard</a>
                 <a href="#setup">⚙️ Server Setup</a>
                 <a href="#counting">🔢 Counting</a>
                 <a href="#economy">💰 Economy</a>
                 <a href="#rpg">⚔️ RPG Game</a>
+                <a href="#interactions">🎉 Interactions</a>
                 <a href="#emoji">🎭 Emoji Tools</a>
+                <a href="#chatexport">🗂️ Chat Export</a>
             </nav>
 
             <!-- Stat Bot -->
@@ -89,6 +92,32 @@
                             Show the server's top members by messages and voice activity
                             (10 per category by default).
                         </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Achievements -->
+            <section id="achievements" class="command-module">
+                <h2 class="h3 command-module-header">🏆 Achievements</h2>
+                <p class="command-module-desc">
+                    Tracks activity across the whole bot — messages, voice time, economy habits,
+                    counting streaks, gambling, and pets — and unlocks milestones as you go, each
+                    with a coin and XP reward. Separate from the RPG game's own quest achievements
+                    below (that's why this command is named <code>/milestones</code> and not
+                    <code>/achievements</code> — Discord doesn't allow two commands with the same name).
+                </p>
+                <div class="list-group command-list-group">
+                    <div class="list-group-item">
+                        <div class="command-entry">
+                            <code class="cmd-name">/milestones [user]</code>
+                        </div>
+                        <p class="command-desc">Browse your (or another member's) unlocked and still-locked achievements, by category.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry">
+                            <code class="cmd-name">/rank [user]</code>
+                        </div>
+                        <p class="command-desc">View your (or another member's) achievement XP rank card.</p>
                     </div>
                 </div>
             </section>
@@ -159,49 +188,57 @@
                 <h2 class="h3 command-module-header">⚙️ Server Setup</h2>
                 <p class="command-module-desc">
                     One command to configure everything else on this list — moderation
-                    channels, the jailed role, the starboard, the counting channel, and
-                    automod exemptions. Every subcommand requires Administrator permission.
+                    channels, the jailed role, the starboard, the counting channel, automod
+                    exemptions, and the Interactions pack. Every subcommand requires
+                    Administrator permission.
                 </p>
                 <div class="list-group command-list-group">
                     <div class="list-group-item">
                         <div class="command-entry">
                             <code class="cmd-name">/setup channels [mod_warn] [hall_of_shame] [general] [logs]</code>
-                            <span class="badge text-bg-secondary">Admin</span>
+                            <span class="badge text-bg-danger">Admin</span>
                         </div>
                         <p class="command-desc">Set the channels used for /warn, full warn details, light warn notices, and numbered mod-log cases (warn/jail/unjail/timeout).</p>
                     </div>
                     <div class="list-group-item">
                         <div class="command-entry">
                             <code class="cmd-name">/setup role &lt;jailed&gt;</code>
-                            <span class="badge text-bg-secondary">Admin</span>
+                            <span class="badge text-bg-danger">Admin</span>
                         </div>
                         <p class="command-desc">Set the role applied automatically on a member's 3rd warning.</p>
                     </div>
                     <div class="list-group-item">
                         <div class="command-entry">
                             <code class="cmd-name">/setup starboard [channel] [threshold]</code>
-                            <span class="badge text-bg-secondary">Admin</span>
+                            <span class="badge text-bg-danger">Admin</span>
                         </div>
                         <p class="command-desc">Set the starboard channel and/or how many ⭐ reactions are needed (default 3).</p>
                     </div>
                     <div class="list-group-item">
                         <div class="command-entry">
                             <code class="cmd-name">/setup counting &lt;channel&gt;</code>
-                            <span class="badge text-bg-secondary">Admin</span>
+                            <span class="badge text-bg-danger">Admin</span>
                         </div>
                         <p class="command-desc">Set the channel the counting game runs in — required before /count, /buysave, or /saves do anything.</p>
                     </div>
                     <div class="list-group-item">
                         <div class="command-entry">
                             <code class="cmd-name">/setup spam-exempt &lt;add|remove&gt; &lt;channel&gt;</code>
-                            <span class="badge text-bg-secondary">Admin</span>
+                            <span class="badge text-bg-danger">Admin</span>
                         </div>
                         <p class="command-desc">Exempt a channel from automod's spam checks (slur and invite detection still apply).</p>
                     </div>
                     <div class="list-group-item">
                         <div class="command-entry">
+                            <code class="cmd-name">/setup interactions &lt;mature_commands&gt; &lt;command_gifs&gt;</code>
+                            <span class="badge text-bg-danger">Admin</span>
+                        </div>
+                        <p class="command-desc">Turn on the Interactions pack (see below) for this server, choosing whether to also allow 18+ commands and whether replies attach GIFs.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry">
                             <code class="cmd-name">/setup view</code>
-                            <span class="badge text-bg-secondary">Admin</span>
+                            <span class="badge text-bg-danger">Admin</span>
                         </div>
                         <p class="command-desc">View this server's current configuration.</p>
                     </div>
@@ -315,6 +352,10 @@
                         <div class="command-entry"><code class="cmd-name">/fishdex</code></div>
                         <p class="command-desc">View every fish species, its rarity, catch odds, and sell price.</p>
                     </div>
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/huntdex</code></div>
+                        <p class="command-desc">View every huntable animal, its rarity, catch odds, and sell price.</p>
+                    </div>
                 </div>
 
                 <h3 class="command-subgroup-title">Gambling</h3>
@@ -340,6 +381,10 @@
                         <p class="command-desc">Attempt to rob a user's bank — works solo, but others can click "Join Heist" within 30 seconds to improve the odds. Failing costs everyone involved a fine.</p>
                     </div>
                     <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/rob &lt;user&gt;</code></div>
+                        <p class="command-desc">Attempt to steal coins straight from another member's wallet — instant and solo, riskier than /crime. Failing costs a fine.</p>
+                    </div>
+                    <div class="list-group-item">
                         <div class="command-entry"><code class="cmd-name">/passive</code></div>
                         <p class="command-desc">Toggle Passive Mode — protects you from being robbed, but restricts your own robbing and lowers grind earnings while it's active.</p>
                     </div>
@@ -362,6 +407,62 @@
                     <div class="list-group-item">
                         <div class="command-entry"><code class="cmd-name">/use &lt;item&gt;</code></div>
                         <p class="command-desc">Use a consumable (Coffee, Lucky Charm, Disguise, etc.) for a one-time boost on your next matching command.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/dailyshop</code></div>
+                        <p class="command-desc">View today's rotating shop selection — a second, separately-stocked shop from /shop that refreshes daily.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/buydaily &lt;item&gt; [quantity]</code></div>
+                        <p class="command-desc">Buy an item from today's rotating shop.</p>
+                    </div>
+                </div>
+
+                <h3 class="command-subgroup-title">Pets</h3>
+                <div class="list-group command-list-group">
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/petshop</code></div>
+                        <p class="command-desc">View the current pet shop rotation (refreshes every few minutes) — 5 slots, one of which can roll a rarer "wildcard" tier.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/buypet &lt;slot&gt;</code></div>
+                        <p class="command-desc">Buy the pet sitting in a given /petshop slot (1-5).</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/petdex</code></div>
+                        <p class="command-desc">Browse every pet tier and species — spawn odds, price range, and coin-earn rate.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/pets view [user]</code></div>
+                        <p class="command-desc">List every pet you (or another member) own, both on display and in storage.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/pets sell &lt;pet&gt;</code></div>
+                        <p class="command-desc">Sell an owned pet for coins, by its number from /pets view.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/pets feed &lt;pet&gt;</code></div>
+                        <p class="command-desc">Feed a Pet Treat to a fatigued pet to restore it — pets stop earning once fully fatigued.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/display view [user]</code></div>
+                        <p class="command-desc">View your (or another member's) display slots and how much coin production is waiting to be collected.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/display place &lt;pet&gt; &lt;slot&gt;</code></div>
+                        <p class="command-desc">Place an owned pet into a display slot so it starts earning coins passively.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/display remove &lt;slot&gt;</code></div>
+                        <p class="command-desc">Remove the pet in a display slot and send it back to storage.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/display collect</code></div>
+                        <p class="command-desc">Collect your pet display's accrued coin production.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/petmenu</code></div>
+                        <p class="command-desc">A single button-and-menu hub for buying, viewing, placing, feeding, and selling pets — no typing required.</p>
                     </div>
                 </div>
 
@@ -402,7 +503,7 @@
                     </div>
                     <div class="list-group-item">
                         <div class="command-entry"><code class="cmd-name">/achievements</code></div>
-                        <p class="command-desc">Browse your unlocked (and still-locked) achievements.</p>
+                        <p class="command-desc">Browse your unlocked (and still-locked) RPG quest achievements — a separate system from the server-wide /milestones (see Achievements above).</p>
                     </div>
                     <div class="list-group-item">
                         <div class="command-entry"><code class="cmd-name">/rpglb</code></div>
@@ -483,6 +584,57 @@
                 </div>
             </section>
 
+            <!-- Interactions -->
+            <section id="interactions" class="command-module">
+                <h2 class="h3 command-module-header">🎉 Interactions</h2>
+                <p class="command-module-desc">
+                    A pack of lighthearted social action commands — <code>/hug</code>,
+                    <code>/kiss</code>, <code>/dance</code>, and about 20 more. Each one posts
+                    a themed message about you (and, for the targeted ones, whoever you aim it
+                    at), optionally with an attached GIF.
+                    <strong>Off by default</strong> — none of these exist as slash commands in
+                    a server until an admin runs <code>/setup interactions</code> (see Server
+                    Setup above), which also chooses whether to allow 18+ commands and whether
+                    replies attach GIFs.
+                </p>
+
+                <h3 class="command-subgroup-title">Aimed at someone</h3>
+                <p class="command-desc mb-3">Each takes a required <code>user</code> option — who it's aimed at.</p>
+                <div class="command-chip-grid">
+                    <code class="cmd-chip">/greet</code>
+                    <code class="cmd-chip">/highfive</code>
+                    <code class="cmd-chip">/dap</code>
+                    <code class="cmd-chip">/handshake</code>
+                    <code class="cmd-chip">/poke</code>
+                    <code class="cmd-chip">/handhold</code>
+                    <code class="cmd-chip">/laughwith</code>
+                    <code class="cmd-chip">/laughat</code>
+                    <code class="cmd-chip">/nuzzle</code>
+                    <code class="cmd-chip">/smile</code>
+                    <code class="cmd-chip">/hug</code>
+                    <code class="cmd-chip">/kiss</code>
+                    <code class="cmd-chip">/slap</code>
+                    <code class="cmd-chip">/punch</code>
+                    <code class="cmd-chip">/kick</code>
+                    <code class="cmd-chip">/bite</code>
+                    <code class="cmd-chip">/lick</code>
+                    <code class="cmd-chip">/cuddle</code>
+                    <code class="cmd-chip">/pat</code>
+                    <code class="cmd-chip">/tickle</code>
+                </div>
+
+                <h3 class="command-subgroup-title">Solo</h3>
+                <p class="command-desc mb-3"><code>/dance</code> and <code>/pout</code> take an optional <code>user</code>; the rest take none at all.</p>
+                <div class="command-chip-grid">
+                    <code class="cmd-chip">/dance [user]</code>
+                    <code class="cmd-chip">/pout [user]</code>
+                    <code class="cmd-chip">/laugh</code>
+                    <code class="cmd-chip">/cry</code>
+                    <code class="cmd-chip">/sing</code>
+                    <code class="cmd-chip">/sleep</code>
+                </div>
+            </section>
+
             <!-- Emoji Tools -->
             <section id="emoji" class="command-module">
                 <h2 class="h3 command-module-header">🎭 Emoji Tools</h2>
@@ -493,8 +645,28 @@
                     <div class="list-group-item">
                         <div class="command-entry">
                             <code class="cmd-name">/steal &lt;emoji&gt; [name]</code>
+                            <span class="badge text-bg-secondary">Manage Expressions</span>
                         </div>
                         <p class="command-desc">Steal a custom emoji into this server, optionally giving it a new name.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Chat Export -->
+            <section id="chatexport" class="command-module">
+                <h2 class="h3 command-module-header">🗂️ Chat Export</h2>
+                <p class="command-module-desc">
+                    Pulls a channel's full message history out as a JSON file. Gated to
+                    Administrator rather than just Moderate Members, since it can expose a lot
+                    of message content at once.
+                </p>
+                <div class="list-group command-list-group">
+                    <div class="list-group-item">
+                        <div class="command-entry">
+                            <code class="cmd-name">/export-chat-history [channel]</code>
+                            <span class="badge text-bg-danger">Admin</span>
+                        </div>
+                        <p class="command-desc">Export a channel's full message history as a JSON file (defaults to the current channel).</p>
                     </div>
                 </div>
             </section>

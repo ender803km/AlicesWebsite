@@ -238,6 +238,24 @@ body {
   margin: 20px 0 10px;
 }
 
+.command-chip-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 25px;
+}
+
+.cmd-chip {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: #111b29;
+  border: 1px solid #1d2f47;
+  color: #4ea5ff;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
 /* Footer */
 
 .site-footer {

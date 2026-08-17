@@ -53,6 +53,7 @@
                 <a href="#moderation">🛡 Moderation</a>
                 <a href="#starboard">⭐ Starboard</a>
                 <a href="#setup">⚙️ Server Setup</a>
+                <a href="#giveaway">🎁 Giveaway</a>
                 <a href="#counting">🔢 Counting</a>
                 <a href="#economy">💰 Economy</a>
                 <a href="#rpg">⚔️ RPG Game</a>
@@ -245,6 +246,67 @@
                 </div>
             </section>
 
+            <!-- Giveaway -->
+            <section id="giveaway" class="command-module">
+                <h2 class="h3 command-module-header">🎁 Giveaway</h2>
+                <p class="command-module-desc">
+                    Timed giveaways with weighted entries — messages sent, voice time, and
+                    daily-challenge completions can each earn tickets (all three on by default,
+                    independently toggleable per giveaway). Members enter by typing
+                    <code>!giveaway</code> in the giveaway channel while one is active — not a
+                    slash command. The channel becomes entry-only while a giveaway is running;
+                    non-mod messages posted there are automatically deleted.
+                </p>
+                <div class="list-group command-list-group">
+                    <div class="list-group-item">
+                        <div class="command-entry">
+                            <code class="cmd-name">/giveaway start &lt;channel&gt; &lt;duration&gt; &lt;winners&gt; &lt;prize&gt; [track_messages] [messages_per_entry] [track_voice] [hours_per_entry] [track_dailies]</code>
+                            <span class="badge text-bg-danger">Admin</span>
+                        </div>
+                        <p class="command-desc">
+                            Start a new giveaway — set how long it runs (e.g. <code>3d</code>,
+                            <code>12h30m</code>), how many winners, and the prize. Optionally
+                            toggle which activity earns entries and adjust how much of it earns
+                            one ticket.
+                        </p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry">
+                            <code class="cmd-name">/giveaway end</code>
+                            <span class="badge text-bg-danger">Admin</span>
+                        </div>
+                        <p class="command-desc">Force-end the active giveaway immediately and draw winners.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry">
+                            <code class="cmd-name">/giveaway reroll &lt;user&gt;</code>
+                            <span class="badge text-bg-danger">Admin</span>
+                        </div>
+                        <p class="command-desc">Reroll a specific winner from the giveaway that just ended — for example, if they didn't claim their prize in time.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry">
+                            <code class="cmd-name">/giveaway config &lt;action&gt; [channel]</code>
+                            <span class="badge text-bg-danger">Admin</span>
+                        </div>
+                        <p class="command-desc">Add, remove, or view the channels excluded from message-count tracking (e.g. bot-command channels).</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry">
+                            <code class="cmd-name">/giveaway status</code>
+                        </div>
+                        <p class="command-desc">View the active giveaway's details and your own current entry count.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry">
+                            <code class="cmd-name">/giveaway entries [user]</code>
+                            <span class="badge text-bg-danger">Admin</span>
+                        </div>
+                        <p class="command-desc">See ticket totals and the message/voice/daily breakdown for every entrant, or for one specific member.</p>
+                    </div>
+                </div>
+            </section>
+
             <!-- Counting -->
             <section id="counting" class="command-module">
                 <h2 class="h3 command-module-header">🔢 Counting</h2>
@@ -276,10 +338,13 @@
                 <p class="command-module-desc">
                     A wallet-and-bank currency system with daily rewards, a full grind
                     loop, a shop, heists, and a few ways to gamble it all away.
-                    <strong>Tip:</strong> every command below also works as a
+                    <strong>Tip:</strong> most commands below also work as a
                     <code>?</code>-prefix shortcut (e.g. <code>?bal</code>,
                     <code>?daily</code>, <code>?slots 50</code>) — run
                     <code>/econhelp</code> in Discord for the full alias list.
+                    The Pets and Roses &amp; Challenges commands below, plus
+                    <code>/toolbench</code>, <code>/dailyshop</code>, and
+                    <code>/buydaily</code>, are slash-only.
                 </p>
 
                 <h3 class="command-subgroup-title">Currency &amp; Banking</h3>
@@ -405,8 +470,8 @@
                         <p class="command-desc">See your tools, consumables, collectables, and upgrades.</p>
                     </div>
                     <div class="list-group-item">
-                        <div class="command-entry"><code class="cmd-name">/use &lt;item&gt;</code></div>
-                        <p class="command-desc">Use a consumable (Coffee, Lucky Charm, Disguise, etc.) for a one-time boost on your next matching command.</p>
+                        <div class="command-entry"><code class="cmd-name">/use &lt;item&gt; [quantity]</code></div>
+                        <p class="command-desc">Use one or more of a consumable (Coffee, Lucky Charm, Disguise, etc.) for a boost on your next matching command — specify a number or "all" (defaults to 1).</p>
                     </div>
                     <div class="list-group-item">
                         <div class="command-entry"><code class="cmd-name">/dailyshop</code></div>
@@ -415,6 +480,10 @@
                     <div class="list-group-item">
                         <div class="command-entry"><code class="cmd-name">/buydaily &lt;item&gt; [quantity]</code></div>
                         <p class="command-desc">Buy an item from today's rotating shop.</p>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="command-entry"><code class="cmd-name">/toolbench</code></div>
+                        <p class="command-desc">Purchase, enhance, and upgrade your Fishing Rod and Rifle through an interactive button menu.</p>
                     </div>
                 </div>
 

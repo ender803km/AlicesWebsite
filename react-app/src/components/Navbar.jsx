@@ -1,5 +1,6 @@
-import { NavLink } from 'react-router-dom'
+import { NavLink, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import HomeNav from './HomeNav'
 
 const navLinks = [
   { to: '/', label: 'Home', end: true },
@@ -12,6 +13,13 @@ const navLinks = [
 
 export default function Navbar() {
   const { user, loading } = useAuth()
+  const { pathname } = useLocation()
+
+  // The homepage gets a distinct floating "island" nav as a showcase piece;
+  // every other route keeps this standard Bootstrap navbar.
+  if (pathname === '/') {
+    return <HomeNav />
+  }
 
   return (
     <nav className="navbar navbar-expand-lg navbar-dark sticky-top site-navbar">

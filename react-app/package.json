@@ -11,12 +11,14 @@
     "start": "serve -s dist -l ${PORT:-4173}"
   },
   "dependencies": {
+    "@tailwindcss/vite": "4.3.3",
     "aos": "^2.3.4",
     "bootstrap": "^5.3.8",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-router-dom": "^7.18.2",
     "serve": "^14.2.6",
+    "tailwindcss": "4.3.3",
     "three": "^0.185.1"
   },
   "devDependencies": {

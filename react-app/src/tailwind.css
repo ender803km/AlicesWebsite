@@ -1,0 +1,38 @@
+/* Tailwind is scoped to the homepage's showcase treatment only (hero, nav,
+   feature grid). Preflight is intentionally excluded — the rest of the site
+   runs on Bootstrap, and Tailwind's base reset would fight Bootstrap's own
+   reset on every other page. Only the theme (design tokens Tailwind needs
+   to generate utilities) and the utilities themselves are pulled in.
+
+   Bootstrap and AOS are pulled in here too, explicitly wrapped in their own
+   layer ordered BEFORE Tailwind's. CSS Cascade Layers rule: unlayered CSS
+   always beats layered CSS, regardless of source order or specificity — so
+   if Bootstrap's plain (unlayered) `h1 { font-weight: 500 }` sat next to
+   Tailwind's `.font-bold` utility, Bootstrap would silently win every time.
+   Putting Bootstrap in a named layer makes it play by the same layer-order
+   rules as Tailwind, so `font-bold`, text-color utilities, etc. actually
+   apply on the homepage's new markup. */
+@layer bootstrap, theme, utilities;
+
+@import "bootstrap/dist/css/bootstrap.min.css" layer(bootstrap);
+@import "aos/dist/aos.css" layer(bootstrap);
+
+@import "tailwindcss/theme.css" layer(theme);
+
+/* source(none) turns off Tailwind's automatic project-wide file scan. Without
+   this, Tailwind reads every file in the repo for candidate class names —
+   including the Bootstrap-driven pages — and generates utilities for any
+   literal string that happens to match one of its own class names (e.g.
+   Bootstrap's `.collapse` component class collides with Tailwind's
+   `visibility: collapse` utility, silently hiding the standard navbar's
+   Bootstrap collapse menu on every non-homepage route). @source scopes
+   scanning to just the two files that actually use Tailwind utilities. */
+@import "tailwindcss/utilities.css" layer(utilities) source(none);
+@source "./pages/Home.jsx";
+@source "./components/HomeNav.jsx";
+
+@theme {
+  --font-display: "Outfit", "Source Sans 3", sans-serif;
+  --font-body: "Source Sans 3", -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+}

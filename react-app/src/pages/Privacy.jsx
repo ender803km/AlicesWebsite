@@ -1,6 +1,6 @@
 export default function Privacy() {
   return (
-    <main className="page-section">
+    <main id="main-content" className="page-section">
       <div className="container" style={{ maxWidth: 800 }} data-aos="fade-up">
         <h1 className="display-5 fw-bold">Privacy Policy</h1>
         <p className="lead mb-4">

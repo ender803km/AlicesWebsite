@@ -5,17 +5,27 @@ import { lazy, Suspense } from 'react'
 const LiquidEtherBackground = lazy(() => import('../components/LiquidEtherBackground'))
 
 const features = [
-  { icon: '🛡', title: 'Moderation', text: 'Advanced filtering and server protection.' },
-  { icon: '💰', title: 'Economy', text: 'Reward your community.' },
-  { icon: '📈', title: 'Statistics', text: 'Track activity and growth.' },
-  { icon: '⭐', title: 'Starboard', text: 'Highlight memorable messages.' },
-  { icon: '🤖', title: 'AI Ready', text: 'Machine-learning moderation coming soon.' },
-  { icon: '⚡', title: 'Fast', text: 'Built with Discord.js for speed.' },
+  {
+    icon: '🛡',
+    title: 'Moderation',
+    text: 'Auto-mod filters, mod logs, and an AI layer that reads context before it warns or acts — not just keyword matching.',
+    size: 'lg',
+  },
+  { icon: '💰', title: 'Economy', text: 'A currency and leveling system your members earn just by being active.' },
+  { icon: '📈', title: 'Statistics', text: 'Per-server activity tracking, so growth is something you can see.' },
+  { icon: '⭐', title: 'Starboard', text: 'The best messages in a channel get pinned automatically, no manual curation.' },
+  { icon: '🎁', title: 'Giveaways & events', text: 'Run giveaways, counting games, and RPG mechanics without a second bot.' },
+  {
+    icon: '⚙️',
+    title: 'Configurable per server',
+    text: 'Turn modules on or off, set channels, and adjust behavior from a dashboard — no config file editing.',
+    size: 'lg',
+  },
 ]
 
 export default function Home() {
   return (
-    <>
+    <main id="main-content">
       <header className="site-hero">
         <Suspense fallback={null}>
           <LiquidEtherBackground />
@@ -23,9 +33,14 @@ export default function Home() {
         <div className="container">
           <div className="row align-items-center gy-5">
             <div className="col-lg-6" data-aos="fade-right">
+              <span className="site-hero-eyebrow">
+                <span className="dot" aria-hidden="true" />
+                Online now
+              </span>
               <h1 className="display-4 fw-bold mb-4">Artificial Learning &amp; Intelligent Community Engine</h1>
               <p className="lead text-body-secondary mb-4">
-                Powerful moderation, logging, statistics, economy, and AI-assisted server management.
+                Moderation, logging, statistics, and an economy system for Discord —
+                configured per server from a dashboard, not a config file.
               </p>
               <div className="d-flex gap-3 flex-wrap">
                 <a
@@ -50,20 +65,22 @@ export default function Home() {
 
       <section className="site-features">
         <div className="container">
-          <div className="row g-4">
+          <div className="feature-grid">
             {features.map((feature, index) => (
-              <div className="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay={(index % 3) * 100} key={feature.title}>
-                <div className="card site-card h-100">
-                  <div className="card-body">
-                    <h2 className="h4 card-title">{feature.icon} {feature.title}</h2>
-                    <p className="card-text">{feature.text}</p>
-                  </div>
-                </div>
+              <div
+                className={`feature-card${feature.size === 'lg' ? ' feature-card--lg' : ''}`}
+                data-aos="fade-up"
+                data-aos-delay={(index % 3) * 80}
+                key={feature.title}
+              >
+                <div className="feature-card-icon" aria-hidden="true">{feature.icon}</div>
+                <h2>{feature.title}</h2>
+                <p>{feature.text}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
-    </>
+    </main>
   )
 }

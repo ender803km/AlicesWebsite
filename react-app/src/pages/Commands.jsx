@@ -17,7 +17,7 @@ const toc = [
 
 export default function Commands() {
   return (
-    <main className="page-section">
+    <main id="main-content" className="page-section">
       <div className="container" style={{ maxWidth: 900 }} data-aos="fade-up">
         <h1 className="display-5 fw-bold">Commands</h1>
         <p className="lead mb-4">

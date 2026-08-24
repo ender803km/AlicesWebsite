@@ -21,20 +21,30 @@ function LogPanel({ title, logs, empty }) {
       {logs.length === 0 ? (
         <p className="text-body-secondary small">{empty}</p>
       ) : (
-        <div
-          className="bg-black rounded p-3 small"
-          style={{ maxHeight: 260, overflowY: 'auto', fontFamily: 'monospace' }}
-        >
+        <div className="log-panel" style={{ maxHeight: 260, overflowY: 'auto' }}>
           {logs.map((log, i) => (
-            <div key={i} className={log.severity === 'error' ? 'text-danger' : 'text-light'}>
-              <span className="text-body-secondary">
-                {new Date(log.timestamp).toLocaleTimeString()}
-              </span>{' '}
+            <div key={i} className={log.severity === 'error' ? 'log-line-error' : undefined}>
+              <span className="log-line-time">{new Date(log.timestamp).toLocaleTimeString()}</span>{' '}
               {log.message}
             </div>
           ))}
         </div>
       )}
+    </div>
+  )
+}
+
+function StatSkeleton() {
+  return (
+    <div className="row g-3 mb-5">
+      {Array.from({ length: 4 }, (_, i) => (
+        <div className="col-6 col-md-3" key={i}>
+          <div className="stat-tile">
+            <div className="skeleton-line mb-2" style={{ width: '50%' }} />
+            <div className="skeleton-line" style={{ width: '70%', height: 22 }} />
+          </div>
+        </div>
+      ))}
     </div>
   )
 }
@@ -76,7 +86,7 @@ export default function DevDashboard() {
 
   if (authLoading) {
     return (
-      <main className="page-section text-center">
+      <main id="main-content" className="page-section text-center">
         <div className="container"><p className="lead">Loading…</p></div>
       </main>
     )
@@ -86,8 +96,8 @@ export default function DevDashboard() {
   if (!user.isDev) return <Navigate to="/dashboard" replace />
 
   return (
-    <main className="page-section">
-      <div className="container" style={{ maxWidth: 900 }} data-aos="fade-up">
+    <main id="main-content" className="page-section">
+      <div className="container" style={{ maxWidth: 900 }}>
         <div className="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-4">
           <h1 className="h3 fw-bold mb-0">Devs dashboard</h1>
           <button className="btn btn-sm btn-outline-light" type="button" onClick={load}>
@@ -95,36 +105,36 @@ export default function DevDashboard() {
           </button>
         </div>
 
-        {status === 'loading' && <p className="lead">Loading…</p>}
+        {status === 'loading' && <StatSkeleton />}
         {status === 'error' && <div className="alert alert-danger" role="alert">{error}</div>}
 
         {status === 'ready' && overview && (
           <>
             <div className="row g-3 mb-5">
               <div className="col-6 col-md-3">
-                <div className="p-3 rounded border border-secondary-subtle h-100">
-                  <div className="text-body-secondary small">Servers</div>
-                  <div className="h3 mb-0">{overview.guildCount}</div>
+                <div className="stat-tile">
+                  <div className="stat-tile-label">Servers</div>
+                  <div className="stat-tile-value">{overview.guildCount}</div>
                 </div>
               </div>
               <div className="col-6 col-md-3">
-                <div className="p-3 rounded border border-secondary-subtle h-100">
-                  <div className="text-body-secondary small">Bot token</div>
-                  <div className="h5 mb-0 text-success">Valid</div>
+                <div className="stat-tile">
+                  <div className="stat-tile-label">Bot token</div>
+                  <div className="stat-tile-value is-good">Valid</div>
                 </div>
               </div>
               <div className="col-6 col-md-3">
-                <div className="p-3 rounded border border-secondary-subtle h-100">
-                  <div className="text-body-secondary small">Last deploy</div>
-                  <div className="h5 mb-0">
+                <div className="stat-tile">
+                  <div className="stat-tile-label">Last deploy</div>
+                  <div className="stat-tile-value">
                     {overview.deployment ? overview.deployment.status : '—'}
                   </div>
                 </div>
               </div>
               <div className="col-6 col-md-3">
-                <div className="p-3 rounded border border-secondary-subtle h-100">
-                  <div className="text-body-secondary small">Deployed</div>
-                  <div className="h5 mb-0">
+                <div className="stat-tile">
+                  <div className="stat-tile-label">Deployed</div>
+                  <div className="stat-tile-value">
                     {overview.deployment ? timeAgo(overview.deployment.createdAt) : '—'}
                   </div>
                 </div>
@@ -150,18 +160,22 @@ export default function DevDashboard() {
             )}
 
             <h2 className="h5 mb-3">Servers ({overview.guildCount})</h2>
-            <ul className="list-group">
-              {overview.guilds.map((guild) => (
-                <li key={guild.id} className="list-group-item d-flex align-items-center gap-3">
-                  {guild.icon ? (
-                    <img src={guild.icon} alt="" width={28} height={28} style={{ borderRadius: '50%' }} />
-                  ) : (
-                    <div style={{ width: 28, height: 28, borderRadius: '50%', background: '#1d2f47' }} aria-hidden="true" />
-                  )}
-                  <span>{guild.name}</span>
-                </li>
-              ))}
-            </ul>
+            {overview.guilds.length === 0 ? (
+              <p className="text-body-secondary">A.L.I.C.E isn't in any servers right now.</p>
+            ) : (
+              <ul className="list-group dashboard-list">
+                {overview.guilds.map((guild) => (
+                  <li key={guild.id} className="list-group-item d-flex align-items-center gap-3">
+                    {guild.icon ? (
+                      <img src={guild.icon} alt="" width={28} height={28} style={{ borderRadius: '50%' }} />
+                    ) : (
+                      <div className="avatar-placeholder" style={{ width: 28, height: 28 }} aria-hidden="true" />
+                    )}
+                    <span>{guild.name}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
           </>
         )}
       </div>

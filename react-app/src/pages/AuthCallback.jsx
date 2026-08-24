@@ -22,8 +22,8 @@ export default function AuthCallback() {
 
   if (failed) {
     return (
-      <main className="page-section text-center">
-        <div className="container" data-aos="fade-up">
+      <main id="main-content" className="page-section text-center">
+        <div className="container">
           <p className="lead mb-4">That login link looks incomplete.</p>
           <a href="/login" className="btn btn-primary btn-lg px-4">Back to login</a>
         </div>
@@ -32,7 +32,7 @@ export default function AuthCallback() {
   }
 
   return (
-    <main className="page-section text-center">
+    <main id="main-content" className="page-section text-center">
       <div className="container">
         <p className="lead">Signing you in…</p>
       </div>

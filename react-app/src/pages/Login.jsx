@@ -13,7 +13,7 @@ export default function Login() {
   const error = params.get('error')
 
   return (
-    <main className="page-section text-center">
+    <main id="main-content" className="page-section text-center">
       <div className="container" style={{ maxWidth: 480 }} data-aos="fade-up">
         <h1 className="display-5 fw-bold">Log in</h1>
         <p className="lead mb-4">

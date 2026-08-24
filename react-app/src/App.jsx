@@ -39,6 +39,7 @@ export default function App() {
 
   return (
     <AuthProvider>
+      <a href="#main-content" className="skip-link">Skip to content</a>
       <Navbar />
       <RouteEffects />
       <Routes>

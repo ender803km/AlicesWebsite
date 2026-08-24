@@ -23,7 +23,7 @@ const MODULES = [
 
 function ChannelSelect({ id, value, onChange, channels }) {
   return (
-    <select id={id} className="form-select bg-dark text-light border-secondary" value={value || ''} onChange={onChange}>
+    <select id={id} className="form-select" value={value || ''} onChange={onChange}>
       <option value="">— None —</option>
       {channels.map((c) => (
         <option key={c.id} value={c.id}>
@@ -70,7 +70,7 @@ export default function GuildConfig() {
 
   if (authLoading) {
     return (
-      <main className="page-section text-center">
+      <main id="main-content" className="page-section text-center">
         <div className="container"><p className="lead">Loading…</p></div>
       </main>
     )
@@ -80,7 +80,7 @@ export default function GuildConfig() {
 
   if (!guild) {
     return (
-      <main className="page-section">
+      <main id="main-content" className="page-section">
         <div className="container" style={{ maxWidth: 700 }}>
           <p className="lead">You don't manage a server with that ID, or A.L.I.C.E isn't in it.</p>
           <Link to="/dashboard" className="btn btn-outline-light">Back to dashboard</Link>
@@ -115,13 +115,13 @@ export default function GuildConfig() {
   }
 
   return (
-    <main className="page-section">
-      <div className="container" style={{ maxWidth: 800 }} data-aos="fade-up">
+    <main id="main-content" className="page-section">
+      <div className="container" style={{ maxWidth: 800 }}>
         <div className="d-flex align-items-center gap-3 mb-2">
           {guild.icon ? (
             <img src={guild.icon} alt="" width={40} height={40} style={{ borderRadius: '50%' }} />
           ) : (
-            <div style={{ width: 40, height: 40, borderRadius: '50%', background: '#1d2f47' }} aria-hidden="true" />
+            <div className="avatar-placeholder" style={{ width: 40, height: 40 }} aria-hidden="true" />
           )}
           <h1 className="h3 fw-bold mb-0">{guild.name}</h1>
         </div>
@@ -162,7 +162,7 @@ export default function GuildConfig() {
               <h2 className="h5 mb-3">Command prefix</h2>
               <input
                 type="text"
-                className="form-control bg-dark text-light border-secondary"
+                className="form-control"
                 style={{ maxWidth: 120 }}
                 maxLength={5}
                 value={config.prefix}
@@ -208,7 +208,7 @@ export default function GuildConfig() {
                   <label className="form-label" htmlFor="llmmod-sensitivity">AI moderation sensitivity</label>
                   <select
                     id="llmmod-sensitivity"
-                    className="form-select bg-dark text-light border-secondary"
+                    className="form-select"
                     value={config.moderation.llmModSensitivity}
                     onChange={(e) => update(['moderation', 'llmModSensitivity'], e.target.value)}
                   >
@@ -254,7 +254,7 @@ export default function GuildConfig() {
                       </label>
                       <textarea
                         id={`${key}-message`}
-                        className="form-control bg-dark text-light border-secondary"
+                        className="form-control"
                         rows={2}
                         maxLength={500}
                         placeholder={placeholder}
@@ -296,7 +296,7 @@ export default function GuildConfig() {
                 <input
                   id="currency-name"
                   type="text"
-                  className="form-control bg-dark text-light border-secondary"
+                  className="form-control"
                   maxLength={30}
                   value={config.economy.currencyName}
                   onChange={(e) => update(['economy', 'currencyName'], e.target.value)}

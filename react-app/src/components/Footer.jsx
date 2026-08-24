@@ -1,10 +1,11 @@
 import { Link } from 'react-router-dom'
+import '../styles/homepage.css'
 
 export default function Footer() {
   return (
-    <footer className="site-footer text-center">
-      <div className="container">
-        <nav className="site-footer-links" aria-label="Footer">
+    <footer className="home-page home-footer">
+      <div className="home-wrap">
+        <nav className="home-footer-links" aria-label="Footer">
           <Link to="/commands">Commands</Link>
           <Link to="/about">About</Link>
           <Link to="/privacy">Privacy</Link>
@@ -13,7 +14,7 @@ export default function Footer() {
             Support server
           </a>
         </nav>
-        <p className="site-footer-copy">© {new Date().getFullYear()} A.L.I.C.E</p>
+        <p className="home-footer-copy">© {new Date().getFullYear()} A.L.I.C.E</p>
       </div>
     </footer>
   )

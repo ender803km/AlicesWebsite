@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { Navigate, Link, useParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { fetchGuildConfig, saveGuildConfig, fetchGuildChannels } from '../lib/api'
+import '../styles/homepage.css'
 
 // Same 12 modules from the public Commands page, in the same order, so the
 // toggle list here reads as "the same bot" rather than a different feature
@@ -23,7 +24,7 @@ const MODULES = [
 
 function ChannelSelect({ id, value, onChange, channels }) {
   return (
-    <select id={id} className="form-select" value={value || ''} onChange={onChange}>
+    <select id={id} className="home-select" value={value || ''} onChange={onChange}>
       <option value="">— None —</option>
       {channels.map((c) => (
         <option key={c.id} value={c.id}>
@@ -70,8 +71,10 @@ export default function GuildConfig() {
 
   if (authLoading) {
     return (
-      <main id="main-content" className="page-section text-center">
-        <div className="container"><p className="lead">Loading…</p></div>
+      <main id="main-content" className="home-page home-content home-content-center">
+        <div className="home-mesh" aria-hidden="true" />
+        <div className="home-grain" aria-hidden="true" />
+        <div className="home-wrap"><p className="home-lede">Loading…</p></div>
       </main>
     )
   }
@@ -80,10 +83,14 @@ export default function GuildConfig() {
 
   if (!guild) {
     return (
-      <main id="main-content" className="page-section">
-        <div className="container" style={{ maxWidth: 700 }}>
-          <p className="lead">You don't manage a server with that ID, or A.L.I.C.E isn't in it.</p>
-          <Link to="/dashboard" className="btn btn-outline-light">Back to dashboard</Link>
+      <main id="main-content" className="home-page home-content">
+        <div className="home-mesh" aria-hidden="true" />
+        <div className="home-grain" aria-hidden="true" />
+        <div className="home-wrap" style={{ maxWidth: 700 }}>
+          <p className="home-lede" style={{ marginBottom: '1.5rem' }}>
+            You don&rsquo;t manage a server with that ID, or A.L.I.C.E isn&rsquo;t in it.
+          </p>
+          <Link to="/dashboard" className="home-btn home-btn-outline">Back to dashboard</Link>
         </div>
       </main>
     )
@@ -115,71 +122,70 @@ export default function GuildConfig() {
   }
 
   return (
-    <main id="main-content" className="page-section">
-      <div className="container" style={{ maxWidth: 800 }}>
-        <div className="d-flex align-items-center gap-3 mb-2">
+    <main id="main-content" className="home-page home-content">
+      <div className="home-mesh" aria-hidden="true" />
+      <div className="home-grain" aria-hidden="true" />
+      <div className="home-wrap" style={{ maxWidth: 760 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.5rem' }}>
           {guild.icon ? (
-            <img src={guild.icon} alt="" width={40} height={40} style={{ borderRadius: '50%' }} />
+            <img src={guild.icon} alt="" width={40} height={40} className="home-avatar" />
           ) : (
-            <div className="avatar-placeholder" style={{ width: 40, height: 40 }} aria-hidden="true" />
+            <div className="home-avatar-placeholder" style={{ width: 40, height: 40 }} aria-hidden="true" />
           )}
-          <h1 className="h3 fw-bold mb-0">{guild.name}</h1>
+          <h1 style={{ fontSize: '1.5rem' }}>{guild.name}</h1>
         </div>
-        <p className="text-body-secondary mb-4">
-          <Link to="/dashboard">← Back to your servers</Link>
+        <p style={{ color: 'var(--home-ink-muted)', marginBottom: '2rem' }}>
+          <Link to="/dashboard" style={{ color: 'var(--home-accent-soft)' }}>← Back to your servers</Link>
         </p>
 
-        {status === 'loading' && <p className="lead">Loading configuration…</p>}
+        {status === 'loading' && <p className="home-lede">Loading configuration…</p>}
 
         {status === 'error' && (
-          <div className="alert alert-danger" role="alert">{error}</div>
+          <div className="home-alert home-alert-error" role="alert">{error}</div>
         )}
 
         {status === 'ready' && config && (
           <form onSubmit={handleSave}>
-            <section className="mb-5">
-              <h2 className="h5 mb-3">Command modules</h2>
-              <div className="row row-cols-2 row-cols-md-3 g-2">
+            <section className="home-form-section">
+              <h2>Command modules</h2>
+              <div className="home-toggle-grid">
                 {MODULES.map((mod) => (
-                  <div className="col" key={mod.key}>
-                    <div className="form-check form-switch">
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        role="switch"
-                        id={`mod-${mod.key}`}
-                        checked={config.modules[mod.key]}
-                        onChange={(e) => update(['modules', mod.key], e.target.checked)}
-                      />
-                      <label className="form-check-label" htmlFor={`mod-${mod.key}`}>{mod.label}</label>
-                    </div>
+                  <div className="home-switch-row" key={mod.key}>
+                    <input
+                      className="home-switch"
+                      type="checkbox"
+                      role="switch"
+                      id={`mod-${mod.key}`}
+                      checked={config.modules[mod.key]}
+                      onChange={(e) => update(['modules', mod.key], e.target.checked)}
+                    />
+                    <label htmlFor={`mod-${mod.key}`}>{mod.label}</label>
                   </div>
                 ))}
               </div>
             </section>
 
-            <section className="mb-5">
-              <h2 className="h5 mb-3">Command prefix</h2>
-              <input
-                type="text"
-                className="form-control"
-                style={{ maxWidth: 120 }}
-                maxLength={5}
-                required
-                value={config.prefix}
-                onChange={(e) => update(['prefix'], e.target.value)}
-              />
+            <section className="home-form-section">
+              <h2>Command prefix</h2>
+              <div className="home-field" style={{ maxWidth: 120 }}>
+                <input
+                  type="text"
+                  className="home-input"
+                  maxLength={5}
+                  required
+                  value={config.prefix}
+                  onChange={(e) => update(['prefix'], e.target.value)}
+                />
+              </div>
               {!config.prefix.trim() && (
-                <p className="text-body-secondary small mt-2 mb-0">
-                  Can't be blank — pick at least one character.
-                </p>
+                <p className="home-field-hint">Can&rsquo;t be blank — pick at least one character.</p>
               )}
             </section>
 
-            <section className="mb-5">
-              <h2 className="h5 mb-3">Moderation</h2>
-              <div className="mb-3">
-                <label className="form-label" htmlFor="mod-log-channel">Mod log channel</label>
+            <section className="home-form-section">
+              <h2>Moderation</h2>
+              <div className="home-field">
+                <label htmlFor="mod-log-channel">Mod log channel</label>
                 <ChannelSelect
                   id="mod-log-channel"
                   channels={channels}
@@ -187,34 +193,34 @@ export default function GuildConfig() {
                   onChange={(e) => update(['moderation', 'logChannelId'], e.target.value || null)}
                 />
               </div>
-              <div className="form-check form-switch mb-2">
+              <div className="home-switch-row" style={{ marginBottom: '0.6rem' }}>
                 <input
-                  className="form-check-input"
+                  className="home-switch"
                   type="checkbox"
                   role="switch"
                   id="automod-enabled"
                   checked={config.moderation.autoModEnabled}
                   onChange={(e) => update(['moderation', 'autoModEnabled'], e.target.checked)}
                 />
-                <label className="form-check-label" htmlFor="automod-enabled">Enable auto-mod</label>
+                <label htmlFor="automod-enabled">Enable auto-mod</label>
               </div>
-              <div className="form-check form-switch mb-3">
+              <div className="home-switch-row" style={{ marginBottom: config.moderation.llmModEnabled ? '1rem' : 0 }}>
                 <input
-                  className="form-check-input"
+                  className="home-switch"
                   type="checkbox"
                   role="switch"
                   id="llmmod-enabled"
                   checked={config.moderation.llmModEnabled}
                   onChange={(e) => update(['moderation', 'llmModEnabled'], e.target.checked)}
                 />
-                <label className="form-check-label" htmlFor="llmmod-enabled">Enable AI moderation</label>
+                <label htmlFor="llmmod-enabled">Enable AI moderation</label>
               </div>
               {config.moderation.llmModEnabled && (
-                <div style={{ maxWidth: 220 }}>
-                  <label className="form-label" htmlFor="llmmod-sensitivity">AI moderation sensitivity</label>
+                <div className="home-field" style={{ maxWidth: 220 }}>
+                  <label htmlFor="llmmod-sensitivity">AI moderation sensitivity</label>
                   <select
                     id="llmmod-sensitivity"
-                    className="form-select"
+                    className="home-select"
                     value={config.moderation.llmModSensitivity}
                     onChange={(e) => update(['moderation', 'llmModSensitivity'], e.target.value)}
                   >
@@ -230,23 +236,23 @@ export default function GuildConfig() {
               { key: 'welcome', title: 'Welcome messages', placeholder: 'Welcome to {server}, {user}!' },
               { key: 'leave', title: 'Leave messages', placeholder: '{user} has left {server}.' },
             ].map(({ key, title, placeholder }) => (
-              <section className="mb-5" key={key}>
-                <h2 className="h5 mb-3">{title}</h2>
-                <div className="form-check form-switch mb-3">
+              <section className="home-form-section" key={key}>
+                <h2>{title}</h2>
+                <div className="home-switch-row" style={{ marginBottom: '1rem' }}>
                   <input
-                    className="form-check-input"
+                    className="home-switch"
                     type="checkbox"
                     role="switch"
                     id={`${key}-enabled`}
                     checked={config[key].enabled}
                     onChange={(e) => update([key, 'enabled'], e.target.checked)}
                   />
-                  <label className="form-check-label" htmlFor={`${key}-enabled`}>Enabled</label>
+                  <label htmlFor={`${key}-enabled`}>Enabled</label>
                 </div>
                 {config[key].enabled && (
                   <>
-                    <div className="mb-3">
-                      <label className="form-label" htmlFor={`${key}-channel`}>Channel</label>
+                    <div className="home-field">
+                      <label htmlFor={`${key}-channel`}>Channel</label>
                       <ChannelSelect
                         id={`${key}-channel`}
                         channels={channels}
@@ -254,13 +260,13 @@ export default function GuildConfig() {
                         onChange={(e) => update([key, 'channelId'], e.target.value || null)}
                       />
                     </div>
-                    <div>
-                      <label className="form-label" htmlFor={`${key}-message`}>
-                        Message <span className="text-body-secondary">(use {'{user}'} and {'{server}'})</span>
+                    <div className="home-field">
+                      <label htmlFor={`${key}-message`}>
+                        Message <span style={{ color: 'var(--home-ink-faint)' }}>(use {'{user}'} and {'{server}'})</span>
                       </label>
                       <textarea
                         id={`${key}-message`}
-                        className="form-control"
+                        className="home-textarea"
                         rows={2}
                         maxLength={500}
                         placeholder={placeholder}
@@ -273,60 +279,63 @@ export default function GuildConfig() {
               </section>
             ))}
 
-            <section className="mb-5">
-              <h2 className="h5 mb-3">Economy &amp; leveling</h2>
-              <div className="form-check form-switch mb-2">
+            <section className="home-form-section">
+              <h2>Economy &amp; leveling</h2>
+              <div className="home-switch-row" style={{ marginBottom: '0.6rem' }}>
                 <input
-                  className="form-check-input"
+                  className="home-switch"
                   type="checkbox"
                   role="switch"
                   id="economy-enabled"
                   checked={config.economy.enabled}
                   onChange={(e) => update(['economy', 'enabled'], e.target.checked)}
                 />
-                <label className="form-check-label" htmlFor="economy-enabled">Enable economy</label>
+                <label htmlFor="economy-enabled">Enable economy</label>
               </div>
-              <div className="form-check form-switch mb-3">
+              <div className="home-switch-row" style={{ marginBottom: '1rem' }}>
                 <input
-                  className="form-check-input"
+                  className="home-switch"
                   type="checkbox"
                   role="switch"
                   id="leveling-enabled"
                   checked={config.economy.levelingEnabled}
                   onChange={(e) => update(['economy', 'levelingEnabled'], e.target.checked)}
                 />
-                <label className="form-check-label" htmlFor="leveling-enabled">Enable leveling</label>
+                <label htmlFor="leveling-enabled">Enable leveling</label>
               </div>
-              <div style={{ maxWidth: 220 }}>
-                <label className="form-label" htmlFor="currency-name">Currency name</label>
+              <div className="home-field" style={{ maxWidth: 220 }}>
+                <label htmlFor="currency-name">Currency name</label>
                 <input
                   id="currency-name"
                   type="text"
-                  className="form-control"
+                  className="home-input"
                   maxLength={30}
                   required
                   value={config.economy.currencyName}
                   onChange={(e) => update(['economy', 'currencyName'], e.target.value)}
                 />
-                {!config.economy.currencyName.trim() && (
-                  <p className="text-body-secondary small mt-2 mb-0">
-                    Can't be blank — try "Coins" or "Credits".
-                  </p>
-                )}
               </div>
+              {!config.economy.currencyName.trim() && (
+                <p className="home-field-hint">Can&rsquo;t be blank — try &ldquo;Coins&rdquo; or &ldquo;Credits&rdquo;.</p>
+              )}
             </section>
 
-            {error && <div className="alert alert-danger" role="alert">{error}</div>}
+            {error && <div className="home-alert home-alert-error" role="alert">{error}</div>}
 
-            <div className="d-flex align-items-center gap-3">
-              <button className="btn btn-primary" type="submit" disabled={saving}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              <button className="home-btn home-btn-primary" type="submit" disabled={saving}>
                 {saving ? 'Saving…' : 'Save changes'}
+                <span className="home-icon-chip" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M5 13l4 4L19 7" />
+                  </svg>
+                </span>
               </button>
-              {savedAt && !saving && <span className="text-success">Saved ✓</span>}
+              {savedAt && !saving && <span style={{ color: '#7fe3ac' }}>Saved ✓</span>}
             </div>
 
-            <p className="text-body-secondary small mt-4">
-              Note: these settings are saved, but the bot doesn't read them yet — that wiring is a
+            <p className="home-field-hint" style={{ marginTop: '2rem' }}>
+              Note: these settings are saved, but the bot doesn&rsquo;t read them yet — that wiring is a
               follow-up. This screen is safe to explore in the meantime.
             </p>
           </form>

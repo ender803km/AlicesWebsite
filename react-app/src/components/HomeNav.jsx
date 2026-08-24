@@ -12,9 +12,8 @@ const navLinks = [
   { to: '/contact', label: 'Contact' },
 ]
 
-// A floating "island" pill nav used only on the homepage, matching the
-// approved concept mockup. Every other route keeps the standard Bootstrap
-// navbar in Navbar.jsx.
+// A floating "island" pill nav, matching the approved concept mockup.
+// This is the site's only nav — Navbar.jsx renders it on every route.
 export default function HomeNav() {
   const { user, loading } = useAuth()
   const [open, setOpen] = useState(false)

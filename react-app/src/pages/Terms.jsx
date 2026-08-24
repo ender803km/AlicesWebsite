@@ -1,12 +1,19 @@
+import { useReveal } from '../hooks/useReveal'
+import '../styles/homepage.css'
+
 export default function Terms() {
+  const [ref, visible] = useReveal({ threshold: 0.1 })
+
   return (
-    <main id="main-content" className="page-section">
-      <div className="container" style={{ maxWidth: 800 }} data-aos="fade-up">
-        <h1 className="display-5 fw-bold">Terms of Service</h1>
-        <p className="lead">
-          Using A.L.I.C.E means you agree to follow Discord's Terms of Service.
+    <main id="main-content" className="home-page home-content">
+      <div className="home-mesh" aria-hidden="true" />
+      <div className="home-grain" aria-hidden="true" />
+      <div ref={ref} className={`home-wrap home-reveal ${visible ? 'is-visible' : ''}`} style={{ maxWidth: 760 }}>
+        <h1>Terms of Service</h1>
+        <p className="home-lede">
+          Using A.L.I.C.E means you agree to follow Discord&rsquo;s Terms of Service.
           Do not abuse, exploit, or intentionally interfere with the bot.
-          The bot is provided "as is" without warranty.
+          The bot is provided &ldquo;as is&rdquo; without warranty.
           Features may change without notice.
         </p>
       </div>

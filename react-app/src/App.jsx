@@ -1,6 +1,5 @@
 import { useEffect } from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
-import AOS from 'aos'
 
 import { AuthProvider } from './context/AuthContext'
 import Navbar from './components/Navbar'
@@ -18,25 +17,19 @@ import GuildConfig from './pages/GuildConfig'
 import DevDashboard from './pages/DevDashboard'
 import NotFound from './pages/NotFound'
 
-// Resets scroll position and re-checks AOS's scroll-triggered animations
-// whenever the route changes, since client-side navigation doesn't reload
-// the page the way the old static site's links did.
+// Resets scroll position whenever the route changes, since client-side
+// navigation doesn't reload the page the way the old static site's links did.
 function RouteEffects() {
   const location = useLocation()
 
   useEffect(() => {
     window.scrollTo(0, 0)
-    AOS.refreshHard()
   }, [location.pathname])
 
   return null
 }
 
 export default function App() {
-  useEffect(() => {
-    AOS.init({ duration: 700, easing: 'ease-out-cubic', once: true })
-  }, [])
-
   return (
     <AuthProvider>
       <a href="#main-content" className="skip-link">Skip to content</a>

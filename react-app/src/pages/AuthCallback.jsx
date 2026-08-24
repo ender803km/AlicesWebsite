@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { setToken } from '../lib/api'
 import { useAuth } from '../context/AuthContext'
+import '../styles/homepage.css'
 
 export default function AuthCallback() {
   const navigate = useNavigate()
@@ -22,19 +23,32 @@ export default function AuthCallback() {
 
   if (failed) {
     return (
-      <main id="main-content" className="page-section text-center">
-        <div className="container">
-          <p className="lead mb-4">That login link looks incomplete.</p>
-          <a href="/login" className="btn btn-primary btn-lg px-4">Back to login</a>
+      <main id="main-content" className="home-page home-content home-content-center">
+        <div className="home-mesh" aria-hidden="true" />
+        <div className="home-grain" aria-hidden="true" />
+        <div className="home-wrap" style={{ maxWidth: 480 }}>
+          <p className="home-lede">That login link looks incomplete.</p>
+          <div className="home-cta-row">
+            <a href="/login" className="home-btn home-btn-primary">
+              Back to login
+              <span className="home-icon-chip" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M7 17L17 7M9 7h8v8" />
+                </svg>
+              </span>
+            </a>
+          </div>
         </div>
       </main>
     )
   }
 
   return (
-    <main id="main-content" className="page-section text-center">
-      <div className="container">
-        <p className="lead">Signing you in…</p>
+    <main id="main-content" className="home-page home-content home-content-center">
+      <div className="home-mesh" aria-hidden="true" />
+      <div className="home-grain" aria-hidden="true" />
+      <div className="home-wrap" style={{ maxWidth: 480 }}>
+        <p className="home-lede">Signing you in…</p>
       </div>
     </main>
   )

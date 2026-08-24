@@ -3,51 +3,51 @@
 
 export function CommandModule({ id, title, description, children }) {
   return (
-    <section id={id} className="command-module">
-      <h2 className="h3 command-module-header">{title}</h2>
-      <p className="command-module-desc">{description}</p>
+    <section id={id} className="home-cmd-module">
+      <h2>{title}</h2>
+      <p className="home-cmd-module-desc">{description}</p>
       {children}
     </section>
   )
 }
 
 export function CommandList({ children }) {
-  return <div className="list-group command-list-group">{children}</div>
+  return <div className="home-cmd-list">{children}</div>
 }
 
 export function CommandEntry({ name, badges, children }) {
   return (
-    <div className="list-group-item">
-      <div className="command-entry">
-        <code className="cmd-name">{name}</code>
+    <div className="home-cmd-row">
+      <div className="home-cmd-entry">
+        <code className="home-cmd-name">{name}</code>
         {badges?.map((badge) => (
-          <span className={`badge ${badge.className}`} key={badge.label}>
+          <span className={`home-badge ${badge.className}`} key={badge.label}>
             {badge.label}
           </span>
         ))}
       </div>
-      {children ? <p className="command-desc">{children}</p> : null}
+      {children ? <p className="home-cmd-desc">{children}</p> : null}
     </div>
   )
 }
 
 export function SubgroupTitle({ children }) {
-  return <h3 className="command-subgroup-title">{children}</h3>
+  return <h3 className="home-cmd-subgroup">{children}</h3>
 }
 
 export function ChipGrid({ items }) {
   return (
-    <div className="command-chip-grid">
+    <div className="home-cmd-chip-grid">
       {items.map((item) => (
-        <code className="cmd-chip" key={item}>{item}</code>
+        <code className="home-cmd-chip" key={item}>{item}</code>
       ))}
     </div>
   )
 }
 
 export const badgeStyles = {
-  mods: { className: 'text-bg-secondary', label: 'Mods only' },
-  admin: { className: 'text-bg-danger', label: 'Admin' },
-  contextMenu: { className: 'text-bg-dark', label: 'Right-click a message' },
-  manageExpressions: { className: 'text-bg-secondary', label: 'Manage Expressions' },
+  mods: { className: 'home-badge-mods', label: 'Mods only' },
+  admin: { className: 'home-badge-admin', label: 'Admin' },
+  contextMenu: { className: 'home-badge-context', label: 'Right-click a message' },
+  manageExpressions: { className: 'home-badge-expressions', label: 'Manage Expressions' },
 }

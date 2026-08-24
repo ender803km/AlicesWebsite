@@ -1,4 +1,6 @@
+import { useReveal } from '../hooks/useReveal'
 import { CommandModule, CommandList, CommandEntry, SubgroupTitle, ChipGrid, badgeStyles } from '../components/CommandsUI'
+import '../styles/homepage.css'
 
 const toc = [
   { href: '#statbot', label: '📈 Stat Bot' },
@@ -16,17 +18,21 @@ const toc = [
 ]
 
 export default function Commands() {
+  const [ref, visible] = useReveal({ threshold: 0.05 })
+
   return (
-    <main id="main-content" className="page-section">
-      <div className="container" style={{ maxWidth: 900 }} data-aos="fade-up">
-        <h1 className="display-5 fw-bold">Commands</h1>
-        <p className="lead mb-4">
+    <main id="main-content" className="home-page home-content">
+      <div className="home-mesh" aria-hidden="true" />
+      <div className="home-grain" aria-hidden="true" />
+      <div ref={ref} className={`home-wrap home-reveal ${visible ? 'is-visible' : ''}`} style={{ maxWidth: 900 }}>
+        <h1>Commands</h1>
+        <p className="home-lede">
           Everything A.L.I.C.E can do, grouped by module. Jump to a section below,
           or just scroll through — every command shown here is a Discord slash command
           unless noted otherwise.
         </p>
 
-        <nav className="commands-toc" aria-label="Command sections">
+        <nav className="home-toc" aria-label="Command sections">
           {toc.map((item) => (
             <a href={item.href} key={item.href}>{item.label}</a>
           ))}
@@ -364,7 +370,7 @@ export default function Commands() {
           }
         >
           <SubgroupTitle>Aimed at someone</SubgroupTitle>
-          <p className="command-desc mb-3">Each takes a required <code>user</code> option — who it's aimed at.</p>
+          <p className="home-cmd-desc" style={{ marginBottom: '0.9rem' }}>Each takes a required <code>user</code> option — who it's aimed at.</p>
           <ChipGrid
             items={[
               '/greet', '/highfive', '/dap', '/handshake', '/poke', '/handhold', '/laughwith', '/laughat', '/nuzzle',
@@ -373,7 +379,7 @@ export default function Commands() {
           />
 
           <SubgroupTitle>Solo</SubgroupTitle>
-          <p className="command-desc mb-3">
+          <p className="home-cmd-desc" style={{ marginBottom: '0.9rem' }}>
             <code>/dance</code> and <code>/pout</code> take an optional <code>user</code>; the rest take none at all.
           </p>
           <ChipGrid items={['/dance [user]', '/pout [user]', '/laugh', '/cry', '/sing', '/sleep']} />

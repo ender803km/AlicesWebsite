@@ -2,6 +2,9 @@ import express from 'express';
 import cors from 'cors';
 import authRoutes from './src/routes/auth.js';
 import apiRoutes from './src/routes/api.js';
+import guildsRoutes from './src/routes/guilds.js';
+import devRoutes from './src/routes/dev.js';
+import { connectMongo } from './src/services/mongo.js';
 
 const app = express();
 
@@ -15,21 +18,32 @@ app.use(
     origin: allowedOrigins,
   }),
 );
+app.use(express.json());
 
 app.get('/health', (req, res) => res.json({ status: 'ok' }));
 
 app.use('/auth', authRoutes);
 app.use('/api', apiRoutes);
+app.use('/api/guilds', guildsRoutes);
+app.use('/api/dev', devRoutes);
 
 app.use((req, res) => res.status(404).json({ error: 'Not found' }));
 
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
   console.error(err);
-  res.status(500).json({ error: 'Internal server error' });
+  res.status(err.status || 500).json({ error: err.publicMessage || 'Internal server error' });
 });
 
 const port = process.env.PORT || 3000;
-app.listen(port, () => {
-  console.log(`alice-api listening on :${port}`);
-});
+
+// Mongo is optional at boot — connectMongo() logs a warning and returns
+// null if MONGODB_URI isn't set yet, rather than crashing the whole API
+// over a feature (guild config) that isn't wired up on Railway yet.
+connectMongo()
+  .catch((err) => console.error('MongoDB connection failed:', err))
+  .finally(() => {
+    app.listen(port, () => {
+      console.log(`alice-api listening on :${port}`);
+    });
+  });

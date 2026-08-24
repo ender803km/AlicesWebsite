@@ -1,10 +1,17 @@
 # A.L.I.C.E — API
 
-Phase 2 of the site rebuild: a small Express service handling Discord OAuth2
-login and serving the data the React dashboard needs. No database yet —
-everything a session needs (profile, manageable guilds, dev flag) is computed
-once at login and signed into a JWT. Phase 3 adds MongoDB-backed per-server
-config on top of this.
+A small Express service handling Discord OAuth2 login and serving the data
+the React dashboard needs. Session data (profile, manageable guilds, dev
+flag) is computed once at login and signed into a JWT — no DB lookups on
+every request. Phase 3 adds a MongoDB-backed per-server config store and a
+devs-only monitoring dashboard on top of that.
+
+**Note on Phase 3 scope:** the config endpoints below let a server's admins
+save settings (module toggles, moderation, welcome/leave messages, economy)
+into MongoDB, and the dashboard UI can read/edit them. The bot itself does
+not yet read from this database — it still runs on whatever's hardcoded in
+its own repo. Wiring the bot up to actually obey these settings is a
+follow-up pass in the bot's own codebase.
 
 ## How auth works
 
@@ -27,6 +34,11 @@ config on top of this.
 | `GET /auth/discord/callback` | none | Discord redirects here after consent |
 | `GET /api/me` | Bearer | Current user's profile + dev flag |
 | `GET /api/guilds` | Bearer | Guilds the user manages where the bot is installed |
+| `GET /api/guilds/:guildId/config` | Bearer, must manage `:guildId` | That server's dashboard config (defaults if never saved) |
+| `PUT /api/guilds/:guildId/config` | Bearer, must manage `:guildId` | Save (partial-merge) that server's config |
+| `GET /api/guilds/:guildId/channels` | Bearer, must manage `:guildId` | Text channels in that server, for the channel-picker dropdowns |
+| `GET /api/dev/overview` | Bearer, dev only | Guild count + names the bot is in, plus deploy status if Railway is configured |
+| `GET /api/dev/logs?type=errors\|activity` | Bearer, dev only | Recent bot service log lines pulled from Railway (needs `RAILWAY_API_TOKEN`) |
 
 ## Environment variables
 
@@ -39,7 +51,9 @@ short version:
 - `OAUTH_REDIRECT_URI` — must exactly match a redirect URI registered on the Discord app (Discord Developer Portal → OAuth2 → Redirects). Add both the local dev one and the production Railway URL there.
 - `FRONTEND_URL` — where the React app runs; used for CORS and for where to send the user back after login.
 - `JWT_SECRET` — a random signing secret, unrelated to Discord. Any long random string.
-- `DEV_USER_IDS` — comma-separated Discord user IDs allowed into the Phase 3 devs-only dashboard. Leave empty until that's built.
+- `DEV_USER_IDS` — comma-separated Discord user IDs allowed into the devs-only dashboard.
+- `MONGODB_URI` — connection string for the dashboard's own MongoDB database (guild config). Get one from a free MongoDB Atlas cluster; see the setup steps in `.env.example`. **Set this directly in Railway, not here.**
+- `RAILWAY_API_TOKEN` / `RAILWAY_PROJECT_ID` / `RAILWAY_ENVIRONMENT_ID` / `RAILWAY_BOT_SERVICE_ID` — optional, powers the devs dashboard's log viewer. The three IDs are just identifiers, not secrets; only the token needs care.
 
 ## Running locally
 

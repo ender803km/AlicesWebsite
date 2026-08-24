@@ -14,6 +14,8 @@ import Terms from './pages/Terms'
 import Login from './pages/Login'
 import AuthCallback from './pages/AuthCallback'
 import Dashboard from './pages/Dashboard'
+import GuildConfig from './pages/GuildConfig'
+import DevDashboard from './pages/DevDashboard'
 import NotFound from './pages/NotFound'
 
 // Resets scroll position and re-checks AOS's scroll-triggered animations
@@ -49,6 +51,8 @@ export default function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/auth/callback" element={<AuthCallback />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/servers/:guildId" element={<GuildConfig />} />
+        <Route path="/dev" element={<DevDashboard />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Footer />

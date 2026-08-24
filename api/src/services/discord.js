@@ -65,10 +65,13 @@ export async function fetchUserGuilds(accessToken) {
 // Guilds the bot itself is a member of. Uses the bot token, not the user's.
 // NOTE: only fetches the first page (up to 200 guilds) — fine for now, add
 // `after` cursor pagination here if the bot ever grows past that.
+// Single cache shared by both accessors below so a dashboard page load
+// (which wants full guild objects) and a login callback (which only wants
+// the id set) don't double the Discord API calls.
 let botGuildsCache = { at: 0, guilds: [] };
 const BOT_GUILDS_TTL_MS = 60_000;
 
-export async function fetchBotGuildIds({ bypassCache = false } = {}) {
+async function fetchBotGuilds({ bypassCache = false } = {}) {
   const fresh = Date.now() - botGuildsCache.at < BOT_GUILDS_TTL_MS;
   if (fresh && !bypassCache) return botGuildsCache.guilds;
 
@@ -76,10 +79,38 @@ export async function fetchBotGuildIds({ bypassCache = false } = {}) {
     headers: { Authorization: `Bot ${requiredEnv('DISCORD_BOT_TOKEN')}` },
   });
   if (!res.ok) throw new Error(`Failed to fetch bot's guilds (${res.status})`);
-  const guilds = await res.json();
-  const ids = new Set(guilds.map((g) => g.id));
-  botGuildsCache = { at: Date.now(), guilds: ids };
-  return ids;
+  const guilds = await res.json(); // [{ id, name, icon, ... }, ...]
+  botGuildsCache = { at: Date.now(), guilds };
+  return guilds;
+}
+
+export async function fetchBotGuildIds(opts) {
+  const guilds = await fetchBotGuilds(opts);
+  return new Set(guilds.map((g) => g.id));
+}
+
+// Full guild objects (id, name, icon) the bot currently belongs to — used
+// by the devs dashboard to show "which servers is A.L.I.C.E actually in".
+export async function fetchBotGuildList(opts) {
+  const guilds = await fetchBotGuilds(opts);
+  return guilds.map((g) => ({ id: g.id, name: g.name, icon: guildIconUrl(g) }));
+}
+
+// Text channels for a given guild, for populating channel-picker dropdowns
+// (mod log channel, welcome/leave channel) in the config screen. Requires
+// the bot to actually be in the guild — callers should check that first.
+export async function fetchGuildChannels(guildId) {
+  const res = await fetch(`${API_BASE}/guilds/${guildId}/channels`, {
+    headers: { Authorization: `Bot ${requiredEnv('DISCORD_BOT_TOKEN')}` },
+  });
+  if (!res.ok) throw new Error(`Failed to fetch guild channels (${res.status})`);
+  const channels = await res.json();
+  const GUILD_TEXT = 0;
+  const GUILD_ANNOUNCEMENT = 5;
+  return channels
+    .filter((c) => c.type === GUILD_TEXT || c.type === GUILD_ANNOUNCEMENT)
+    .map((c) => ({ id: c.id, name: c.name, position: c.position }))
+    .sort((a, b) => a.position - b.position);
 }
 
 export function userCanManage(guild) {

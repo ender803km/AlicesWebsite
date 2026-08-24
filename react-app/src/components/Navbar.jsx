@@ -42,6 +42,13 @@ export default function Navbar() {
                 </NavLink>
               </li>
             ))}
+            {!loading && user?.isDev && (
+              <li className="nav-item">
+                <NavLink className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`} to="/dev">
+                  Dev
+                </NavLink>
+              </li>
+            )}
             <li className="nav-item">
               {!loading && (
                 <NavLink

@@ -56,9 +56,20 @@ export default function Dashboard() {
                   />
                 )}
                 <span className="flex-grow-1">{guild.name}</span>
-                <button className="btn btn-sm btn-outline-primary" type="button" disabled title="Coming in the next phase">
-                  Configure
-                </button>
+                {guild.botInstalled ? (
+                  <Link className="btn btn-sm btn-outline-primary" to={`/servers/${guild.id}`}>
+                    Configure
+                  </Link>
+                ) : (
+                  <button
+                    className="btn btn-sm btn-outline-secondary"
+                    type="button"
+                    disabled
+                    title="Invite A.L.I.C.E to this server first"
+                  >
+                    Not installed
+                  </button>
+                )}
               </li>
             ))}
           </ul>

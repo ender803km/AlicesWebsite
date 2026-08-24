@@ -165,9 +165,15 @@ export default function GuildConfig() {
                 className="form-control"
                 style={{ maxWidth: 120 }}
                 maxLength={5}
+                required
                 value={config.prefix}
                 onChange={(e) => update(['prefix'], e.target.value)}
               />
+              {!config.prefix.trim() && (
+                <p className="text-body-secondary small mt-2 mb-0">
+                  Can't be blank — pick at least one character.
+                </p>
+              )}
             </section>
 
             <section className="mb-5">
@@ -298,9 +304,15 @@ export default function GuildConfig() {
                   type="text"
                   className="form-control"
                   maxLength={30}
+                  required
                   value={config.economy.currencyName}
                   onChange={(e) => update(['economy', 'currencyName'], e.target.value)}
                 />
+                {!config.economy.currencyName.trim() && (
+                  <p className="text-body-secondary small mt-2 mb-0">
+                    Can't be blank — try "Coins" or "Credits".
+                  </p>
+                )}
               </div>
             </section>
 

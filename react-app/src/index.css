@@ -78,6 +78,10 @@ h1, .display-1, .display-2, .display-3, .display-4 {
   letter-spacing: -0.02em;
 }
 
+.lead {
+  text-wrap: pretty;
+}
+
 :focus-visible {
   outline: 2px solid var(--accent-strong);
   outline-offset: 3px;

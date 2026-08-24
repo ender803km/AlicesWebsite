@@ -1,0 +1,272 @@
+:root {
+  --bs-body-bg: #081018;
+  --bs-body-color: #ffffff;
+  --bs-secondary-color: #bfc8d4;
+  --bs-primary: #4ea5ff;
+  --bs-primary-rgb: 78, 165, 255;
+  --bs-link-color: #4ea5ff;
+  --bs-link-hover-color: #7cbcff;
+  --bs-link-color-rgb: 78, 165, 255;
+  --bs-link-hover-color-rgb: 124, 188, 255;
+  --bs-border-color: #1d2f47;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+}
+
+/* Navbar */
+
+.site-navbar {
+  padding: 20px 0;
+  background: #081018ee;
+  backdrop-filter: blur(15px);
+}
+
+.navbar-brand {
+  font-size: 28px;
+  font-weight: 700;
+  color: #4ea5ff !important;
+}
+
+.site-navbar .nav-link {
+  color: #ffffff;
+  font-weight: 500;
+  transition: 0.3s;
+}
+
+.site-navbar .nav-link:hover,
+.site-navbar .nav-link:focus,
+.site-navbar .nav-link.active {
+  color: #4ea5ff;
+}
+
+/* Hero */
+
+.site-hero {
+  position: relative;
+  overflow: hidden;
+  padding: 100px 0 60px;
+}
+
+.site-hero-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.site-hero > .container {
+  position: relative;
+  z-index: 1;
+}
+
+.site-hero-img {
+  max-width: 420px;
+  width: 100%;
+  border-radius: 20px;
+  box-shadow: 0 0 50px #4ea5ff55;
+}
+
+.btn-primary {
+  background-color: #4ea5ff;
+  border-color: #4ea5ff;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+  background-color: #4ea5ff;
+  border-color: #4ea5ff;
+  transform: translateY(-4px);
+  box-shadow: 0 0 25px #4ea5ff;
+}
+
+.btn-outline-light {
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.btn-outline-light:hover {
+  transform: translateY(-4px);
+}
+
+/* Feature cards */
+
+.site-features {
+  padding: 80px 0;
+}
+
+.site-card {
+  background: #111b29;
+  border: 1px solid #1d2f47;
+  border-radius: 15px;
+  transition: 0.3s;
+}
+
+.site-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 0 30px #4ea5ff33;
+}
+
+.site-card .card-title {
+  color: #4ea5ff;
+}
+
+.site-card .card-text {
+  color: #bfc8d4;
+}
+
+/* Content pages (About / Contact / Privacy / Terms / 404) */
+
+.page-section {
+  padding: 100px 0;
+}
+
+.page-section h1 {
+  color: #4ea5ff;
+  margin-bottom: 25px;
+}
+
+.page-section .lead {
+  color: #bfc8d4;
+  line-height: 1.8;
+}
+
+.page-section .list-group-item {
+  background: #111b29;
+  color: #bfc8d4;
+  border-color: #1d2f47;
+}
+
+.page-section a:not(.btn) {
+  color: #4ea5ff;
+}
+
+.contact-links .btn {
+  font-weight: bold;
+}
+
+/* Commands page */
+
+.commands-toc {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 50px;
+}
+
+.commands-toc a {
+  display: inline-block;
+  padding: 8px 18px;
+  border-radius: 999px;
+  background: #111b29;
+  border: 1px solid #1d2f47;
+  color: #ffffff;
+  font-weight: 500;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.commands-toc a:hover {
+  color: #4ea5ff;
+  border-color: #4ea5ff;
+  transform: translateY(-2px);
+}
+
+.command-module {
+  scroll-margin-top: 110px;
+  margin-bottom: 60px;
+}
+
+.command-module-header {
+  margin-bottom: 8px;
+}
+
+.command-module-desc {
+  color: #bfc8d4;
+  margin-bottom: 25px;
+}
+
+.command-list-group .list-group-item {
+  background: #111b29;
+  border-color: #1d2f47;
+  padding: 16px 20px;
+}
+
+.command-entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  margin-bottom: 6px;
+}
+
+.cmd-name {
+  color: #4ea5ff;
+  font-weight: 700;
+  font-size: 1rem;
+  background: transparent;
+  padding: 0;
+}
+
+.command-entry .badge {
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.command-desc {
+  color: #bfc8d4;
+  margin-bottom: 0;
+  font-size: 0.95rem;
+}
+
+.command-desc code {
+  color: #4ea5ff;
+  background: transparent;
+  font-weight: 600;
+}
+
+.command-subgroup-title {
+  color: #8d99aa;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  margin: 20px 0 10px;
+}
+
+.command-chip-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 25px;
+}
+
+.cmd-chip {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: #111b29;
+  border: 1px solid #1d2f47;
+  color: #4ea5ff;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+/* Footer */
+
+.site-footer {
+  padding: 40px 0;
+  color: #8d99aa;
+  border-top: 1px solid #1d2f47;
+}
+
+@media (max-width: 991.98px) {
+  .site-navbar .navbar-nav {
+    padding-top: 15px;
+    gap: 10px;
+  }
+}

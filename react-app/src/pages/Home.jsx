@@ -1,188 +1,221 @@
-import { forwardRef, lazy, Suspense, useRef } from 'react'
+import { useRef } from 'react'
 import { useReveal } from '../hooks/useReveal'
-
-// Lazily loaded so the ~800kB three.js dependency it pulls in only ever
-// loads for visitors who land on the homepage, not on every route.
-const LiquidEtherBackground = lazy(() => import('../components/LiquidEtherBackground'))
+import NeuralCanvas from '../components/NeuralCanvas'
+import '../styles/homepage.css'
 
 const features = [
   {
-    icon: '🛡',
+    area: 'home-b-mod',
     title: 'Moderation',
     text: 'Auto-mod filters, mod logs, and an AI layer that reads context before it warns or acts — not just keyword matching.',
-    size: 'lg',
+    tag: 'Always on',
+    big: true,
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 3l7 3v6c0 4.4-3 7.6-7 9-4-1.4-7-4.6-7-9V6l7-3z" />
+      </svg>
+    ),
   },
-  { icon: '💰', title: 'Economy', text: 'A currency and leveling system your members earn just by being active.' },
-  { icon: '📈', title: 'Statistics', text: 'Per-server activity tracking, so growth is something you can see.' },
-  { icon: '⭐', title: 'Starboard', text: 'The best messages in a channel get pinned automatically, no manual curation.' },
-  { icon: '🎁', title: 'Giveaways & events', text: 'Run giveaways, counting games, and RPG mechanics without a second bot.' },
   {
-    icon: '⚙️',
+    area: 'home-b-stat',
+    title: 'Statistics',
+    text: 'Per-server activity tracking, so growth is something you can see.',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M4 19V10M11 19V5M18 19v-7" />
+      </svg>
+    ),
+  },
+  {
+    area: 'home-b-give',
+    title: 'Giveaways & events',
+    text: 'Run giveaways, counting games, and RPG mechanics without a second bot.',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3" y="8" width="18" height="13" rx="1" />
+        <path d="M3 12h18M12 8v13" />
+        <path d="M12 8c-1.5-3-3.5-4-5-3s-1 3 1 3M12 8c1.5-3 3.5-4 5-3s1 3-1 3" />
+      </svg>
+    ),
+  },
+  {
+    area: 'home-b-eco',
+    title: 'Economy',
+    text: 'A currency and leveling system your members earn just by being active.',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round">
+        <circle cx="12" cy="12" r="8" />
+        <path d="M12 7.5v9M9 9.5c0-1 1-1.8 3-1.8s3 .8 3 1.8-1 1.4-3 1.8-3 .9-3 1.9 1 1.8 3 1.8 3-.8 3-1.8" />
+      </svg>
+    ),
+  },
+  {
+    area: 'home-b-star',
+    title: 'Starboard',
+    text: 'The best messages in a channel get pinned automatically, no manual curation.',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round">
+        <path d="M12 3.5l2.4 5 5.5.6-4 3.8 1 5.4L12 15.8l-4.9 2.5 1-5.4-4-3.8 5.5-.6z" />
+      </svg>
+    ),
+  },
+  {
+    area: 'home-b-conf',
     title: 'Configurable per server',
     text: 'Turn modules on or off, set channels, and adjust behavior from a dashboard — no config file editing.',
-    size: 'lg',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round">
+        <line x1="4" y1="6" x2="20" y2="6" />
+        <circle cx="9" cy="6" r="2" />
+        <line x1="4" y1="12" x2="20" y2="12" />
+        <circle cx="15" cy="12" r="2" />
+        <line x1="4" y1="18" x2="20" y2="18" />
+        <circle cx="11" cy="18" r="2" />
+      </svg>
+    ),
   },
 ]
 
-// A card whose border glows faintly under the cursor — tracked via CSS
-// custom properties rather than re-rendering React on every mouse move.
-const SpotlightCard = forwardRef(function SpotlightCard(
-  { className = '', children, onMouseMove, ...rest },
-  ref,
-) {
+// Nudges a button toward the cursor on hover — cheap, transform-only, and
+// skipped entirely for touch input and reduced-motion preferences.
+function useMagnetic() {
+  const ref = useRef(null)
+  const rafRef = useRef(null)
+
   function handleMove(e) {
-    const rect = e.currentTarget.getBoundingClientRect()
-    e.currentTarget.style.setProperty('--spot-x', `${e.clientX - rect.left}px`)
-    e.currentTarget.style.setProperty('--spot-y', `${e.clientY - rect.top}px`)
-    onMouseMove?.(e)
+    const btn = ref.current
+    if (!btn) return
+    if (!window.matchMedia('(pointer: fine)').matches) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const rect = btn.getBoundingClientRect()
+    const x = e.clientX - rect.left - rect.width / 2
+    const y = e.clientY - rect.top - rect.height / 2
+    if (rafRef.current) cancelAnimationFrame(rafRef.current)
+    rafRef.current = requestAnimationFrame(() => {
+      btn.style.transform = `translate(${x * 0.18}px, ${y * 0.35}px)`
+    })
   }
 
-  return (
-    <div
-      ref={ref}
-      onMouseMove={handleMove}
-      className={`group/spot relative overflow-hidden ${className}`}
-      {...rest}
-    >
-      <div
-        className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover/spot:opacity-100"
-        style={{
-          background:
-            'radial-gradient(320px circle at var(--spot-x, 50%) var(--spot-y, 50%), rgba(79,147,224,0.16), transparent 70%)',
-        }}
-        aria-hidden="true"
-      />
-      {children}
-    </div>
-  )
-})
+  function handleLeave() {
+    if (rafRef.current) cancelAnimationFrame(rafRef.current)
+    if (ref.current) ref.current.style.transform = ''
+  }
+
+  return [ref, handleMove, handleLeave]
+}
 
 function FeatureCard({ feature, index }) {
   const [ref, visible] = useReveal({ threshold: 0.15 })
-  const isLg = feature.size === 'lg'
-
   return (
-    <SpotlightCard
+    <div
       ref={ref}
-      className={`rounded-[1.75rem] [border:1px_solid_rgba(255,255,255,0.08)] bg-white/[0.02] p-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] transition-all duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] hover:[border-color:rgba(255,255,255,0.14)] ${
-        isLg ? 'sm:col-span-4' : 'sm:col-span-2'
-      } ${visible ? 'translate-y-0 opacity-100 blur-none' : 'translate-y-10 opacity-0 blur-sm'}`}
-      style={{ transitionDelay: visible ? `${(index % 3) * 90}ms` : '0ms' }}
+      className={`home-card-shell ${feature.area} home-reveal ${visible ? 'is-visible' : ''}`}
+      style={{ transitionDelay: visible ? `${(index % 6) * 70}ms` : '0ms' }}
     >
-      <div
-        className={`relative rounded-[calc(1.75rem-0.375rem)] bg-[#0d131b] p-7 ${
-          isLg ? 'flex flex-col gap-[1.25rem] sm:flex-row sm:items-start' : 'h-full'
-        }`}
-      >
-        <div
-          className={`flex shrink-0 items-center justify-center rounded-2xl bg-[#4f93e0]/[0.12] text-2xl ${
-            isLg ? 'h-14 w-14 text-3xl' : 'h-12 w-12'
-          }`}
-          aria-hidden="true"
-        >
-          {feature.icon}
-        </div>
+      <div className="home-card-core">
         <div>
-          <h2 className={`font-display mt-[1rem] font-semibold tracking-tight text-[#eef1f5] sm:mt-0 ${isLg ? 'text-2xl' : 'text-lg'}`}>
-            {feature.title}
-          </h2>
-          <p className={`mt-2 leading-relaxed text-[#97a3b3] ${isLg ? 'max-w-[52ch]' : ''}`}>{feature.text}</p>
+          <div className="home-card-icon" aria-hidden="true">{feature.icon}</div>
+          <h3>{feature.title}</h3>
+          <p>{feature.text}</p>
         </div>
+        {feature.tag && <span className="home-card-tag">{feature.tag}</span>}
       </div>
-    </SpotlightCard>
+    </div>
   )
 }
 
-function Orb({ className }) {
-  return <div className={`pointer-events-none absolute rounded-full blur-[110px] ${className}`} aria-hidden="true" />
+function FeaturesHead() {
+  const [ref, visible] = useReveal({ threshold: 0.15 })
+  return (
+    <div ref={ref} className={`home-features-head home-reveal ${visible ? 'is-visible' : ''}`}>
+      <div className="home-eyebrow"><span className="home-dot" aria-hidden="true" /> What it does</div>
+      <h2>Six systems, one bot.</h2>
+      <p>
+        Everything below runs on the same MongoDB-backed core — no separate bots to invite, no
+        separate dashboards to juggle.
+      </p>
+    </div>
+  )
 }
 
 export default function Home() {
   const [heroRef, heroVisible] = useReveal({ threshold: 0.1 })
-  const scrollRef = useRef(null)
-
-  function scrollToFeatures() {
-    scrollRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-  }
+  const [portraitRef, portraitVisible] = useReveal({ threshold: 0.1 })
+  const [inviteRef, onInviteMove, onInviteLeave] = useMagnetic()
+  const [githubRef, onGithubMove, onGithubLeave] = useMagnetic()
 
   return (
-    <main id="main-content">
-      <header className="relative overflow-hidden pt-40 pb-24 sm:pt-48 sm:pb-32">
-        <Suspense fallback={null}>
-          <LiquidEtherBackground />
-        </Suspense>
+    <main id="main-content" className="home-page">
+      <div className="home-mesh" aria-hidden="true" />
+      <div className="home-grain" aria-hidden="true" />
 
-        <Orb className="-left-24 top-16 h-72 w-72 bg-[#4f93e0]/[0.18]" />
-        <Orb className="-right-16 top-56 h-64 w-64 bg-[#3ecf8e]/[0.12]" />
-
-        <div className="container relative z-10">
-          <div className="row align-items-center gy-5">
-            <div
-              ref={heroRef}
-              className={`col-lg-6 transition-all duration-1000 ease-[cubic-bezier(0.32,0.72,0,1)] ${
-                heroVisible ? 'translate-y-0 opacity-100 blur-none' : 'translate-y-10 opacity-0 blur-sm'
-              }`}
-            >
-              <span className="site-hero-eyebrow">
-                <span className="dot" aria-hidden="true" />
-                Online now
-              </span>
-              <h1 className="font-display text-[2.75rem] font-bold leading-[1.05] tracking-tight text-[#eef1f5] sm:text-[3.4rem]">
-                Artificial Learning &amp; Intelligent Community Engine
-              </h1>
-              <p className="mt-[1.25rem] max-w-[52ch] text-lg leading-relaxed text-[#97a3b3]">
-                Moderation, logging, statistics, and an economy system for Discord —
-                configured per server from a dashboard, not a config file.
-              </p>
-
-              <div className="mt-8 flex flex-wrap items-center gap-[1rem]">
-                <a
-                  href="https://discord.com/oauth2/authorize?client_id=1520771362246103091&permissions=1392442207446&integration_type=0&scope=bot+applications.commands"
-                  target="_blank"
-                  rel="noopener"
-                  className="group inline-flex items-center gap-[0.75rem] rounded-full bg-[#4f93e0] py-2.5 pl-6 pr-2.5 font-semibold text-[#06101c] no-underline transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-0.5 hover:bg-[#74abe8] hover:shadow-[0_16px_32px_-16px_rgba(79,147,224,0.55)] active:scale-[0.98]"
-                >
-                  Invite Bot
-                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#06101c]/10 transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
-                    ↗
-                  </span>
-                </a>
-                <a
-                  href="https://github.com/ender803km"
-                  target="_blank"
-                  rel="noopener"
-                  className="inline-flex items-center gap-2 rounded-full [border:1px_solid_rgba(255,255,255,0.15)] px-6 py-2.5 font-semibold text-[#eef1f5] no-underline transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-0.5 hover:[border-color:rgba(255,255,255,0.3)] hover:bg-white/5 active:scale-[0.98]"
-                >
-                  GitHub
-                </a>
-              </div>
+      <header className="home-hero">
+        <NeuralCanvas className="home-hero-canvas" />
+        <div className="home-wrap">
+          <div ref={heroRef}>
+            <div className={`home-eyebrow home-reveal ${heroVisible ? 'is-visible' : ''}`}>
+              <span className="home-dot" aria-hidden="true" /> Moderation &middot; Economy &middot; AI-assisted
             </div>
+            <h1 className={`home-reveal ${heroVisible ? 'is-visible' : ''}`} style={{ transitionDelay: heroVisible ? '60ms' : '0ms' }}>
+              Artificial Learning &amp; Intelligent Community Engine
+            </h1>
+            <p
+              className={`home-lede home-reveal ${heroVisible ? 'is-visible' : ''}`}
+              style={{ transitionDelay: heroVisible ? '120ms' : '0ms' }}
+            >
+              Moderation, logging, statistics, and an economy system for Discord — running
+              quietly in the background, configured per server from a dashboard, not a config
+              file.
+            </p>
+            <div
+              className={`home-cta-row home-reveal ${heroVisible ? 'is-visible' : ''}`}
+              style={{ transitionDelay: heroVisible ? '180ms' : '0ms' }}
+            >
+              <a
+                ref={inviteRef}
+                href="https://discord.com/oauth2/authorize?client_id=1520771362246103091&permissions=1392442207446&integration_type=0&scope=bot+applications.commands"
+                target="_blank"
+                rel="noopener"
+                className="home-btn home-btn-primary"
+                onMouseMove={onInviteMove}
+                onMouseLeave={onInviteLeave}
+              >
+                Invite Bot
+                <span className="home-icon-chip" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M7 17L17 7M9 7h8v8" />
+                  </svg>
+                </span>
+              </a>
+              <a
+                ref={githubRef}
+                href="https://github.com/ender803km"
+                target="_blank"
+                rel="noopener"
+                className="home-btn home-btn-outline"
+                onMouseMove={onGithubMove}
+                onMouseLeave={onGithubLeave}
+              >
+                GitHub
+              </a>
+            </div>
+          </div>
 
-            <div className="col-lg-6 text-center">
-              <div className="mx-auto inline-block rounded-[2rem] [border:1px_solid_rgba(255,255,255,0.08)] bg-white/[0.02] p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
-                <img
-                  src="/images/alice.png"
-                  alt="A.L.I.C.E bot avatar"
-                  className="block max-w-[380px] rounded-[calc(2rem-0.5rem)] shadow-[0_30px_60px_-30px_rgba(0,0,0,0.7)]"
-                />
+          <div ref={portraitRef} className={`home-reveal ${portraitVisible ? 'is-visible' : ''}`}>
+            <div className="home-portrait-shell">
+              <div className="home-portrait-glow" aria-hidden="true" />
+              <div className="home-portrait-core">
+                <img src="/images/alice.png" alt="A.L.I.C.E bot avatar" />
               </div>
             </div>
           </div>
         </div>
-
-        <button
-          type="button"
-          onClick={scrollToFeatures}
-          aria-label="Scroll to features"
-          className="absolute bottom-6 left-1/2 z-10 hidden h-10 w-10 -translate-x-1/2 items-center justify-center rounded-full [border:1px_solid_rgba(255,255,255,0.1)] text-[#97a3b3] transition-all duration-300 hover:[border-color:rgba(255,255,255,0.25)] hover:text-[#eef1f5] sm:flex"
-        >
-          <span className="animate-bounce">↓</span>
-        </button>
       </header>
 
-      <section ref={scrollRef} className="py-24 sm:py-32">
-        <div className="container">
-          <div className="grid grid-cols-1 gap-[1rem] sm:grid-cols-4">
+      <section className="home-features">
+        <div className="home-wrap">
+          <FeaturesHead />
+          <div className="home-bento">
             {features.map((feature, index) => (
               <FeatureCard feature={feature} index={index} key={feature.title} />
             ))}

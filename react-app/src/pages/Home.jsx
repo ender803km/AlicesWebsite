@@ -109,7 +109,7 @@ function FeatureCard({ feature, index }) {
   return (
     <div
       ref={ref}
-      className={`home-card-shell ${feature.area} home-reveal ${visible ? 'is-visible' : ''}`}
+      className={`home-card-shell ${feature.area} home-reveal home-reveal-blur ${visible ? 'is-visible' : ''}`}
       style={{ transitionDelay: visible ? `${(index % 6) * 70}ms` : '0ms' }}
     >
       <div className="home-card-core">
@@ -127,7 +127,7 @@ function FeatureCard({ feature, index }) {
 function FeaturesHead() {
   const [ref, visible] = useReveal({ threshold: 0.15 })
   return (
-    <div ref={ref} className={`home-section-head home-reveal ${visible ? 'is-visible' : ''}`}>
+    <div ref={ref} className={`home-section-head home-reveal home-reveal-blur ${visible ? 'is-visible' : ''}`}>
       <div className="home-section-head-rule-row">
         <span className="home-section-head-rule" aria-hidden="true" />
         <div className="home-eyebrow"><span className="home-dot" aria-hidden="true" /> What it does</div>
@@ -162,7 +162,7 @@ export default function Home() {
             <div className={`home-eyebrow home-reveal ${heroVisible ? 'is-visible' : ''}`}>
               <span className="home-dot" aria-hidden="true" /> Moderation &middot; Economy &middot; AI-assisted
             </div>
-            <h1 className={`home-reveal ${heroVisible ? 'is-visible' : ''}`} style={{ transitionDelay: heroVisible ? '60ms' : '0ms' }}>
+            <h1 className={`home-reveal home-reveal-blur ${heroVisible ? 'is-visible' : ''}`} style={{ transitionDelay: heroVisible ? '60ms' : '0ms' }}>
               Artificial Learning &amp; Intelligent Community Engine
             </h1>
             <p
@@ -207,7 +207,7 @@ export default function Home() {
             </div>
           </div>
 
-          <div ref={portraitRef} className={`home-reveal ${portraitVisible ? 'is-visible' : ''}`}>
+          <div ref={portraitRef} className={`home-reveal home-reveal-blur ${portraitVisible ? 'is-visible' : ''}`}>
             <div className="home-portrait-shell">
               <div className="home-portrait-glow" aria-hidden="true" />
               <div className="home-portrait-core">

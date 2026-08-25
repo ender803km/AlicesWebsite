@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { Navigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { fetchDevOverview, fetchDevLogs } from '../lib/api'
+import { useReveal } from '../hooks/useReveal'
 import '../styles/homepage.css'
 
 function timeAgo(iso) {
@@ -52,6 +53,7 @@ function StatSkeleton() {
 
 export default function DevDashboard() {
   const { user, loading: authLoading } = useAuth()
+  const [ref, visible] = useReveal({ threshold: 0.05 })
 
   const [overview, setOverview] = useState(null)
   const [errorLogs, setErrorLogs] = useState([])
@@ -106,7 +108,7 @@ export default function DevDashboard() {
       <div className="home-blueprint" aria-hidden="true" />
       <div className="home-spotlight" aria-hidden="true" />
       <div className="home-grain" aria-hidden="true" />
-      <div className="home-wrap" style={{ maxWidth: 900 }}>
+      <div ref={ref} className={`home-wrap home-reveal ${visible ? 'is-visible' : ''}`} style={{ maxWidth: 900 }}>
         <div className="home-page-eyebrow-row">
           <div className="home-eyebrow"><span className="home-dot" aria-hidden="true" /> Internal</div>
         </div>
@@ -170,8 +172,12 @@ export default function DevDashboard() {
               <p style={{ color: 'var(--home-ink-muted)' }}>A.L.I.C.E isn&rsquo;t in any servers right now.</p>
             ) : (
               <ul className="home-panel-list">
-                {overview.guilds.map((guild) => (
-                  <li key={guild.id} className="home-panel-row">
+                {overview.guilds.map((guild, i) => (
+                  <li
+                    key={guild.id}
+                    className="home-panel-row home-reveal-child"
+                    style={{ transitionDelay: visible ? `${i * 60}ms` : '0ms' }}
+                  >
                     {guild.icon ? (
                       <img src={guild.icon} alt="" width={28} height={28} className="home-avatar" />
                     ) : (

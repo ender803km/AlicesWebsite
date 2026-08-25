@@ -1,9 +1,11 @@
 import { Navigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { useReveal } from '../hooks/useReveal'
 import '../styles/homepage.css'
 
 export default function Dashboard() {
   const { user, guilds, loading, logout } = useAuth()
+  const [ref, visible] = useReveal({ threshold: 0.05 })
 
   if (loading) {
     return (
@@ -32,7 +34,7 @@ export default function Dashboard() {
       <div className="home-blueprint" aria-hidden="true" />
       <div className="home-spotlight" aria-hidden="true" />
       <div className="home-grain" aria-hidden="true" />
-      <div className="home-wrap" style={{ maxWidth: 760 }}>
+      <div ref={ref} className={`home-wrap home-reveal ${visible ? 'is-visible' : ''}`} style={{ maxWidth: 760 }}>
         <div className="home-page-eyebrow-row">
           <div className="home-eyebrow"><span className="home-dot" aria-hidden="true" /> Account</div>
         </div>
@@ -58,8 +60,12 @@ export default function Dashboard() {
           </p>
         ) : (
           <ul className="home-panel-list">
-            {guilds.map((guild) => (
-              <li key={guild.id} className="home-panel-row">
+            {guilds.map((guild, i) => (
+              <li
+                key={guild.id}
+                className="home-panel-row home-reveal-child"
+                style={{ transitionDelay: visible ? `${i * 60}ms` : '0ms' }}
+              >
                 {guild.icon ? (
                   <img src={guild.icon} alt="" width={36} height={36} className="home-avatar" />
                 ) : (

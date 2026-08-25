@@ -2,7 +2,21 @@ import { useCallback, useEffect, useState } from 'react'
 import { Navigate, Link, useParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { fetchGuildConfig, saveGuildConfig, fetchGuildChannels } from '../lib/api'
+import { useReveal } from '../hooks/useReveal'
 import '../styles/homepage.css'
+
+// This form is long — a single page-wide reveal would resolve while most
+// of it is still off-screen, so each section gets its own small
+// IntersectionObserver instead (same idea as the homepage's FeatureCard)
+// and fades/rises in as the user actually scrolls to it.
+function RevealSection({ children }) {
+  const [ref, visible] = useReveal({ threshold: 0.2 })
+  return (
+    <section ref={ref} className={`home-form-section home-reveal ${visible ? 'is-visible' : ''}`}>
+      {children}
+    </section>
+  )
+}
 
 // Same 12 modules from the public Commands page, in the same order, so the
 // toggle list here reads as "the same bot" rather than a different feature
@@ -155,11 +169,15 @@ export default function GuildConfig() {
 
         {status === 'ready' && config && (
           <form onSubmit={handleSave}>
-            <section className="home-form-section">
+            <RevealSection>
               <h2>Command modules</h2>
               <div className="home-toggle-grid">
-                {MODULES.map((mod) => (
-                  <div className="home-switch-row" key={mod.key}>
+                {MODULES.map((mod, i) => (
+                  <div
+                    className="home-switch-row home-reveal-child"
+                    key={mod.key}
+                    style={{ transitionDelay: `${i * 35}ms` }}
+                  >
                     <input
                       className="home-switch"
                       type="checkbox"
@@ -172,9 +190,9 @@ export default function GuildConfig() {
                   </div>
                 ))}
               </div>
-            </section>
+            </RevealSection>
 
-            <section className="home-form-section">
+            <RevealSection>
               <h2>Command prefix</h2>
               <div className="home-field" style={{ maxWidth: 120 }}>
                 <input
@@ -189,9 +207,9 @@ export default function GuildConfig() {
               {!config.prefix.trim() && (
                 <p className="home-field-hint">Can&rsquo;t be blank — pick at least one character.</p>
               )}
-            </section>
+            </RevealSection>
 
-            <section className="home-form-section">
+            <RevealSection>
               <h2>Moderation</h2>
               <div className="home-field">
                 <label htmlFor="mod-log-channel">Mod log channel</label>
@@ -202,7 +220,7 @@ export default function GuildConfig() {
                   onChange={(e) => update(['moderation', 'logChannelId'], e.target.value || null)}
                 />
               </div>
-              <div className="home-switch-row" style={{ marginBottom: '0.6rem' }}>
+              <div className="home-switch-row home-reveal-child" style={{ marginBottom: '0.6rem' }}>
                 <input
                   className="home-switch"
                   type="checkbox"
@@ -213,7 +231,10 @@ export default function GuildConfig() {
                 />
                 <label htmlFor="automod-enabled">Enable auto-mod</label>
               </div>
-              <div className="home-switch-row" style={{ marginBottom: config.moderation.llmModEnabled ? '1rem' : 0 }}>
+              <div
+                className="home-switch-row home-reveal-child"
+                style={{ marginBottom: config.moderation.llmModEnabled ? '1rem' : 0, transitionDelay: '60ms' }}
+              >
                 <input
                   className="home-switch"
                   type="checkbox"
@@ -239,15 +260,15 @@ export default function GuildConfig() {
                   </select>
                 </div>
               )}
-            </section>
+            </RevealSection>
 
             {[
               { key: 'welcome', title: 'Welcome messages', placeholder: 'Welcome to {server}, {user}!' },
               { key: 'leave', title: 'Leave messages', placeholder: '{user} has left {server}.' },
             ].map(({ key, title, placeholder }) => (
-              <section className="home-form-section" key={key}>
+              <RevealSection key={key}>
                 <h2>{title}</h2>
-                <div className="home-switch-row" style={{ marginBottom: '1rem' }}>
+                <div className="home-switch-row home-reveal-child" style={{ marginBottom: '1rem' }}>
                   <input
                     className="home-switch"
                     type="checkbox"
@@ -285,12 +306,12 @@ export default function GuildConfig() {
                     </div>
                   </>
                 )}
-              </section>
+              </RevealSection>
             ))}
 
-            <section className="home-form-section">
+            <RevealSection>
               <h2>Economy &amp; leveling</h2>
-              <div className="home-switch-row" style={{ marginBottom: '0.6rem' }}>
+              <div className="home-switch-row home-reveal-child" style={{ marginBottom: '0.6rem' }}>
                 <input
                   className="home-switch"
                   type="checkbox"
@@ -301,7 +322,7 @@ export default function GuildConfig() {
                 />
                 <label htmlFor="economy-enabled">Enable economy</label>
               </div>
-              <div className="home-switch-row" style={{ marginBottom: '1rem' }}>
+              <div className="home-switch-row home-reveal-child" style={{ marginBottom: '1rem', transitionDelay: '60ms' }}>
                 <input
                   className="home-switch"
                   type="checkbox"
@@ -327,7 +348,7 @@ export default function GuildConfig() {
               {!config.economy.currencyName.trim() && (
                 <p className="home-field-hint">Can&rsquo;t be blank — try &ldquo;Coins&rdquo; or &ldquo;Credits&rdquo;.</p>
               )}
-            </section>
+            </RevealSection>
 
             {error && <div className="home-alert home-alert-error" role="alert">{error}</div>}
 

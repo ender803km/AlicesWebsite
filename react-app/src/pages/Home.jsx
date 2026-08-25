@@ -127,8 +127,12 @@ function FeatureCard({ feature, index }) {
 function FeaturesHead() {
   const [ref, visible] = useReveal({ threshold: 0.15 })
   return (
-    <div ref={ref} className={`home-features-head home-reveal ${visible ? 'is-visible' : ''}`}>
-      <div className="home-eyebrow"><span className="home-dot" aria-hidden="true" /> What it does</div>
+    <div ref={ref} className={`home-section-head home-reveal ${visible ? 'is-visible' : ''}`}>
+      <div className="home-section-head-rule-row">
+        <span className="home-section-head-rule" aria-hidden="true" />
+        <div className="home-eyebrow"><span className="home-dot" aria-hidden="true" /> What it does</div>
+        <span className="home-section-head-rule" aria-hidden="true" />
+      </div>
       <h2>Six systems, one bot.</h2>
       <p>
         Everything below runs on the same MongoDB-backed core — no separate bots to invite, no
@@ -147,6 +151,8 @@ export default function Home() {
   return (
     <main id="main-content" className="home-page">
       <div className="home-mesh" aria-hidden="true" />
+      <div className="home-blueprint" aria-hidden="true" />
+      <div className="home-spotlight" aria-hidden="true" />
       <div className="home-grain" aria-hidden="true" />
 
       <header className="home-hero">

@@ -26,6 +26,20 @@
   --home-font-display: 'Geist', ui-sans-serif, system-ui, -apple-system, sans-serif;
   --home-font-body: 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, sans-serif;
   --home-font-mono: 'Geist Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+
+  /* Glass elevation — a "frosted cathedral" recipe (inset highlight + soft
+     ambient halo + cool drop) that reads as a lit glass plate rather than a
+     bordered box. Built from our own blue/violet tokens, not new colors.
+     Cards, panels, inputs, and the nav pill compose these instead of
+     drawing a solid 1px border. */
+  --home-glass-edge: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  --home-glass-edge-strong: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+  --home-glass-highlight: inset 0 1px 1px rgba(255, 255, 255, 0.14);
+  --home-glass-halo: inset 0 24px 48px rgba(78, 165, 255, 0.05);
+  --home-glass-drop: 0 20px 32px -16px rgba(2, 3, 7, 0.65);
+  --home-elevation-glass: var(--home-glass-edge), var(--home-glass-highlight), var(--home-glass-halo);
+  --home-elevation-glass-strong: var(--home-glass-edge-strong), var(--home-glass-highlight), var(--home-glass-halo);
+  --home-elevation-card: var(--home-glass-edge), var(--home-glass-highlight), var(--home-glass-halo), var(--home-glass-drop);
 }
 
 .home-page {
@@ -72,6 +86,39 @@
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
+/* Faint blueprint grid — full-bleed, fades toward the edges so it reads as
+   atmosphere behind the hero rather than a literal ruled sheet. */
+.home-blueprint {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(139, 123, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(139, 123, 255, 0.05) 1px, transparent 1px);
+  background-size: 88px 88px;
+  mask-image: radial-gradient(ellipse 70% 55% at 50% 0%, black 35%, transparent 88%);
+  -webkit-mask-image: radial-gradient(ellipse 70% 55% at 50% 0%, black 35%, transparent 88%);
+}
+
+/* Conic spotlight halo — a soft wedge of light beaming down from top-center,
+   anchoring the hero the way a single overhead lamp anchors a dark room. */
+.home-spotlight {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.7;
+  background: conic-gradient(
+    from 180deg at 50% -6%,
+    transparent 44%,
+    rgba(78, 165, 255, 0.16) 49%,
+    rgba(139, 123, 255, 0.22) 50%,
+    rgba(78, 165, 255, 0.16) 51%,
+    transparent 56%
+  );
+}
+
 .home-wrap {
   position: relative;
   z-index: 1;
@@ -97,11 +144,10 @@
   gap: 1.25rem;
   padding: 0.6rem 0.6rem 0.6rem 1.25rem;
   background: rgba(10, 13, 19, 0.6);
-  border: 1px solid var(--home-hairline);
   border-radius: 999px;
   backdrop-filter: blur(24px) saturate(140%);
   -webkit-backdrop-filter: blur(24px) saturate(140%);
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 20px 40px -24px rgba(0, 0, 0, 0.6);
+  box-shadow: var(--home-elevation-glass), 0 20px 40px -24px rgba(0, 0, 0, 0.6);
 }
 
 .home-brand {
@@ -156,7 +202,7 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  border: 1px solid var(--home-hairline);
+  box-shadow: var(--home-glass-edge);
   background: rgba(255, 255, 255, 0.03);
   position: relative;
   cursor: pointer;
@@ -266,6 +312,11 @@
 }
 .home-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--home-accent-soft); box-shadow: 0 0 6px var(--home-accent-soft); flex: none; }
 
+/* Small centered eyebrow crowning a page's own <h1> — a lighter cousin
+   of .home-section-head below, with no divider lines, used once per page. */
+.home-page-eyebrow-row { text-align: center; margin-bottom: 1.25rem; }
+.home-page-eyebrow-row .home-eyebrow { margin-bottom: 0; }
+
 .home-hero h1 {
   font-size: clamp(2.6rem, 5.2vw, 4.4rem);
   font-weight: 700;
@@ -328,10 +379,10 @@
 .home-btn-outline {
   padding: 0.9rem 1.6rem;
   background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--home-hairline-strong);
+  box-shadow: var(--home-elevation-glass-strong);
   color: var(--home-ink);
 }
-.home-btn-outline:hover { background: rgba(255, 255, 255, 0.07); border-color: rgba(255, 255, 255, 0.28); }
+.home-btn-outline:hover { background: rgba(255, 255, 255, 0.07); box-shadow: var(--home-glass-edge-strong), var(--home-glass-highlight), 0 0 0 1px rgba(255, 255, 255, 0.1) inset; }
 
 /* ---------------------------------------------------------- hero portrait */
 .home-portrait-shell {
@@ -339,15 +390,14 @@
   padding: 0.5rem;
   border-radius: var(--home-radius-shell);
   background: linear-gradient(160deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.015));
-  border: 1px solid var(--home-hairline);
-  box-shadow: 0 40px 80px -32px rgba(0, 0, 0, 0.7);
+  box-shadow: var(--home-elevation-glass), 0 40px 80px -32px rgba(0, 0, 0, 0.7);
 }
 .home-portrait-core {
   position: relative;
   border-radius: calc(var(--home-radius-shell) - 0.5rem);
   overflow: hidden;
   background: var(--home-surface);
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.12);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.12), inset 0 24px 48px rgba(78, 165, 255, 0.05);
 }
 .home-portrait-core img { width: 100%; height: 100%; object-fit: cover; aspect-ratio: 4 / 5; }
 .home-portrait-core::after {
@@ -377,9 +427,34 @@
 /* ----------------------------------------------------------- features */
 .home-features { padding: 6rem 0 9rem; position: relative; z-index: 1; }
 
-.home-features-head { max-width: 40rem; margin-bottom: 3.5rem; }
-.home-features-head h2 { font-size: clamp(1.9rem, 3vw, 2.6rem); font-weight: 700; margin-top: 1rem; }
-.home-features-head p { margin-top: 1rem; color: var(--home-ink-muted); font-size: 1.02rem; max-width: 46ch; }
+/* Centered eyebrow flanked by fading divider lines, then a centered
+   heading and a single line of centered muted copy — opens a section
+   the way AuthKit opens each block of its page. */
+.home-section-head {
+  max-width: 40rem;
+  margin: 0 auto 3.5rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.home-section-head-rule-row {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  width: 100%;
+  max-width: 22rem;
+  margin-bottom: 1.5rem;
+}
+.home-section-head-rule {
+  flex: 1 1 auto;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--home-hairline-strong));
+}
+.home-section-head-rule:last-child { background: linear-gradient(90deg, var(--home-hairline-strong), transparent); }
+.home-section-head .home-eyebrow { margin-bottom: 0; flex: none; }
+.home-section-head h2 { font-size: clamp(1.9rem, 3vw, 2.6rem); font-weight: 700; text-wrap: balance; }
+.home-section-head p { margin-top: 1rem; color: var(--home-ink-muted); font-size: 1.02rem; max-width: 46ch; }
 
 .home-bento {
   display: grid;
@@ -401,19 +476,19 @@
   padding: 0.4rem;
   border-radius: var(--home-radius-shell);
   background: rgba(255, 255, 255, 0.025);
-  border: 1px solid var(--home-hairline);
-  transition: transform 0.6s var(--home-ease-spring), border-color 0.5s ease, background 0.5s ease;
+  box-shadow: var(--home-elevation-glass);
+  transition: transform 0.6s var(--home-ease-spring), box-shadow 0.5s ease, background 0.5s ease;
 }
 .home-card-shell:hover {
   transform: translateY(-4px);
-  border-color: var(--home-hairline-strong);
+  box-shadow: var(--home-elevation-glass-strong);
   background: rgba(255, 255, 255, 0.045);
 }
 .home-card-core {
   height: 100%;
   border-radius: var(--home-radius-core);
   background: linear-gradient(165deg, var(--home-surface-2), var(--home-surface));
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.06);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.08), inset 0 20px 40px rgba(78, 165, 255, 0.04);
   padding: 1.9rem;
   display: flex;
   flex-direction: column;
@@ -451,7 +526,7 @@
   text-transform: uppercase;
   color: var(--home-ink-faint);
   padding: 0.3rem 0.7rem;
-  border: 1px solid var(--home-hairline);
+  box-shadow: var(--home-glass-edge);
   border-radius: 999px;
 }
 
@@ -559,7 +634,7 @@
 .home-alert {
   padding: 1rem 1.25rem;
   border-radius: 1rem;
-  border: 1px solid var(--home-hairline);
+  box-shadow: var(--home-glass-edge);
   font-size: 0.92rem;
   line-height: 1.55;
   margin: 0 0 1.5rem;
@@ -567,7 +642,7 @@
 }
 .home-alert-error {
   background: rgba(240, 90, 110, 0.08);
-  border-color: rgba(240, 90, 110, 0.3);
+  box-shadow: inset 0 0 0 1px rgba(240, 90, 110, 0.3);
   color: #ffb4c0;
 }
 .home-alert-info {
@@ -598,16 +673,16 @@
   padding: 0.5rem 1.1rem;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--home-hairline);
+  box-shadow: var(--home-glass-edge);
   color: var(--home-ink-muted);
   font-size: 0.85rem;
   font-weight: 500;
-  transition: border-color 0.3s var(--home-ease-spring), color 0.3s var(--home-ease-spring),
+  transition: box-shadow 0.3s var(--home-ease-spring), color 0.3s var(--home-ease-spring),
     transform 0.3s var(--home-ease-spring);
 }
 .home-toc a:hover {
   color: var(--home-ink);
-  border-color: rgba(78, 165, 255, 0.4);
+  box-shadow: inset 0 0 0 1px rgba(78, 165, 255, 0.4);
   transform: translateY(-2px);
 }
 
@@ -640,7 +715,7 @@
   flex-direction: column;
   border-radius: var(--home-radius-core);
   overflow: hidden;
-  border: 1px solid var(--home-hairline);
+  box-shadow: var(--home-glass-edge);
   background: rgba(255, 255, 255, 0.02);
 }
 .home-cmd-row {
@@ -690,7 +765,7 @@
   padding: 0.4rem 0.85rem;
   border-radius: 0.6rem;
   background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--home-hairline);
+  box-shadow: var(--home-glass-edge);
   color: var(--home-accent-soft);
   font-family: var(--home-font-mono);
   font-size: 0.82rem;
@@ -738,7 +813,7 @@
 .home-avatar-placeholder {
   border-radius: 50%;
   background: var(--home-surface-2);
-  border: 1px solid var(--home-hairline);
+  box-shadow: var(--home-glass-edge);
   flex-shrink: 0;
 }
 
@@ -747,7 +822,7 @@
   flex-direction: column;
   border-radius: var(--home-radius-core);
   overflow: hidden;
-  border: 1px solid var(--home-hairline);
+  box-shadow: var(--home-glass-edge);
   background: rgba(255, 255, 255, 0.02);
   list-style: none;
   margin: 0;
@@ -774,10 +849,9 @@
 }
 .home-stat-tile {
   background: linear-gradient(165deg, var(--home-surface-2), var(--home-surface));
-  border: 1px solid var(--home-hairline);
   border-radius: var(--home-radius-core);
   padding: 1.1rem 1.25rem;
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.06);
+  box-shadow: var(--home-elevation-glass);
 }
 .home-stat-tile-label {
   color: var(--home-ink-faint);
@@ -797,7 +871,7 @@
 
 .home-log-panel {
   background: #050608;
-  border: 1px solid var(--home-hairline);
+  box-shadow: var(--home-elevation-glass);
   border-radius: var(--home-radius-core);
   padding: 1rem 1.1rem;
   font-family: var(--home-font-mono);
@@ -835,21 +909,20 @@
 .home-textarea {
   width: 100%;
   background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--home-hairline-strong);
+  box-shadow: var(--home-glass-edge-strong);
   border-radius: 0.85rem;
   padding: 0.65rem 0.9rem;
   color: var(--home-ink);
   font-family: var(--home-font-body);
   font-size: 0.92rem;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  transition: box-shadow 0.3s ease;
 }
 .home-textarea { resize: vertical; min-height: 4.5rem; }
 .home-input:focus,
 .home-select:focus,
 .home-textarea:focus {
   outline: none;
-  border-color: var(--home-accent);
-  box-shadow: 0 0 0 3px rgba(78, 165, 255, 0.16);
+  box-shadow: inset 0 0 0 1.5px var(--home-accent), 0 0 0 3px rgba(78, 165, 255, 0.16);
 }
 .home-select {
   appearance: none;
@@ -880,7 +953,7 @@
   padding: 0.65rem 0.85rem;
   border-radius: 0.85rem;
   background: rgba(255, 255, 255, 0.02);
-  border: 1px solid var(--home-hairline);
+  box-shadow: var(--home-glass-edge);
 }
 .home-switch-row label {
   font-size: 0.85rem;

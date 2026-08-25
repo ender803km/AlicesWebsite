@@ -89,6 +89,8 @@ export default function DevDashboard() {
     return (
       <main id="main-content" className="home-page home-content home-content-center">
         <div className="home-mesh" aria-hidden="true" />
+        <div className="home-blueprint" aria-hidden="true" />
+        <div className="home-spotlight" aria-hidden="true" />
         <div className="home-grain" aria-hidden="true" />
         <div className="home-wrap"><p className="home-lede">Loading…</p></div>
       </main>
@@ -101,8 +103,13 @@ export default function DevDashboard() {
   return (
     <main id="main-content" className="home-page home-content">
       <div className="home-mesh" aria-hidden="true" />
+      <div className="home-blueprint" aria-hidden="true" />
+      <div className="home-spotlight" aria-hidden="true" />
       <div className="home-grain" aria-hidden="true" />
       <div className="home-wrap" style={{ maxWidth: 900 }}>
+        <div className="home-page-eyebrow-row">
+          <div className="home-eyebrow"><span className="home-dot" aria-hidden="true" /> Internal</div>
+        </div>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', marginBottom: '2.5rem' }}>
           <h1 style={{ fontSize: '1.5rem' }}>Devs dashboard</h1>
           <button className="home-btn home-btn-outline home-btn-sm" type="button" onClick={load}>

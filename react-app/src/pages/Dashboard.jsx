@@ -9,6 +9,8 @@ export default function Dashboard() {
     return (
       <main id="main-content" className="home-page home-content">
         <div className="home-mesh" aria-hidden="true" />
+        <div className="home-blueprint" aria-hidden="true" />
+        <div className="home-spotlight" aria-hidden="true" />
         <div className="home-grain" aria-hidden="true" />
         <div className="home-wrap" style={{ maxWidth: 760 }}>
           <div className="home-skeleton" style={{ width: 220, height: 32, marginBottom: '1.5rem' }} />
@@ -27,8 +29,13 @@ export default function Dashboard() {
   return (
     <main id="main-content" className="home-page home-content">
       <div className="home-mesh" aria-hidden="true" />
+      <div className="home-blueprint" aria-hidden="true" />
+      <div className="home-spotlight" aria-hidden="true" />
       <div className="home-grain" aria-hidden="true" />
       <div className="home-wrap" style={{ maxWidth: 760 }}>
+        <div className="home-page-eyebrow-row">
+          <div className="home-eyebrow"><span className="home-dot" aria-hidden="true" /> Account</div>
+        </div>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', marginBottom: '2.5rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <img src={user.avatar} alt="" width={48} height={48} className="home-avatar" />

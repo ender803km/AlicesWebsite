@@ -7,8 +7,13 @@ export default function Contact() {
   return (
     <main id="main-content" className="home-page home-content">
       <div className="home-mesh" aria-hidden="true" />
+      <div className="home-blueprint" aria-hidden="true" />
+      <div className="home-spotlight" aria-hidden="true" />
       <div className="home-grain" aria-hidden="true" />
       <div ref={ref} className={`home-wrap home-reveal ${visible ? 'is-visible' : ''}`} style={{ maxWidth: 760 }}>
+        <div className="home-page-eyebrow-row">
+          <div className="home-eyebrow"><span className="home-dot" aria-hidden="true" /> Get in touch</div>
+        </div>
         <h1>Contact</h1>
         <p className="home-lede">
           Have a question or need support? Reach out through any of the options below.

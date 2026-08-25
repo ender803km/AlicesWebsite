@@ -23,8 +23,13 @@ export default function Commands() {
   return (
     <main id="main-content" className="home-page home-content">
       <div className="home-mesh" aria-hidden="true" />
+      <div className="home-blueprint" aria-hidden="true" />
+      <div className="home-spotlight" aria-hidden="true" />
       <div className="home-grain" aria-hidden="true" />
       <div ref={ref} className={`home-wrap home-reveal ${visible ? 'is-visible' : ''}`} style={{ maxWidth: 900 }}>
+        <div className="home-page-eyebrow-row">
+          <div className="home-eyebrow"><span className="home-dot" aria-hidden="true" /> Reference</div>
+        </div>
         <h1>Commands</h1>
         <p className="home-lede">
           Everything A.L.I.C.E can do, grouped by module. Jump to a section below,

@@ -25,8 +25,13 @@ export default function AuthCallback() {
     return (
       <main id="main-content" className="home-page home-content home-content-center">
         <div className="home-mesh" aria-hidden="true" />
+        <div className="home-blueprint" aria-hidden="true" />
+        <div className="home-spotlight" aria-hidden="true" />
         <div className="home-grain" aria-hidden="true" />
         <div className="home-wrap" style={{ maxWidth: 480 }}>
+          <div className="home-page-eyebrow-row">
+            <div className="home-eyebrow"><span className="home-dot" aria-hidden="true" /> Account</div>
+          </div>
           <p className="home-lede">That login link looks incomplete.</p>
           <div className="home-cta-row">
             <a href="/login" className="home-btn home-btn-primary">
@@ -46,8 +51,13 @@ export default function AuthCallback() {
   return (
     <main id="main-content" className="home-page home-content home-content-center">
       <div className="home-mesh" aria-hidden="true" />
+      <div className="home-blueprint" aria-hidden="true" />
+      <div className="home-spotlight" aria-hidden="true" />
       <div className="home-grain" aria-hidden="true" />
       <div className="home-wrap" style={{ maxWidth: 480 }}>
+        <div className="home-page-eyebrow-row">
+          <div className="home-eyebrow"><span className="home-dot" aria-hidden="true" /> Account</div>
+        </div>
         <p className="home-lede">Signing you in…</p>
       </div>
     </main>

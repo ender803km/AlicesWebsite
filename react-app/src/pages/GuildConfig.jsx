@@ -73,6 +73,8 @@ export default function GuildConfig() {
     return (
       <main id="main-content" className="home-page home-content home-content-center">
         <div className="home-mesh" aria-hidden="true" />
+        <div className="home-blueprint" aria-hidden="true" />
+        <div className="home-spotlight" aria-hidden="true" />
         <div className="home-grain" aria-hidden="true" />
         <div className="home-wrap"><p className="home-lede">Loading…</p></div>
       </main>
@@ -85,6 +87,8 @@ export default function GuildConfig() {
     return (
       <main id="main-content" className="home-page home-content">
         <div className="home-mesh" aria-hidden="true" />
+        <div className="home-blueprint" aria-hidden="true" />
+        <div className="home-spotlight" aria-hidden="true" />
         <div className="home-grain" aria-hidden="true" />
         <div className="home-wrap" style={{ maxWidth: 700 }}>
           <p className="home-lede" style={{ marginBottom: '1.5rem' }}>
@@ -124,8 +128,13 @@ export default function GuildConfig() {
   return (
     <main id="main-content" className="home-page home-content">
       <div className="home-mesh" aria-hidden="true" />
+      <div className="home-blueprint" aria-hidden="true" />
+      <div className="home-spotlight" aria-hidden="true" />
       <div className="home-grain" aria-hidden="true" />
       <div className="home-wrap" style={{ maxWidth: 760 }}>
+        <div className="home-page-eyebrow-row">
+          <div className="home-eyebrow"><span className="home-dot" aria-hidden="true" /> Server configuration</div>
+        </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.5rem' }}>
           {guild.icon ? (
             <img src={guild.icon} alt="" width={40} height={40} className="home-avatar" />

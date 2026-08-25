@@ -18,8 +18,13 @@ export default function Login() {
   return (
     <main id="main-content" className="home-page home-content home-content-center">
       <div className="home-mesh" aria-hidden="true" />
+      <div className="home-blueprint" aria-hidden="true" />
+      <div className="home-spotlight" aria-hidden="true" />
       <div className="home-grain" aria-hidden="true" />
       <div ref={ref} className={`home-wrap home-reveal ${visible ? 'is-visible' : ''}`} style={{ maxWidth: 480 }}>
+        <div className="home-page-eyebrow-row">
+          <div className="home-eyebrow"><span className="home-dot" aria-hidden="true" /> Account</div>
+        </div>
         <h1>Log in</h1>
         <p className="home-lede">
           Log in with Discord to see the servers you manage where A.L.I.C.E is installed.

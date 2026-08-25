@@ -1,10 +1,10 @@
 import { useSearchParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useReveal } from '../hooks/useReveal'
-import '../styles/homepage.css'
+import '../styles/system.css'
 
 const ERROR_MESSAGES = {
-  invalid_state: "That login link expired — hit the button below to start over.",
+  invalid_state: 'That login link expired. Hit the button below to start over.',
   oauth_failed: "Discord couldn't complete the login. Give it another try.",
   access_denied: 'Login was cancelled.',
 }
@@ -19,24 +19,21 @@ export default function Login() {
     <main id="main-content" className="home-page home-content home-content-center">
       <div className="home-mesh" aria-hidden="true" />
       <div className="home-blueprint" aria-hidden="true" />
-      <div className="home-spotlight" aria-hidden="true" />
       <div className="home-grain" aria-hidden="true" />
       <div ref={ref} className={`home-wrap home-reveal ${visible ? 'is-visible' : ''}`} style={{ maxWidth: 480 }}>
-        <div className="home-page-eyebrow-row">
-          <div className="home-eyebrow"><span className="home-dot" aria-hidden="true" /> Account</div>
-        </div>
+        <span className="home-eyebrow">Account</span>
         <h1>Log in</h1>
         <p className="home-lede">
           Log in with Discord to see the servers you manage where A.L.I.C.E is installed.
         </p>
         {error && (
           <div className="home-alert home-alert-error" role="alert">
-            {ERROR_MESSAGES[error] || 'Something went wrong logging in — please try again.'}
+            {ERROR_MESSAGES[error] || 'Something went wrong logging in. Please try again.'}
           </div>
         )}
         <div className="home-cta-row">
-          <a href={loginUrl} className="home-btn home-btn-primary">
-            Login with Discord
+          <a href={loginUrl} className="home-btn home-btn-primary home-btn-lg">
+            Log in with Discord
             <span className="home-icon-chip" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M7 17L17 7M9 7h8v8" />

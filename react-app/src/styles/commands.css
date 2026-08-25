@@ -1,0 +1,441 @@
+/* ===================================================================
+   COMMANDS REFERENCE
+   -------------------------------------------------------------------
+   Built for scanning, not for reading top to bottom. A sticky rail
+   holds position in a 116-command document, search narrows it, and
+   every command renders in the same three-part shape so the eye can
+   move down the column without re-learning the layout each time.
+
+   Composition only. All tokens come from system.css.
+   =================================================================== */
+
+.home-cmd-page {
+  padding-block: calc(var(--home-sp-24) + 1.5rem) var(--home-section-y-end);
+}
+
+/* Rail beside content. The rail is narrow and fixed-width so the
+   reading column keeps a stable measure no matter the viewport. */
+.home-cmd-layout {
+  display: grid;
+  grid-template-columns: 15rem minmax(0, 1fr);
+  gap: clamp(2rem, 4vw, 4rem);
+  align-items: start;
+}
+
+/* ---------------------------------------------------------- masthead */
+.home-cmd-masthead { margin-bottom: var(--home-sp-12); max-width: 60ch; }
+.home-cmd-masthead h1 { margin-bottom: var(--home-sp-4); }
+.home-cmd-masthead p { color: var(--home-ink-muted); font-size: var(--home-fs-lede); }
+
+/* ------------------------------------------------------------- rail */
+.home-cmd-rail {
+  position: sticky;
+  top: calc(var(--home-sp-24) + 0.5rem);
+  max-height: calc(100dvh - 9rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-right: var(--home-sp-2);
+}
+
+.home-cmd-rail-group { margin-bottom: var(--home-sp-6); }
+
+.home-cmd-rail-group > h2 {
+  font-family: var(--home-font-body);
+  font-size: var(--home-fs-xs);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--home-ink-faint);
+  margin-bottom: var(--home-sp-2);
+  padding-left: var(--home-sp-3);
+}
+
+.home-cmd-rail ul { list-style: none; margin: 0; padding: 0; }
+
+.home-cmd-rail a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--home-sp-2);
+  font-size: var(--home-fs-sm);
+  color: var(--home-ink-muted);
+  padding: 0.42rem var(--home-sp-3);
+  border-radius: var(--home-r-input);
+  transition: color var(--home-dur) var(--home-ease), background var(--home-dur) var(--home-ease);
+}
+.home-cmd-rail a:hover { color: var(--home-ink); background: rgba(255, 255, 255, 0.04); }
+.home-cmd-rail a:focus-visible { outline: 2px solid var(--home-accent-bright); outline-offset: -2px; }
+
+.home-cmd-rail a.is-current {
+  color: var(--home-ink);
+  background: var(--home-accent-wash);
+  box-shadow: var(--home-edge-accent);
+}
+
+.home-cmd-rail-count {
+  font-family: var(--home-font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.75rem;
+  color: var(--home-ink-faint);
+  flex: none;
+}
+
+/* ------------------------------------------------------------ search
+   Sticks to the top of the reading column, so narrowing the list is
+   always one keystroke away no matter how far down the page you are. */
+/* A real floating panel rather than a faded band. A band that is only
+   partly opaque lets command names read straight through it as the page
+   scrolls; pushing the opacity high enough to stop that just paints a
+   flat rectangle over the ambient background. Giving the bar its own
+   edge, radius and shadow makes it read as a control surface sitting
+   above the document, which is what it is. */
+.home-cmd-tools {
+  position: sticky;
+  top: calc(var(--home-sp-20) + 0.5rem);
+  z-index: var(--home-z-sticky);
+  padding: var(--home-sp-3);
+  margin-bottom: var(--home-sp-8);
+  border-radius: calc(var(--home-r-card) + 0.25rem);
+  /* Opaque by default. 116 command names scroll under this panel, and
+     any of them showing through reads as a rendering fault. */
+  background: var(--home-surface-1);
+  box-shadow: var(--home-edge), var(--home-drop-2);
+}
+
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .home-cmd-tools {
+    backdrop-filter: blur(18px) saturate(150%);
+    -webkit-backdrop-filter: blur(18px) saturate(150%);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .home-cmd-tools {
+    background: var(--home-surface-1);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+.home-cmd-search { position: relative; }
+
+.home-cmd-search svg {
+  position: absolute;
+  left: 0.95rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--home-ink-faint);
+  pointer-events: none;
+}
+
+.home-cmd-search input {
+  padding-left: 2.75rem;
+  padding-right: 3.5rem;
+  height: 3rem;
+  font-size: var(--home-fs-body);
+  background: var(--home-surface-1);
+  border-radius: var(--home-r-pill);
+}
+
+/* Keyboard hint. Hidden once the field has focus or content, so it
+   never sits on top of what is being typed. */
+.home-cmd-kbd {
+  position: absolute;
+  right: 0.85rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--home-font-mono);
+  font-size: 0.7rem;
+  color: var(--home-ink-faint);
+  padding: 0.2rem 0.45rem;
+  border-radius: var(--home-r-chip);
+  box-shadow: var(--home-edge);
+  pointer-events: none;
+  transition: opacity var(--home-dur) var(--home-ease);
+}
+.home-cmd-search:focus-within .home-cmd-kbd,
+.home-cmd-search.has-value .home-cmd-kbd { opacity: 0; }
+
+.home-cmd-clear {
+  position: absolute;
+  right: 0.6rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.9rem;
+  height: 1.9rem;
+  border: 0;
+  border-radius: var(--home-r-pill);
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--home-ink-muted);
+  cursor: pointer;
+  transition: background var(--home-dur) var(--home-ease), color var(--home-dur) var(--home-ease);
+}
+.home-cmd-clear:hover { background: rgba(255, 255, 255, 0.13); color: var(--home-ink); }
+.home-cmd-clear:focus-visible { outline: 2px solid var(--home-accent-bright); outline-offset: 2px; }
+
+.home-cmd-filters {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--home-sp-2);
+  margin-top: var(--home-sp-3);
+  padding-inline: var(--home-sp-1);
+}
+
+.home-cmd-filter {
+  font-family: var(--home-font-body);
+  font-size: var(--home-fs-xs);
+  font-weight: 500;
+  color: var(--home-ink-muted);
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.25rem;
+  background: transparent;
+  border: 0;
+  padding: 0.4rem 0.9rem;
+  border-radius: var(--home-r-pill);
+  box-shadow: var(--home-edge);
+  cursor: pointer;
+  transition: color var(--home-dur) var(--home-ease), background var(--home-dur) var(--home-ease), box-shadow var(--home-dur) var(--home-ease);
+}
+.home-cmd-filter:hover { color: var(--home-ink); background: rgba(255, 255, 255, 0.05); }
+.home-cmd-filter:active { transform: scale(0.97); }
+.home-cmd-filter:focus-visible { outline: 2px solid var(--home-accent-bright); outline-offset: 2px; }
+.home-cmd-filter[aria-pressed='true'] {
+  color: var(--home-ink);
+  background: var(--home-accent-wash-strong);
+  box-shadow: var(--home-edge-accent);
+}
+
+.home-cmd-result-count {
+  margin-left: auto;
+  font-family: var(--home-font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--home-fs-xs);
+  color: var(--home-ink-faint);
+}
+
+/* ------------------------------------------------------------ module */
+.home-cmd-module {
+  /* Anchor offset. This stacks on top of the global `scroll-padding-top`
+     (6.5rem, which clears the floating nav), so it only needs to account
+     for the sticky search panel above it. Setting the full offset here
+     double-counted the nav and dropped linked headings 80px too low. */
+  scroll-margin-top: 7rem;
+  margin-bottom: var(--home-sp-16);
+}
+
+.home-cmd-module-head { margin-bottom: var(--home-sp-6); }
+
+.home-cmd-module-head h2 {
+  display: flex;
+  align-items: center;
+  gap: var(--home-sp-3);
+  font-size: 1.5rem;
+  margin-bottom: var(--home-sp-3);
+}
+
+.home-cmd-module-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.1rem;
+  height: 2.1rem;
+  flex: none;
+  border-radius: var(--home-r-inner);
+  background: var(--home-accent-wash);
+  box-shadow: var(--home-edge-accent);
+  color: var(--home-accent-bright);
+}
+
+.home-cmd-module-desc {
+  color: var(--home-ink-muted);
+  font-size: var(--home-fs-sm);
+  max-width: 68ch;
+  line-height: 1.7;
+}
+.home-cmd-module-desc code {
+  font-family: var(--home-font-mono);
+  font-size: 0.88em;
+  padding: 0.1em 0.35em;
+  border-radius: var(--home-r-chip);
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--home-ink);
+}
+
+/* ------------------------------------------------------------- group */
+.home-cmd-group + .home-cmd-group { margin-top: var(--home-sp-8); }
+
+.home-cmd-group-title {
+  font-family: var(--home-font-body);
+  font-size: var(--home-fs-xs);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--home-ink-faint);
+  margin-bottom: var(--home-sp-3);
+}
+
+.home-cmd-group-note {
+  color: var(--home-ink-muted);
+  font-size: var(--home-fs-sm);
+  margin-bottom: var(--home-sp-4);
+  max-width: 62ch;
+}
+
+/* -------------------------------------------------------------- list
+   One hairline between rows, none above the first or below the last,
+   so the block reads as a single panel rather than a ruled table. */
+.home-cmd-list {
+  border-radius: var(--home-r-card);
+  background: rgba(255, 255, 255, 0.018);
+  box-shadow: var(--home-edge);
+  overflow: hidden;
+}
+
+.home-cmd-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--home-sp-2) var(--home-sp-4);
+  align-items: baseline;
+  padding: var(--home-sp-4) var(--home-sp-5);
+  transition: background var(--home-dur) var(--home-ease);
+}
+.home-cmd-row + .home-cmd-row { box-shadow: inset 0 1px 0 var(--home-hairline); }
+.home-cmd-row:hover { background: rgba(255, 255, 255, 0.028); }
+
+.home-cmd-signature {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0 var(--home-sp-2);
+  min-width: 0;
+}
+
+.home-cmd-name {
+  font-family: var(--home-font-mono);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--home-accent-bright);
+  letter-spacing: -0.01em;
+}
+
+/* Arguments sit in the same mono face but drop back in weight and
+   colour, so the command name stays the thing you scan for. */
+.home-cmd-args {
+  font-family: var(--home-font-mono);
+  font-size: 0.85rem;
+  color: var(--home-ink-faint);
+  word-break: break-word;
+}
+.home-cmd-args .is-required { color: var(--home-ink-muted); }
+
+.home-cmd-badges {
+  display: flex;
+  align-items: center;
+  gap: var(--home-sp-2);
+  grid-column: 2;
+  grid-row: 1;
+  flex: none;
+  /* Wraps rather than pushing out of the row on a 320px screen, where
+     "Right-click a message" plus "Mods only" cannot sit side by side. */
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.home-cmd-desc {
+  grid-column: 1 / -1;
+  color: var(--home-ink-muted);
+  font-size: var(--home-fs-sm);
+  line-height: 1.6;
+  max-width: 76ch;
+}
+
+/* Search hit highlighting. */
+.home-cmd-mark {
+  background: var(--home-accent-wash-strong);
+  color: var(--home-ink);
+  border-radius: 3px;
+  padding: 0 2px;
+}
+
+/* ------------------------------------------------- search result view */
+.home-cmd-hit-origin {
+  font-size: var(--home-fs-xs);
+  color: var(--home-ink-faint);
+  grid-column: 1 / -1;
+}
+.home-cmd-hit-origin a {
+  color: var(--home-ink-muted);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-color: var(--home-hairline-strong);
+}
+.home-cmd-hit-origin a:hover { color: var(--home-accent-bright); }
+
+/* -------------------------------------------------------- mobile rail
+   The vertical rail becomes a horizontal, snapping chip row pinned
+   under the floating nav. */
+.home-cmd-rail-mobile { display: none; }
+
+@media (max-width: 900px) {
+  .home-cmd-page { padding-block: calc(var(--home-sp-20) + 1rem) var(--home-section-y); }
+  .home-cmd-layout { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .home-cmd-rail { display: none; }
+
+  /* Scrolls away with the page. The search panel below is the only
+     thing that stays pinned, so the phone viewport keeps its height. */
+  .home-cmd-rail-mobile {
+    display: block;
+    margin-inline: calc(var(--home-sp-6) * -1);
+    margin-bottom: var(--home-sp-5);
+    padding: 0 var(--home-sp-6);
+  }
+
+  .home-cmd-rail-mobile ul {
+    display: flex;
+    gap: var(--home-sp-2);
+    list-style: none;
+    margin: 0;
+    padding: 0 0 var(--home-sp-1);
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+  }
+  .home-cmd-rail-mobile ul::-webkit-scrollbar { display: none; }
+
+  .home-cmd-rail-mobile li { scroll-snap-align: start; flex: none; }
+
+  .home-cmd-rail-mobile a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.25rem;
+    white-space: nowrap;
+    font-size: var(--home-fs-xs);
+    font-weight: 500;
+    color: var(--home-ink-muted);
+    padding: 0.42rem 0.9rem;
+    border-radius: var(--home-r-pill);
+    box-shadow: var(--home-edge);
+  }
+  .home-cmd-rail-mobile a.is-current {
+    color: var(--home-ink);
+    background: var(--home-accent-wash-strong);
+    box-shadow: var(--home-edge-accent);
+  }
+
+  .home-cmd-tools { top: calc(var(--home-sp-16) + 1.25rem); }
+  /* The panel is taller here: the filter chips wrap onto two rows. */
+  .home-cmd-module { scroll-margin-top: 9.5rem; }
+}
+
+@media (max-width: 620px) {
+  .home-cmd-row { grid-template-columns: minmax(0, 1fr); padding: var(--home-sp-4); }
+  .home-cmd-badges { grid-column: 1; grid-row: auto; order: 3; }
+  .home-cmd-desc { order: 2; }
+  .home-cmd-module-head h2 { font-size: 1.3rem; }
+  .home-cmd-rail-mobile { margin-inline: calc(var(--home-sp-5) * -1); padding-inline: var(--home-sp-5); }
+}

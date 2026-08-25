@@ -1,6 +1,6 @@
 // Thin client for the alice-api service. Sessions are a bearer JWT kept in
-// localStorage — simplest thing that works across the frontend/API domain
-// split, no cross-site cookie config to fight with.
+// localStorage, the simplest thing that works across the frontend/API
+// domain split, with no cross-site cookie config to fight with.
 
 export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
@@ -84,4 +84,14 @@ export function fetchDevOverview() {
 
 export function fetchDevLogs(type) {
   return authedGet(`/api/dev/logs?type=${encodeURIComponent(type)}`);
+}
+
+// --- public, unauthenticated ---
+
+// Used by the homepage proof band. Never throws for the caller's benefit:
+// a page that cannot reach the API still renders its product facts.
+export async function fetchPublicStats() {
+  const res = await fetch(`${API_BASE_URL}/api/public/stats`)
+  if (!res.ok) throw new Error(`Request failed (${res.status})`)
+  return res.json()
 }

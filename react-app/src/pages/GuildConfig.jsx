@@ -3,9 +3,39 @@ import { Navigate, Link, useParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { fetchGuildConfig, saveGuildConfig, fetchGuildChannels } from '../lib/api'
 import { useReveal } from '../hooks/useReveal'
-import '../styles/homepage.css'
+import '../styles/system.css'
 
-// This form is long — a single page-wide reveal would resolve while most
+// Every branch of this screen paints the same ambient stack, so switching
+// between loading, error and the form does not change the background.
+function Backdrop() {
+  return (
+    <>
+      <div className="home-mesh" aria-hidden="true" />
+      <div className="home-blueprint" aria-hidden="true" />
+      <div className="home-grain" aria-hidden="true" />
+    </>
+  )
+}
+
+// Stands in for the first few form sections, in the same shapes, so the
+// real form does not shift the page when it arrives.
+function ConfigSkeleton() {
+  return (
+    <div role="status" aria-label="Loading configuration">
+      <div className="home-skeleton" style={{ width: 180, height: 20, marginBottom: '1.25rem' }} />
+      <div className="home-toggle-grid" style={{ marginBottom: '3rem' }}>
+        {Array.from({ length: 6 }, (_, i) => (
+          <div className="home-skeleton" key={i} style={{ height: 44 }} />
+        ))}
+      </div>
+      <div className="home-skeleton" style={{ width: 160, height: 20, marginBottom: '1.25rem' }} />
+      <div className="home-skeleton" style={{ height: 40, marginBottom: '0.75rem' }} />
+      <div className="home-skeleton" style={{ height: 40, width: '60%' }} />
+    </div>
+  )
+}
+
+// This form is long: a single page-wide reveal would resolve while most
 // of it is still off-screen, so each section gets its own small
 // IntersectionObserver instead (same idea as the homepage's FeatureCard)
 // and fades/rises in as the user actually scrolls to it.
@@ -39,7 +69,7 @@ const MODULES = [
 function ChannelSelect({ id, value, onChange, channels }) {
   return (
     <select id={id} className="home-select" value={value || ''} onChange={onChange}>
-      <option value="">— None —</option>
+      <option value="">None</option>
       {channels.map((c) => (
         <option key={c.id} value={c.id}>
           #{c.name}
@@ -85,12 +115,15 @@ export default function GuildConfig() {
 
   if (authLoading) {
     return (
-      <main id="main-content" className="home-page home-content home-content-center">
-        <div className="home-mesh" aria-hidden="true" />
-        <div className="home-blueprint" aria-hidden="true" />
-        <div className="home-spotlight" aria-hidden="true" />
-        <div className="home-grain" aria-hidden="true" />
-        <div className="home-wrap"><p className="home-lede">Loading…</p></div>
+      <main id="main-content" className="home-page home-content">
+        <Backdrop />
+        <div className="home-wrap" style={{ maxWidth: 760 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2rem' }}>
+            <div className="home-skeleton" style={{ width: 40, height: 40, borderRadius: 12 }} />
+            <div className="home-skeleton" style={{ width: 200, height: 26 }} />
+          </div>
+          <ConfigSkeleton />
+        </div>
       </main>
     )
   }
@@ -100,15 +133,15 @@ export default function GuildConfig() {
   if (!guild) {
     return (
       <main id="main-content" className="home-page home-content">
-        <div className="home-mesh" aria-hidden="true" />
-        <div className="home-blueprint" aria-hidden="true" />
-        <div className="home-spotlight" aria-hidden="true" />
-        <div className="home-grain" aria-hidden="true" />
+        <Backdrop />
         <div className="home-wrap" style={{ maxWidth: 700 }}>
-          <p className="home-lede" style={{ marginBottom: '1.5rem' }}>
-            You don&rsquo;t manage a server with that ID, or A.L.I.C.E isn&rsquo;t in it.
-          </p>
-          <Link to="/dashboard" className="home-btn home-btn-outline">Back to dashboard</Link>
+          <div className="home-empty">
+            <h3>Server not available</h3>
+            <p>
+              You don&rsquo;t manage a server with that ID, or A.L.I.C.E isn&rsquo;t in it.
+            </p>
+            <Link to="/dashboard" className="home-btn home-btn-secondary">Back to dashboard</Link>
+          </div>
         </div>
       </main>
     )
@@ -141,27 +174,22 @@ export default function GuildConfig() {
 
   return (
     <main id="main-content" className="home-page home-content">
-      <div className="home-mesh" aria-hidden="true" />
-      <div className="home-blueprint" aria-hidden="true" />
-      <div className="home-spotlight" aria-hidden="true" />
-      <div className="home-grain" aria-hidden="true" />
+      <Backdrop />
       <div className="home-wrap" style={{ maxWidth: 760 }}>
-        <div className="home-page-eyebrow-row">
-          <div className="home-eyebrow"><span className="home-dot" aria-hidden="true" /> Server configuration</div>
-        </div>
+        <span className="home-eyebrow">Server configuration</span>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.5rem' }}>
           {guild.icon ? (
             <img src={guild.icon} alt="" width={40} height={40} className="home-avatar" />
           ) : (
-            <div className="home-avatar-placeholder" style={{ width: 40, height: 40 }} aria-hidden="true" />
+            <div className="home-avatar home-avatar-placeholder" style={{ width: 40, height: 40 }} aria-hidden="true" />
           )}
           <h1 style={{ fontSize: '1.5rem' }}>{guild.name}</h1>
         </div>
         <p style={{ color: 'var(--home-ink-muted)', marginBottom: '2rem' }}>
-          <Link to="/dashboard" style={{ color: 'var(--home-accent-soft)' }}>← Back to your servers</Link>
+          <Link to="/dashboard" style={{ color: 'var(--home-accent-bright)' }}>← Back to your servers</Link>
         </p>
 
-        {status === 'loading' && <p className="home-lede">Loading configuration…</p>}
+        {status === 'loading' && <ConfigSkeleton />}
 
         {status === 'error' && (
           <div className="home-alert home-alert-error" role="alert">{error}</div>
@@ -172,12 +200,8 @@ export default function GuildConfig() {
             <RevealSection>
               <h2>Command modules</h2>
               <div className="home-toggle-grid">
-                {MODULES.map((mod, i) => (
-                  <div
-                    className="home-switch-row home-reveal-child"
-                    key={mod.key}
-                    style={{ transitionDelay: `${i * 35}ms` }}
-                  >
+                {MODULES.map((mod) => (
+                  <div className="home-switch-row" key={mod.key}>
                     <input
                       className="home-switch"
                       type="checkbox"
@@ -205,7 +229,7 @@ export default function GuildConfig() {
                 />
               </div>
               {!config.prefix.trim() && (
-                <p className="home-field-hint">Can&rsquo;t be blank — pick at least one character.</p>
+                <p className="home-field-hint">Can&rsquo;t be blank. Pick at least one character.</p>
               )}
             </RevealSection>
 
@@ -220,7 +244,7 @@ export default function GuildConfig() {
                   onChange={(e) => update(['moderation', 'logChannelId'], e.target.value || null)}
                 />
               </div>
-              <div className="home-switch-row home-reveal-child" style={{ marginBottom: '0.6rem' }}>
+              <div className="home-switch-row" style={{ marginBottom: '0.6rem' }}>
                 <input
                   className="home-switch"
                   type="checkbox"
@@ -232,8 +256,8 @@ export default function GuildConfig() {
                 <label htmlFor="automod-enabled">Enable auto-mod</label>
               </div>
               <div
-                className="home-switch-row home-reveal-child"
-                style={{ marginBottom: config.moderation.llmModEnabled ? '1rem' : 0, transitionDelay: '60ms' }}
+                className="home-switch-row"
+                style={{ marginBottom: config.moderation.llmModEnabled ? '1rem' : 0 }}
               >
                 <input
                   className="home-switch"
@@ -268,7 +292,7 @@ export default function GuildConfig() {
             ].map(({ key, title, placeholder }) => (
               <RevealSection key={key}>
                 <h2>{title}</h2>
-                <div className="home-switch-row home-reveal-child" style={{ marginBottom: '1rem' }}>
+                <div className="home-switch-row" style={{ marginBottom: '1rem' }}>
                   <input
                     className="home-switch"
                     type="checkbox"
@@ -311,7 +335,7 @@ export default function GuildConfig() {
 
             <RevealSection>
               <h2>Economy &amp; leveling</h2>
-              <div className="home-switch-row home-reveal-child" style={{ marginBottom: '0.6rem' }}>
+              <div className="home-switch-row" style={{ marginBottom: '0.6rem' }}>
                 <input
                   className="home-switch"
                   type="checkbox"
@@ -322,7 +346,7 @@ export default function GuildConfig() {
                 />
                 <label htmlFor="economy-enabled">Enable economy</label>
               </div>
-              <div className="home-switch-row home-reveal-child" style={{ marginBottom: '1rem', transitionDelay: '60ms' }}>
+              <div className="home-switch-row" style={{ marginBottom: '1rem' }}>
                 <input
                   className="home-switch"
                   type="checkbox"
@@ -346,7 +370,7 @@ export default function GuildConfig() {
                 />
               </div>
               {!config.economy.currencyName.trim() && (
-                <p className="home-field-hint">Can&rsquo;t be blank — try &ldquo;Coins&rdquo; or &ldquo;Credits&rdquo;.</p>
+                <p className="home-field-hint">Can&rsquo;t be blank. Try &ldquo;Coins&rdquo; or &ldquo;Credits&rdquo;.</p>
               )}
             </RevealSection>
 
@@ -365,7 +389,7 @@ export default function GuildConfig() {
             </div>
 
             <p className="home-field-hint" style={{ marginTop: '2rem' }}>
-              Note: these settings are saved, but the bot doesn&rsquo;t read them yet — that wiring is a
+              Note: these settings are saved, but the bot doesn&rsquo;t read them yet. That wiring is a
               follow-up. This screen is safe to explore in the meantime.
             </p>
           </form>

@@ -1,6 +1,6 @@
 import HomeNav from './HomeNav'
 
-// The floating "island" nav is now the site's only nav — every route uses it.
+// The floating "island" nav is the site's only nav. Every route uses it.
 export default function Navbar() {
   return <HomeNav />
 }

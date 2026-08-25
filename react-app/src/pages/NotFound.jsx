@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useReveal } from '../hooks/useReveal'
-import '../styles/homepage.css'
+import '../styles/system.css'
 
 export default function NotFound() {
   const [ref, visible] = useReveal({ threshold: 0.1 })
@@ -9,12 +9,9 @@ export default function NotFound() {
     <main id="main-content" className="home-page home-content home-content-center">
       <div className="home-mesh" aria-hidden="true" />
       <div className="home-blueprint" aria-hidden="true" />
-      <div className="home-spotlight" aria-hidden="true" />
       <div className="home-grain" aria-hidden="true" />
       <div ref={ref} className={`home-wrap home-reveal ${visible ? 'is-visible' : ''}`}>
-        <div className="home-page-eyebrow-row">
-          <div className="home-eyebrow"><span className="home-dot" aria-hidden="true" /> Not found</div>
-        </div>
+        <span className="home-eyebrow">Not found</span>
         <div className="home-404-code">404</div>
         <p className="home-lede">The page you&rsquo;re looking for doesn&rsquo;t exist.</p>
         <div className="home-cta-row">
@@ -25,6 +22,9 @@ export default function NotFound() {
                 <path d="M7 17L17 7M9 7h8v8" />
               </svg>
             </span>
+          </Link>
+          <Link to="/commands" className="home-btn home-btn-secondary">
+            Browse commands
           </Link>
         </div>
       </div>

@@ -1,49 +1,68 @@
 /* ============================================================
-   Global base — the rest of the design system lives in
-   src/styles/homepage.css (the sitewide "Ethereal Glass" theme,
-   scoped under .home-page). This file only covers what has to be
-   in place before that: scroll behavior, a body background that
-   matches so there's no flash, and the skip-link/focus ring used
-   on every page.
+   Global base. Everything that has to be true before the design
+   system loads: scroll behaviour, a page background that matches
+   the theme so there is no white flash on first paint, and the
+   skip link every route relies on.
+
+   The design system itself lives in src/styles/system.css.
    ============================================================ */
 
 html {
   scroll-behavior: smooth;
+  /* Anchored jumps land below the floating nav rather than under it. */
+  scroll-padding-top: 6.5rem;
+  -webkit-text-size-adjust: 100%;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
+  html { scroll-behavior: auto; }
 }
 
 body {
   margin: 0;
-  background: var(--home-void, #06070a);
-  color: var(--home-ink, #f4f7fb);
-  font-family: var(--home-font-body, 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, sans-serif);
+  min-height: 100dvh;
+}
+
+/* Standard sticky footer. Short pages (Privacy, Terms, 404) used to pad
+   themselves to a full viewport so the footer would not ride up, which
+   left a screen-tall empty gap above it. Letting the shell stretch and
+   the main region grow puts the footer at the bottom without the void. */
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+#root > main {
+  flex: 1 0 auto;
+  background: var(--home-void, #08090f);
+  color: var(--home-ink, #f2f4f8);
+  font-family: var(--home-font-body, 'Geist Sans', ui-sans-serif, system-ui, -apple-system, sans-serif);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 :focus-visible {
-  outline: 2px solid var(--home-accent-soft, #8fd0ff);
+  outline: 2px solid var(--home-accent-bright, #7e8bff);
   outline-offset: 3px;
   border-radius: 4px;
 }
 
-/* Skip link — hidden until focused, for keyboard users */
+/* Hidden until focused, so keyboard users can jump the nav. Fixed rather
+   than absolute: focus can land here after the page has been scrolled,
+   and an absolutely positioned link would slide off the top. */
 .skip-link {
-  position: absolute;
-  top: -48px;
+  position: fixed;
+  top: -60px;
   left: 12px;
-  z-index: 3000;
-  background: var(--home-accent, #4ea5ff);
-  color: var(--home-void, #06070a);
+  z-index: 400;
+  background: var(--home-accent, #5865f2);
+  color: #fff;
   font-weight: 600;
-  padding: 10px 16px;
-  border-radius: 10px;
-  transition: top 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+  font-size: 0.9rem;
+  padding: 0.7rem 1.1rem;
+  border-radius: 999px;
+  transition: top 200ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.skip-link:focus {
-  top: 12px;
-}
+.skip-link:focus { top: 12px; }

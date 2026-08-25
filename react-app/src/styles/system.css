@@ -1,0 +1,1068 @@
+/* ===================================================================
+   A.L.I.C.E DESIGN SYSTEM
+   -------------------------------------------------------------------
+   One dark theme, one accent, one radius rule, one spacing scale.
+   Everything in this file is prefixed `--home-` / `.home-` and every
+   page root carries `.home-page` to pick it up.
+
+   Load order matters. This file first (reset + tokens + primitives),
+   then the page-level sheets (home.css, commands.css) which only add
+   composition on top. Nothing below should ever hardcode a colour, a
+   radius or a duration that is not a token here.
+   =================================================================== */
+
+/* -------------------------------------------------------------- reset
+   The site previously had no box-sizing reset at all. Because of that
+   every padded box measured as content + padding, so any element with
+   `height: 100%` inside a padded parent overflowed its parent by
+   exactly its own vertical padding. That is what made the homepage
+   feature cards paint on top of each other. This is the actual fix;
+   the grid-template patching that used to sit in the bento was
+   treating the symptom. Keep this at the top of the cascade. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+:root {
+  /* --- colour ------------------------------------------------------
+     One accent: Discord blurple. The bot lives inside Discord, so
+     borrowing Discord's own brand blue reads as native rather than as
+     the generic purple-gradient look. Neutrals are a single cool
+     family, never mixed with warm greys. */
+  --home-void: #08090f;
+  --home-surface-1: #0d0f18;
+  --home-surface-2: #131627;
+  --home-surface-3: #1a1e33;
+
+  --home-hairline: rgba(255, 255, 255, 0.07);
+  --home-hairline-strong: rgba(255, 255, 255, 0.14);
+
+  --home-accent: #5865f2;
+  --home-accent-bright: #7e8bff;
+  --home-accent-ink: #0a0b14;
+  --home-accent-wash: rgba(88, 101, 242, 0.12);
+  --home-accent-wash-strong: rgba(88, 101, 242, 0.22);
+
+  /* Reserved for real state only (a live indicator, an online count),
+     never as decoration. */
+  --home-online: #3ba55d;
+  --home-danger: #ed4245;
+  --home-warn: #faa61a;
+
+  --home-ink: #f2f4f8;
+  --home-ink-muted: #a4abbe;
+  /* Lightened from #6e7690, which measured 3.97:1 against the card
+     surface and 4.24:1 behind input placeholders, both under the WCAG AA
+     floor for body-size text. This value clears 4.5:1 on every surface
+     it is used on. */
+  --home-ink-faint: #78819d;
+
+  /* --- radius ------------------------------------------------------
+     The documented rule, applied everywhere without exception:
+       pill  -> anything the user clicks (buttons, interactive chips)
+       card  -> cards, panels, the nav shell
+       inner -> surfaces nested inside a card (icon tiles, code blocks)
+       input -> form controls
+       chip  -> static labels (badges, inline code) */
+  --home-r-pill: 999px;
+  --home-r-card: 20px;
+  --home-r-inner: 12px;
+  --home-r-input: 10px;
+  --home-r-chip: 8px;
+
+  /* --- spacing (4px base) ------------------------------------------ */
+  --home-sp-1: 0.25rem;
+  --home-sp-2: 0.5rem;
+  --home-sp-3: 0.75rem;
+  --home-sp-4: 1rem;
+  --home-sp-5: 1.25rem;
+  --home-sp-6: 1.5rem;
+  --home-sp-8: 2rem;
+  --home-sp-10: 2.5rem;
+  --home-sp-12: 3rem;
+  --home-sp-16: 4rem;
+  --home-sp-20: 5rem;
+  --home-sp-24: 6rem;
+  --home-sp-32: 8rem;
+
+  /* Section rhythm. Bottom padding runs slightly larger than top so
+     sections read as optically centred rather than mathematically. */
+  --home-section-y: clamp(3.75rem, 6vw, 5.5rem);
+  --home-section-y-end: clamp(4.25rem, 7vw, 6.5rem);
+
+  /* --- type -------------------------------------------------------- */
+  --home-font-display: 'Outfit', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --home-font-body: 'Geist Sans', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --home-font-mono: 'Geist Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+
+  --home-fs-display: clamp(2.35rem, 4.3vw, 3.6rem);
+  --home-fs-h1: clamp(2.1rem, 4vw, 3.1rem);
+  --home-fs-h2: clamp(1.75rem, 3vw, 2.5rem);
+  --home-fs-h3: 1.15rem;
+  --home-fs-lede: clamp(1.02rem, 1.35vw, 1.18rem);
+  --home-fs-body: 1rem;
+  --home-fs-sm: 0.9rem;
+  --home-fs-xs: 0.78rem;
+
+  /* --- elevation ---------------------------------------------------
+     Shadows carry the page's own hue instead of pure black, and the
+     light source is consistently above. */
+  --home-edge: inset 0 0 0 1px rgba(255, 255, 255, 0.07);
+  --home-edge-strong: inset 0 0 0 1px rgba(255, 255, 255, 0.13);
+  --home-edge-accent: inset 0 0 0 1px rgba(88, 101, 242, 0.35);
+  --home-sheen: inset 0 1px 0 rgba(255, 255, 255, 0.09);
+  --home-drop-1: 0 2px 8px -2px rgba(4, 5, 12, 0.5);
+  --home-drop-2: 0 16px 32px -18px rgba(4, 5, 12, 0.85);
+  --home-drop-3: 0 32px 60px -28px rgba(4, 5, 12, 0.95);
+
+  --home-elev-card: var(--home-edge), var(--home-sheen), var(--home-drop-2);
+  --home-elev-card-hover: var(--home-edge-strong), var(--home-sheen), var(--home-drop-3);
+
+  /* --- motion ------------------------------------------------------ */
+  --home-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --home-dur-fast: 140ms;
+  --home-dur: 240ms;
+  --home-dur-slow: 480ms;
+
+  /* --- layers ------------------------------------------------------
+     A real scale, so nothing has to reach for an arbitrary 9999. */
+  --home-z-behind: 0;
+  --home-z-base: 1;
+  --home-z-sticky: 100;
+  --home-z-nav: 200;
+  --home-z-menu: 250;
+  --home-z-grain: 300;
+  --home-z-skip: 400;
+}
+
+/* --------------------------------------------------------------- base */
+.home-page {
+  position: relative;
+  background: var(--home-void);
+  color: var(--home-ink);
+  font-family: var(--home-font-body);
+  font-size: var(--home-fs-body);
+  line-height: 1.6;
+}
+
+.home-page h1,
+.home-page h2,
+.home-page h3,
+.home-page h4 {
+  font-family: var(--home-font-display);
+  color: var(--home-ink);
+  margin: 0;
+  text-wrap: balance;
+  line-height: 1.08;
+  letter-spacing: -0.022em;
+}
+
+.home-page h1 { font-size: var(--home-fs-h1); font-weight: 700; }
+.home-page h2 { font-size: var(--home-fs-h2); font-weight: 700; }
+.home-page h3 { font-size: var(--home-fs-h3); font-weight: 600; letter-spacing: -0.012em; }
+
+.home-page p { margin: 0; text-wrap: pretty; }
+
+/* :where() keeps this at zero specificity so every component rule below
+   still sets its own colour without needing an extra qualifier. */
+:where(.home-page) a { color: inherit; text-decoration: none; }
+
+.home-page img { max-width: 100%; display: block; }
+.home-page ::selection { background: var(--home-accent); color: #fff; }
+
+/* Numbers read as data, not as prose. */
+.home-num {
+  font-family: var(--home-font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+/* ------------------------------------------------------------ ambient
+   Three fixed, pointer-events-none layers. Fixed rather than scrolling
+   so the grain never forces a repaint on scroll. */
+.home-mesh {
+  position: fixed;
+  inset: 0;
+  z-index: var(--home-z-behind);
+  pointer-events: none;
+  background:
+    radial-gradient(42rem 32rem at 78% -8%, rgba(88, 101, 242, 0.18), transparent 62%),
+    radial-gradient(34rem 28rem at 4% 12%, rgba(88, 101, 242, 0.08), transparent 62%),
+    radial-gradient(46rem 36rem at 50% 112%, rgba(88, 101, 242, 0.07), transparent 60%);
+}
+
+.home-blueprint {
+  position: fixed;
+  inset: 0;
+  z-index: var(--home-z-behind);
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(126, 139, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(126, 139, 255, 0.045) 1px, transparent 1px);
+  background-size: 92px 92px;
+  mask-image: radial-gradient(ellipse 72% 55% at 50% 0%, black 30%, transparent 86%);
+  -webkit-mask-image: radial-gradient(ellipse 72% 55% at 50% 0%, black 30%, transparent 86%);
+}
+
+.home-grain {
+  position: fixed;
+  inset: 0;
+  z-index: var(--home-z-grain);
+  pointer-events: none;
+  opacity: 0.03;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ------------------------------------------------------------ layout */
+.home-wrap {
+  position: relative;
+  z-index: var(--home-z-base);
+  width: 100%;
+  max-width: 1200px;
+  margin-inline: auto;
+  padding-inline: var(--home-sp-6);
+}
+
+.home-wrap-narrow { max-width: 780px; }
+
+.home-section {
+  position: relative;
+  z-index: var(--home-z-base);
+  padding-block: var(--home-section-y) var(--home-section-y-end);
+}
+
+/* --------------------------------------------------------- section head */
+.home-section-head { max-width: 44rem; margin-bottom: var(--home-sp-12); }
+.home-section-head.is-centered { margin-inline: auto; text-align: center; }
+.home-section-head h2 { margin-bottom: var(--home-sp-4); }
+.home-section-head p {
+  color: var(--home-ink-muted);
+  font-size: var(--home-fs-lede);
+  max-width: 58ch;
+}
+.home-section-head.is-centered p { margin-inline: auto; }
+
+/* Small uppercase label above a heading. Deliberately rare: the page
+   budget is one per three sections, so most sections just lead with
+   their heading. */
+.home-eyebrow {
+  display: inline-block;
+  font-family: var(--home-font-mono);
+  font-size: var(--home-fs-xs);
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--home-accent-bright);
+  margin-bottom: var(--home-sp-4);
+}
+
+/* ----------------------------------------------------------- buttons */
+.home-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--home-sp-2);
+  white-space: nowrap;
+  font-family: var(--home-font-body);
+  font-size: var(--home-fs-sm);
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  line-height: 1;
+  padding: 0.85rem 1.5rem;
+  border: 0;
+  border-radius: var(--home-r-pill);
+  cursor: pointer;
+  transition:
+    transform var(--home-dur) var(--home-ease),
+    background var(--home-dur) var(--home-ease),
+    box-shadow var(--home-dur) var(--home-ease),
+    color var(--home-dur) var(--home-ease);
+}
+
+.home-btn:active { transform: translateY(1px) scale(0.985); }
+
+.home-btn:focus-visible {
+  outline: 2px solid var(--home-accent-bright);
+  outline-offset: 3px;
+}
+
+.home-btn-lg { padding: 1.05rem 1.9rem; font-size: 1rem; }
+.home-btn-sm { padding: 0.6rem 1.15rem; font-size: var(--home-fs-xs); }
+
+/* Primary. White text on blurple clears WCAG AA at this size. */
+.home-btn-primary {
+  background: var(--home-accent);
+  color: #fff;
+  box-shadow: var(--home-sheen), 0 14px 30px -14px rgba(88, 101, 242, 0.9);
+}
+.home-btn-primary:hover {
+  background: var(--home-accent-bright);
+  box-shadow: var(--home-sheen), 0 20px 40px -14px rgba(88, 101, 242, 0.95);
+}
+
+.home-btn-secondary {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--home-ink);
+  box-shadow: var(--home-edge);
+}
+.home-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.09);
+  box-shadow: var(--home-edge-strong);
+}
+
+/* Tertiary is a text link, not a third button, so a section never
+   carries three competing filled shapes. */
+.home-btn-quiet {
+  background: transparent;
+  color: var(--home-ink-muted);
+  padding-inline: var(--home-sp-2);
+}
+.home-btn-quiet:hover { color: var(--home-ink); }
+
+.home-btn:disabled,
+.home-btn[aria-disabled='true'] {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* The small circular glyph that rides inside a CTA. */
+.home-icon-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  border-radius: var(--home-r-pill);
+  background: rgba(255, 255, 255, 0.18);
+  transition: transform var(--home-dur) var(--home-ease);
+  flex: none;
+}
+.home-btn:hover .home-icon-chip { transform: translateX(2px); }
+.home-icon-chip svg { width: 0.72rem; height: 0.72rem; }
+
+/* CTA rows are shared: the landing page, the 404, the login screen and
+   the contact page all lay their buttons out the same way. */
+.home-cta-row {
+  display: flex;
+  align-items: center;
+  gap: var(--home-sp-3);
+  flex-wrap: wrap;
+}
+.home-cta-row.is-centered { justify-content: center; }
+
+.home-content-center { text-align: center; }
+.home-content-center .home-lede { margin-inline: auto; }
+.home-content-center .home-cta-row { justify-content: center; }
+
+@media (max-width: 520px) {
+  .home-cta-row { flex-direction: column; align-items: stretch; }
+  .home-cta-row .home-btn { width: 100%; }
+}
+
+/* ------------------------------------------------------------- cards */
+.home-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--home-r-card);
+  background: linear-gradient(168deg, var(--home-surface-2), var(--home-surface-1));
+  box-shadow: var(--home-elev-card);
+  padding: var(--home-sp-6);
+  transition:
+    transform var(--home-dur-slow) var(--home-ease),
+    box-shadow var(--home-dur) var(--home-ease);
+}
+.home-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--home-elev-card-hover);
+}
+
+.home-card h3 { margin-bottom: var(--home-sp-2); }
+.home-card p { color: var(--home-ink-muted); font-size: var(--home-fs-sm); }
+
+/* Icon tile inside a card. */
+.home-card-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.6rem;
+  height: 2.6rem;
+  flex: none;
+  border-radius: var(--home-r-inner);
+  background: var(--home-accent-wash);
+  box-shadow: var(--home-edge-accent);
+  color: var(--home-accent-bright);
+  margin-bottom: var(--home-sp-5);
+}
+
+/* Linked rows. A list of destinations where each one needs a sentence
+   explaining when to pick it, rather than a row of bare buttons. */
+.home-link-list {
+  display: grid;
+  gap: var(--home-sp-3);
+  margin-top: var(--home-sp-8);
+}
+
+.home-link-row {
+  display: flex;
+  align-items: center;
+  gap: var(--home-sp-4);
+  padding: var(--home-sp-5);
+  border-radius: var(--home-r-card);
+  background: rgba(255, 255, 255, 0.02);
+  box-shadow: var(--home-edge);
+  transition:
+    transform var(--home-dur) var(--home-ease),
+    background var(--home-dur) var(--home-ease),
+    box-shadow var(--home-dur) var(--home-ease);
+}
+.home-link-row:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: var(--home-edge-strong), var(--home-drop-2);
+}
+.home-link-row:focus-visible { outline: 2px solid var(--home-accent-bright); outline-offset: 3px; }
+
+.home-link-row h3 { margin-bottom: var(--home-sp-1); }
+.home-link-row p { color: var(--home-ink-muted); font-size: var(--home-fs-sm); }
+
+.home-link-row-arrow {
+  margin-left: auto;
+  flex: none;
+  color: var(--home-ink-faint);
+  transition: color var(--home-dur) var(--home-ease), transform var(--home-dur) var(--home-ease);
+}
+.home-link-row:hover .home-link-row-arrow {
+  color: var(--home-accent-bright);
+  transform: translateX(3px);
+}
+
+/* Two-column key/value list for short factual blocks. */
+.home-facts {
+  display: grid;
+  grid-template-columns: 11rem minmax(0, 1fr);
+  gap: var(--home-sp-3) var(--home-sp-6);
+  margin: 0;
+  padding-top: var(--home-sp-2);
+}
+.home-facts dt {
+  font-size: var(--home-fs-sm);
+  color: var(--home-ink-faint);
+  padding-block: var(--home-sp-2);
+}
+.home-facts dd {
+  margin: 0;
+  font-size: var(--home-fs-sm);
+  color: var(--home-ink);
+  padding-block: var(--home-sp-2);
+  box-shadow: inset 0 -1px 0 var(--home-hairline);
+}
+.home-facts dt { box-shadow: inset 0 -1px 0 var(--home-hairline); }
+.home-facts dt:last-of-type, .home-facts dd:last-of-type { box-shadow: none; }
+
+@media (max-width: 620px) {
+  .home-facts { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .home-facts dt { padding-bottom: 0; box-shadow: none; }
+  .home-facts dd { padding-top: var(--home-sp-1); }
+}
+
+/* ------------------------------------------------------------ badges */
+.home-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--home-sp-1);
+  font-family: var(--home-font-mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--home-r-chip);
+  white-space: nowrap;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--home-ink-muted);
+}
+.home-badge-admin { background: rgba(237, 66, 69, 0.14); color: #ff9497; }
+.home-badge-mods { background: rgba(250, 166, 26, 0.13); color: #f5c073; }
+.home-badge-accent { background: var(--home-accent-wash); color: var(--home-accent-bright); }
+
+/* Inline code, and the mono command names on the commands page. */
+.home-code {
+  font-family: var(--home-font-mono);
+  font-size: 0.88em;
+  padding: 0.12em 0.4em;
+  border-radius: var(--home-r-chip);
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--home-ink);
+}
+
+/* ------------------------------------------------------------- forms */
+.home-field { margin-bottom: var(--home-sp-5); }
+
+.home-field label {
+  display: block;
+  font-size: var(--home-fs-sm);
+  font-weight: 600;
+  color: var(--home-ink);
+  margin-bottom: var(--home-sp-2);
+}
+
+.home-field-hint {
+  font-size: var(--home-fs-xs);
+  color: var(--home-ink-muted);
+  margin-top: var(--home-sp-2);
+}
+
+.home-field-error {
+  font-size: var(--home-fs-xs);
+  color: #ff9497;
+  margin-top: var(--home-sp-2);
+}
+
+.home-input,
+.home-select,
+.home-textarea {
+  width: 100%;
+  font-family: inherit;
+  font-size: var(--home-fs-sm);
+  color: var(--home-ink);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--home-hairline);
+  border-radius: var(--home-r-input);
+  padding: 0.7rem 0.9rem;
+  transition: border-color var(--home-dur) var(--home-ease), background var(--home-dur) var(--home-ease);
+}
+
+/* Placeholders stay above the AA floor against the input surface. */
+.home-input::placeholder,
+.home-textarea::placeholder { color: var(--home-ink-faint); opacity: 1; }
+
+.home-input:hover,
+.home-select:hover,
+.home-textarea:hover { border-color: var(--home-hairline-strong); }
+
+.home-input:focus,
+.home-select:focus,
+.home-textarea:focus {
+  outline: none;
+  border-color: var(--home-accent);
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 0 0 3px var(--home-accent-wash);
+}
+
+.home-textarea { resize: vertical; min-height: 5rem; }
+
+.home-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a4abbe' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1rem;
+  padding-right: 2.4rem;
+}
+.home-select option { background: var(--home-surface-2); color: var(--home-ink); }
+
+/* Toggle switch. */
+.home-switch-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--home-sp-4);
+  padding: 0.7rem 0.9rem;
+  border-radius: var(--home-r-input);
+  transition: background var(--home-dur) var(--home-ease);
+}
+.home-switch-row:has(.home-switch:hover),
+.home-switch-row:has(.home-switch:focus-visible) { background: rgba(255, 255, 255, 0.04); }
+
+.home-switch-row label {
+  margin: 0;
+  font-weight: 500;
+  font-size: var(--home-fs-sm);
+  cursor: pointer;
+}
+
+.home-switch {
+  appearance: none;
+  position: relative;
+  flex: none;
+  width: 2.4rem;
+  height: 1.35rem;
+  border-radius: var(--home-r-pill);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--home-hairline);
+  cursor: pointer;
+  transition: background var(--home-dur) var(--home-ease), border-color var(--home-dur) var(--home-ease);
+}
+.home-switch::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0.16rem;
+  width: 0.95rem;
+  height: 0.95rem;
+  border-radius: var(--home-r-pill);
+  background: var(--home-ink-muted);
+  transform: translateY(-50%);
+  transition: transform var(--home-dur) var(--home-ease), background var(--home-dur) var(--home-ease);
+}
+.home-switch:checked { background: var(--home-accent-wash-strong); border-color: var(--home-accent); }
+.home-switch:checked::after { transform: translate(1.03rem, -50%); background: var(--home-accent-bright); }
+.home-switch:focus-visible { outline: 2px solid var(--home-accent-bright); outline-offset: 2px; }
+
+/* ------------------------------------------------------------ states */
+
+/* Skeletons mirror the shape of the content they stand in for, rather
+   than being a spinner. */
+.home-skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.04) 0%,
+    rgba(255, 255, 255, 0.09) 50%,
+    rgba(255, 255, 255, 0.04) 100%
+  );
+  background-size: 200% 100%;
+  animation: home-shimmer 1.4s linear infinite;
+  border-radius: var(--home-r-input);
+}
+@keyframes home-shimmer {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+
+.home-empty {
+  text-align: center;
+  padding: var(--home-sp-16) var(--home-sp-6);
+  border-radius: var(--home-r-card);
+  box-shadow: var(--home-edge);
+  background: rgba(255, 255, 255, 0.015);
+}
+.home-empty h3 { margin-bottom: var(--home-sp-2); }
+.home-empty p {
+  color: var(--home-ink-muted);
+  font-size: var(--home-fs-sm);
+  max-width: 40ch;
+  margin-inline: auto;
+  margin-bottom: var(--home-sp-6);
+}
+
+.home-alert {
+  border-radius: var(--home-r-input);
+  padding: var(--home-sp-4) var(--home-sp-5);
+  font-size: var(--home-fs-sm);
+  margin-bottom: var(--home-sp-6);
+}
+.home-alert-error { background: rgba(237, 66, 69, 0.1); color: #ffb3b5; box-shadow: inset 0 0 0 1px rgba(237, 66, 69, 0.28); }
+.home-alert-info { background: var(--home-accent-wash); color: #c3caff; box-shadow: var(--home-edge-accent); }
+.home-alert code { font-family: var(--home-font-mono); font-size: 0.9em; }
+
+/* ------------------------------------------------------------ reveal
+   Entry animation for scrolled-into-view content. Driven by
+   IntersectionObserver in useReveal, never by a scroll listener, and
+   only transform + opacity + filter so it stays on the compositor. */
+.home-reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity var(--home-dur-slow) var(--home-ease),
+    transform var(--home-dur-slow) var(--home-ease),
+    filter var(--home-dur-slow) var(--home-ease);
+}
+.home-reveal.is-visible { opacity: 1; transform: translateY(0); }
+.home-reveal-blur { filter: blur(6px); }
+.home-reveal-blur.is-visible { filter: blur(0); }
+
+/* --------------------------------------------------------------- nav */
+/* Centred with auto margins rather than `left: 50%; translateX(-50%)`.
+   A transform on this element establishes a new backdrop root, and
+   `backdrop-filter` on the pill inside can then only sample within that
+   subtree. The page scrolling underneath sits outside it, so the blur
+   silently did nothing and headings read straight through the nav. That
+   was the visible bug on the old site. No transform here, no problem. */
+.home-nav-shell {
+  position: fixed;
+  top: var(--home-sp-5);
+  left: 0;
+  right: 0;
+  margin-inline: auto;
+  z-index: var(--home-z-nav);
+  width: min(940px, calc(100% - 2rem));
+}
+
+/* The base fill alone is opaque enough to keep headings from reading
+   through the pill. Blur is layered on top as polish, never as the
+   thing legibility depends on: the CSS minifier normalises these two
+   declarations down to whichever one its browser targets need, and not
+   every engine honours the prefixed alias. Getting this wrong is what
+   made page headings show through the nav on the old site. */
+.home-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--home-sp-6);
+  height: 60px;
+  padding: 0 0.55rem 0 1.35rem;
+  border-radius: var(--home-r-pill);
+  background: rgba(13, 15, 24, 0.94);
+  box-shadow: var(--home-edge), var(--home-sheen), var(--home-drop-2);
+}
+
+/* Blur is added on top where it exists, and the fill is NOT lightened to
+   compensate. Trading opacity for blur would mean a browser that matches
+   this @supports condition but resolves only one of the two spellings
+   ends up with the thinner background and no blur at all, which is the
+   exact failure this whole arrangement exists to prevent. */
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .home-nav {
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+  }
+}
+
+/* Viewers who ask for less transparency get the solid pill back. */
+@media (prefers-reduced-transparency: reduce) {
+  .home-nav {
+    background: var(--home-surface-1);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+.home-brand {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.5rem;
+  font-family: var(--home-font-display);
+  font-weight: 800;
+  font-size: 1rem;
+  letter-spacing: 0.01em;
+  color: var(--home-ink);
+  flex: none;
+}
+
+.home-nav-links {
+  display: flex;
+  align-items: center;
+  gap: var(--home-sp-1);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  margin-right: auto;
+}
+
+.home-nav-links a {
+  display: block;
+  font-size: var(--home-fs-sm);
+  font-weight: 500;
+  color: var(--home-ink-muted);
+  padding: 0.45rem 0.7rem;
+  border-radius: var(--home-r-pill);
+  transition: color var(--home-dur) var(--home-ease), background var(--home-dur) var(--home-ease);
+}
+.home-nav-links a:hover { color: var(--home-ink); background: rgba(255, 255, 255, 0.05); }
+.home-nav-links a.is-current { color: var(--home-ink); background: rgba(255, 255, 255, 0.08); }
+.home-nav-links a:focus-visible { outline: 2px solid var(--home-accent-bright); outline-offset: 2px; }
+
+.home-nav-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--home-sp-2);
+  flex: none;
+  font-size: var(--home-fs-sm);
+  font-weight: 600;
+  color: #fff;
+  background: var(--home-accent);
+  padding: 0.6rem 1.1rem;
+  border-radius: var(--home-r-pill);
+  box-shadow: var(--home-sheen);
+  transition: background var(--home-dur) var(--home-ease), transform var(--home-dur) var(--home-ease);
+}
+.home-nav-cta:hover { background: var(--home-accent-bright); transform: translateY(-1px); }
+.home-nav-cta:active { transform: translateY(0) scale(0.97); }
+.home-nav-cta:focus-visible { outline: 2px solid var(--home-accent-bright); outline-offset: 3px; }
+.home-nav-cta .home-icon-chip { width: 1.15rem; height: 1.15rem; }
+.home-nav-cta .home-icon-chip svg { width: 0.6rem; height: 0.6rem; }
+
+.home-hamburger {
+  display: none;
+  position: relative;
+  flex: none;
+  width: 40px;
+  height: 40px;
+  margin-left: auto;
+  background: transparent;
+  border: 0;
+  border-radius: var(--home-r-pill);
+  cursor: pointer;
+  transition: background var(--home-dur) var(--home-ease), transform var(--home-dur) var(--home-ease);
+}
+.home-hamburger:hover { background: rgba(255, 255, 255, 0.06); }
+.home-hamburger:active { transform: scale(0.93); }
+.home-hamburger:focus-visible { outline: 2px solid var(--home-accent-bright); outline-offset: 2px; }
+.home-hamburger span {
+  position: absolute;
+  left: 11px;
+  width: 18px;
+  height: 1.5px;
+  border-radius: 2px;
+  background: var(--home-ink);
+  transition: transform var(--home-dur) var(--home-ease), opacity var(--home-dur) var(--home-ease), top var(--home-dur) var(--home-ease);
+}
+.home-hamburger span:nth-child(1) { top: 15px; }
+.home-hamburger span:nth-child(2) { top: 20px; }
+.home-hamburger span:nth-child(3) { top: 25px; }
+.home-hamburger.is-open span:nth-child(1) { top: 20px; transform: rotate(45deg); }
+.home-hamburger.is-open span:nth-child(2) { opacity: 0; }
+.home-hamburger.is-open span:nth-child(3) { top: 20px; transform: rotate(-45deg); }
+
+.home-mobile-menu {
+  position: fixed;
+  inset: 0;
+  z-index: var(--home-z-menu);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: var(--home-sp-8);
+  background: rgba(8, 9, 15, 0.985);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--home-dur) var(--home-ease), visibility var(--home-dur) var(--home-ease);
+}
+.home-mobile-menu.is-open { opacity: 1; visibility: visible; }
+.home-mobile-menu ul { list-style: none; margin: 0; padding: 0; }
+.home-mobile-menu a {
+  display: block;
+  font-family: var(--home-font-display);
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--home-ink-muted);
+  padding: var(--home-sp-3) 0;
+  transform: translateY(10px);
+  opacity: 0;
+  transition: transform var(--home-dur-slow) var(--home-ease), opacity var(--home-dur-slow) var(--home-ease), color var(--home-dur) var(--home-ease);
+}
+.home-mobile-menu.is-open a { transform: translateY(0); opacity: 1; }
+.home-mobile-menu a:hover { color: var(--home-ink); }
+.home-mobile-menu a.is-current { color: var(--home-accent-bright); }
+.home-mobile-menu li:nth-child(1) a { transition-delay: 40ms; }
+.home-mobile-menu li:nth-child(2) a { transition-delay: 80ms; }
+.home-mobile-menu li:nth-child(3) a { transition-delay: 120ms; }
+.home-mobile-menu li:nth-child(4) a { transition-delay: 160ms; }
+.home-mobile-menu li:nth-child(5) a { transition-delay: 200ms; }
+.home-mobile-menu li:nth-child(6) a { transition-delay: 240ms; }
+.home-mobile-menu li:nth-child(7) a { transition-delay: 280ms; }
+
+.home-mobile-cta { margin-top: var(--home-sp-8); align-self: flex-start; }
+
+@media (max-width: 940px) {
+  .home-nav-links,
+  .home-nav > .home-nav-cta { display: none; }
+  .home-hamburger { display: block; }
+  .home-nav { padding-right: 0.6rem; }
+}
+
+/* ------------------------------------------------------------ footer */
+.home-footer {
+  position: relative;
+  z-index: var(--home-z-base);
+  padding-block: var(--home-sp-16) var(--home-sp-10);
+  box-shadow: inset 0 1px 0 var(--home-hairline);
+}
+
+.home-footer-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  gap: var(--home-sp-10);
+  margin-bottom: var(--home-sp-12);
+}
+
+.home-footer-blurb {
+  color: var(--home-ink-muted);
+  font-size: var(--home-fs-sm);
+  max-width: 34ch;
+  margin-top: var(--home-sp-3);
+}
+
+.home-footer-col h4 {
+  font-family: var(--home-font-body);
+  font-size: var(--home-fs-xs);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--home-ink-faint);
+  margin-bottom: var(--home-sp-4);
+}
+
+.home-footer-col ul { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--home-sp-1); }
+
+/* Block-level with vertical padding so each row is a real touch target
+   rather than a 16px strip of text. */
+.home-footer-col a {
+  display: block;
+  padding-block: 0.45rem;
+  font-size: var(--home-fs-sm);
+  color: var(--home-ink-muted);
+  transition: color var(--home-dur) var(--home-ease);
+}
+.home-footer-col a:hover { color: var(--home-ink); }
+.home-footer-col a:focus-visible { outline: 2px solid var(--home-accent-bright); outline-offset: 3px; border-radius: 3px; }
+
+.home-footer-base {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--home-sp-4);
+  flex-wrap: wrap;
+  padding-top: var(--home-sp-6);
+  box-shadow: inset 0 1px 0 var(--home-hairline);
+  color: var(--home-ink-faint);
+  font-size: var(--home-fs-xs);
+}
+
+@media (max-width: 760px) {
+  .home-footer-grid { grid-template-columns: 1fr 1fr; gap: var(--home-sp-8); }
+  .home-footer-brand { grid-column: 1 / -1; }
+}
+
+/* ---------------------------------------------------- content pages */
+.home-content { padding-block: calc(var(--home-sp-24) + 1.5rem) var(--home-section-y-end); }
+.home-content h1 { margin-bottom: var(--home-sp-5); }
+.home-content .home-lede {
+  color: var(--home-ink-muted);
+  font-size: var(--home-fs-lede);
+  max-width: 62ch;
+  margin-bottom: var(--home-sp-10);
+}
+.home-content h2 {
+  font-size: 1.35rem;
+  margin-top: var(--home-sp-10);
+  margin-bottom: var(--home-sp-4);
+}
+.home-content p + p { margin-top: var(--home-sp-4); }
+.home-content p { color: var(--home-ink-muted); }
+
+.home-list { list-style: none; margin: var(--home-sp-6) 0 0; padding: 0; }
+.home-list li {
+  padding: var(--home-sp-3) 0;
+  color: var(--home-ink-muted);
+  font-size: var(--home-fs-sm);
+  line-height: 1.65;
+  box-shadow: inset 0 -1px 0 var(--home-hairline);
+}
+.home-list li:last-child { box-shadow: none; }
+.home-list li strong { color: var(--home-ink); font-weight: 600; }
+
+/* Prose following a list needs its own air; without this the closing
+   sentence butted straight up against the final row's rule. */
+.home-list + p,
+.home-list + .home-lede { margin-top: var(--home-sp-6); }
+
+/* -------------------------------------------------- account surfaces */
+.home-avatar { width: 2.75rem; height: 2.75rem; border-radius: var(--home-r-inner); flex: none; }
+.home-avatar-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--home-accent-wash);
+  color: var(--home-accent-bright);
+  font-weight: 700;
+  font-family: var(--home-font-display);
+}
+
+.home-panel-list {
+  display: grid;
+  gap: var(--home-sp-3);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.home-panel-row {
+  display: flex;
+  align-items: center;
+  gap: var(--home-sp-4);
+  padding: var(--home-sp-4);
+  border-radius: var(--home-r-inner);
+  background: rgba(255, 255, 255, 0.025);
+  box-shadow: var(--home-edge);
+  transition: background var(--home-dur) var(--home-ease), box-shadow var(--home-dur) var(--home-ease);
+}
+.home-panel-row:hover { background: rgba(255, 255, 255, 0.05); box-shadow: var(--home-edge-strong); }
+
+.home-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  gap: var(--home-sp-4);
+}
+
+.home-stat-tile {
+  padding: var(--home-sp-5);
+  border-radius: var(--home-r-inner);
+  background: rgba(255, 255, 255, 0.025);
+  box-shadow: var(--home-edge);
+}
+.home-stat-tile-label {
+  font-size: var(--home-fs-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--home-ink-faint);
+  margin-bottom: var(--home-sp-2);
+}
+.home-stat-tile-value {
+  font-family: var(--home-font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: var(--home-ink);
+}
+.home-stat-tile-value.is-good { color: #7fe3ac; }
+
+.home-log-panel {
+  font-family: var(--home-font-mono);
+  font-size: var(--home-fs-xs);
+  line-height: 1.7;
+  max-height: 22rem;
+  overflow: auto;
+  padding: var(--home-sp-4);
+  border-radius: var(--home-r-inner);
+  background: rgba(0, 0, 0, 0.35);
+  box-shadow: var(--home-edge);
+}
+.home-log-line-error { color: #ff9497; }
+.home-log-line-time { color: var(--home-ink-faint); margin-right: var(--home-sp-2); }
+
+.home-form-section { margin-bottom: var(--home-sp-12); }
+.home-form-section h2 { font-size: 1.25rem; margin-bottom: var(--home-sp-5); margin-top: 0; }
+
+.home-toggle-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: var(--home-sp-1);
+}
+
+.home-404-code {
+  font-family: var(--home-font-mono);
+  font-size: clamp(4rem, 14vw, 8rem);
+  font-weight: 500;
+  line-height: 1;
+  color: var(--home-accent);
+  letter-spacing: -0.04em;
+  margin-bottom: var(--home-sp-6);
+}
+
+/* --------------------------------------------------- reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .home-page *,
+  .home-page *::before,
+  .home-page *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .home-reveal { opacity: 1; transform: none; filter: none; }
+}

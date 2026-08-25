@@ -6,8 +6,8 @@ import { useCallback, useRef, useState } from 'react'
 // listeners.
 //
 // `ref` is a callback ref rather than a plain useRef on purpose: several
-// pages (Dashboard, DevDashboard) render a "loading" branch first — one
-// that doesn't attach this ref to anything — before swapping in the real
+// pages (Dashboard, DevDashboard) render a "loading" branch first: one
+// that doesn't attach this ref to anything, before swapping in the real
 // content that does. A plain useRef + effect only wires up the observer
 // once, on mount; if the ref's target didn't exist yet at that point, it
 // would silently never attach and `visible` would stay false forever. A

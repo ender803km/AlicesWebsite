@@ -1,5 +1,5 @@
 import { useReveal } from '../hooks/useReveal'
-import '../styles/homepage.css'
+import '../styles/system.css'
 
 export default function Terms() {
   const [ref, visible] = useReveal({ threshold: 0.1 })
@@ -8,12 +8,9 @@ export default function Terms() {
     <main id="main-content" className="home-page home-content">
       <div className="home-mesh" aria-hidden="true" />
       <div className="home-blueprint" aria-hidden="true" />
-      <div className="home-spotlight" aria-hidden="true" />
       <div className="home-grain" aria-hidden="true" />
-      <div ref={ref} className={`home-wrap home-reveal ${visible ? 'is-visible' : ''}`} style={{ maxWidth: 760 }}>
-        <div className="home-page-eyebrow-row">
-          <div className="home-eyebrow"><span className="home-dot" aria-hidden="true" /> Legal</div>
-        </div>
+      <div ref={ref} className={`home-wrap home-wrap-narrow home-reveal ${visible ? 'is-visible' : ''}`}>
+        <span className="home-eyebrow">Legal</span>
         <h1>Terms of Service</h1>
         <p className="home-lede">
           Using A.L.I.C.E means you agree to follow Discord&rsquo;s Terms of Service.

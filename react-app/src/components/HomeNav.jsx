@@ -1,31 +1,37 @@
 import { useEffect, useState } from 'react'
-import { NavLink } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
-import '../styles/homepage.css'
+import { NavLink, useLocation } from 'react-router-dom'
+import { ArrowUpRight } from '@phosphor-icons/react'
 
+import { useAuth } from '../context/AuthContext'
+import { INVITE_URL } from '../lib/links'
+import '../styles/system.css'
+
+// Privacy and Terms deliberately live in the footer rather than up here.
+// They are legally required, not navigational, and carrying them made
+// the bar eight items wide with no room left for the thing the page is
+// actually asking people to do.
 const navLinks = [
   { to: '/', label: 'Home', end: true },
   { to: '/commands', label: 'Commands' },
   { to: '/about', label: 'About' },
-  { to: '/privacy', label: 'Privacy' },
-  { to: '/terms', label: 'Terms' },
   { to: '/contact', label: 'Contact' },
 ]
 
-// A floating "island" pill nav, matching the approved concept mockup.
-// This is the site's only nav — Navbar.jsx renders it on every route.
 export default function HomeNav() {
   const { user, loading } = useAuth()
   const [open, setOpen] = useState(false)
+  const location = useLocation()
 
-  // Lock body scroll while the mobile menu is open, and let Escape close it.
+  // Close the mobile menu on navigation, otherwise it stays open over
+  // the page the user just asked for.
+  useEffect(() => { setOpen(false) }, [location.pathname])
+
+  // Lock body scroll while the menu is open, and let Escape close it.
   useEffect(() => {
     if (!open) return undefined
     const prevOverflow = document.body.style.overflow
     document.body.style.overflow = 'hidden'
-    const onKey = (e) => {
-      if (e.key === 'Escape') setOpen(false)
-    }
+    const onKey = (e) => { if (e.key === 'Escape') setOpen(false) }
     window.addEventListener('keydown', onKey)
     return () => {
       document.body.style.overflow = prevOverflow
@@ -35,7 +41,7 @@ export default function HomeNav() {
 
   const accountLink = loading
     ? null
-    : { to: user ? '/dashboard' : '/login', label: user ? 'Dashboard' : 'Login' }
+    : { to: user ? '/dashboard' : '/login', label: user ? 'Dashboard' : 'Log in' }
 
   const allLinks = [
     ...navLinks,
@@ -52,24 +58,21 @@ export default function HomeNav() {
           <ul className="home-nav-links">
             {allLinks.map((link) => (
               <li key={link.to}>
-                <NavLink to={link.to} end={link.end} className={({ isActive }) => (isActive ? 'is-current' : '')}>
+                <NavLink
+                  to={link.to}
+                  end={link.end}
+                  className={({ isActive }) => (isActive ? 'is-current' : '')}
+                >
                   {link.label}
                 </NavLink>
               </li>
             ))}
           </ul>
 
-          <a
-            href="https://discord.com/oauth2/authorize?client_id=1520771362246103091&permissions=1392442207446&integration_type=0&scope=bot+applications.commands"
-            target="_blank"
-            rel="noopener"
-            className="home-nav-cta"
-          >
+          <a href={INVITE_URL} target="_blank" rel="noopener" className="home-nav-cta">
             Invite
             <span className="home-icon-chip" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                <path d="M7 17L17 7M9 7h8v8" />
-              </svg>
+              <ArrowUpRight weight="bold" />
             </span>
           </a>
 
@@ -101,6 +104,17 @@ export default function HomeNav() {
             </li>
           ))}
         </ul>
+        <a
+          href={INVITE_URL}
+          target="_blank"
+          rel="noopener"
+          className="home-btn home-btn-primary home-btn-lg home-mobile-cta"
+        >
+          Invite to Discord
+          <span className="home-icon-chip" aria-hidden="true">
+            <ArrowUpRight weight="bold" />
+          </span>
+        </a>
       </div>
     </div>
   )

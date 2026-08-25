@@ -2,7 +2,19 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { setToken } from '../lib/api'
 import { useAuth } from '../context/AuthContext'
-import '../styles/homepage.css'
+import '../styles/system.css'
+
+// Every branch of this screen paints the same ambient stack, so the page
+// does not flash a different background while the token is exchanged.
+function Backdrop() {
+  return (
+    <>
+      <div className="home-mesh" aria-hidden="true" />
+      <div className="home-blueprint" aria-hidden="true" />
+      <div className="home-grain" aria-hidden="true" />
+    </>
+  )
+}
 
 export default function AuthCallback() {
   const navigate = useNavigate()
@@ -24,15 +36,12 @@ export default function AuthCallback() {
   if (failed) {
     return (
       <main id="main-content" className="home-page home-content home-content-center">
-        <div className="home-mesh" aria-hidden="true" />
-        <div className="home-blueprint" aria-hidden="true" />
-        <div className="home-spotlight" aria-hidden="true" />
-        <div className="home-grain" aria-hidden="true" />
+        <Backdrop />
         <div className="home-wrap" style={{ maxWidth: 480 }}>
-          <div className="home-page-eyebrow-row">
-            <div className="home-eyebrow"><span className="home-dot" aria-hidden="true" /> Account</div>
+          <span className="home-eyebrow">Account</span>
+          <div className="home-alert home-alert-error" role="alert">
+            That login link looks incomplete.
           </div>
-          <p className="home-lede">That login link looks incomplete.</p>
           <div className="home-cta-row">
             <a href="/login" className="home-btn home-btn-primary">
               Back to login
@@ -48,17 +57,17 @@ export default function AuthCallback() {
     )
   }
 
+  // Signing-in state. The skeleton stands in for the heading and the line
+  // of copy that the dashboard paints a moment later, so the handoff does
+  // not jump.
   return (
     <main id="main-content" className="home-page home-content home-content-center">
-      <div className="home-mesh" aria-hidden="true" />
-      <div className="home-blueprint" aria-hidden="true" />
-      <div className="home-spotlight" aria-hidden="true" />
-      <div className="home-grain" aria-hidden="true" />
-      <div className="home-wrap" style={{ maxWidth: 480 }}>
-        <div className="home-page-eyebrow-row">
-          <div className="home-eyebrow"><span className="home-dot" aria-hidden="true" /> Account</div>
-        </div>
-        <p className="home-lede">Signing you in…</p>
+      <Backdrop />
+      <div className="home-wrap" style={{ maxWidth: 480 }} role="status" aria-label="Signing you in">
+        <span className="home-eyebrow">Account</span>
+        <div className="home-skeleton" style={{ width: 200, height: 30, margin: '0 auto 1.25rem' }} />
+        <div className="home-skeleton" style={{ width: '100%', height: 14, margin: '0 auto 0.6rem' }} />
+        <div className="home-skeleton" style={{ width: '70%', height: 14, margin: '0 auto' }} />
       </div>
     </main>
   )

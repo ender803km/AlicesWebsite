@@ -4,6 +4,7 @@ import authRoutes from './src/routes/auth.js';
 import apiRoutes from './src/routes/api.js';
 import guildsRoutes from './src/routes/guilds.js';
 import devRoutes from './src/routes/dev.js';
+import publicRoutes from './src/routes/public.js';
 import { connectMongo } from './src/services/mongo.js';
 
 const app = express();
@@ -23,6 +24,7 @@ app.use(express.json());
 app.get('/health', (req, res) => res.json({ status: 'ok' }));
 
 app.use('/auth', authRoutes);
+app.use('/api/public', publicRoutes);
 app.use('/api', apiRoutes);
 app.use('/api/guilds', guildsRoutes);
 app.use('/api/dev', devRoutes);

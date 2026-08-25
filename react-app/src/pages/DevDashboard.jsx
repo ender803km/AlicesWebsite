@@ -3,7 +3,18 @@ import { Navigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { fetchDevOverview, fetchDevLogs } from '../lib/api'
 import { useReveal } from '../hooks/useReveal'
-import '../styles/homepage.css'
+import { INVITE_URL, INVITE_LABEL } from '../lib/links'
+import '../styles/system.css'
+
+function Backdrop() {
+  return (
+    <>
+      <div className="home-mesh" aria-hidden="true" />
+      <div className="home-blueprint" aria-hidden="true" />
+      <div className="home-grain" aria-hidden="true" />
+    </>
+  )
+}
 
 function timeAgo(iso) {
   if (!iso) return 'unknown'
@@ -16,14 +27,17 @@ function timeAgo(iso) {
   return `${Math.floor(hours / 24)}d ago`
 }
 
-function LogPanel({ title, logs, empty }) {
+function LogPanel({ title, logs, empty, emptyBody }) {
   return (
     <div style={{ marginBottom: '2rem' }}>
       <h3 style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--home-ink-muted)', marginBottom: '0.75rem' }}>
         {title}
       </h3>
       {logs.length === 0 ? (
-        <p style={{ color: 'var(--home-ink-faint)', fontSize: '0.88rem' }}>{empty}</p>
+        <div className="home-empty">
+          <h3>{empty}</h3>
+          <p>{emptyBody}</p>
+        </div>
       ) : (
         <div className="home-log-panel">
           {logs.map((log, i) => (
@@ -38,15 +52,23 @@ function LogPanel({ title, logs, empty }) {
   )
 }
 
-function StatSkeleton() {
+// Stands in for the four stat tiles and the server list underneath them,
+// in the same shapes, so nothing shifts when the real numbers land.
+function OverviewSkeleton() {
   return (
-    <div className="home-stat-grid">
-      {Array.from({ length: 4 }, (_, i) => (
-        <div className="home-stat-tile" key={i}>
-          <div className="home-skeleton" style={{ width: '50%', height: 12, marginBottom: '0.6rem' }} />
-          <div className="home-skeleton" style={{ width: '70%', height: 22 }} />
-        </div>
-      ))}
+    <div role="status" aria-label="Loading overview">
+      <div className="home-stat-grid">
+        {Array.from({ length: 4 }, (_, i) => (
+          <div className="home-stat-tile" key={i}>
+            <div className="home-skeleton" style={{ width: '50%', height: 12, marginBottom: '0.6rem' }} />
+            <div className="home-skeleton" style={{ width: '70%', height: 22 }} />
+          </div>
+        ))}
+      </div>
+      <div className="home-skeleton" style={{ width: 160, height: 18, margin: '2.5rem 0 1rem' }} />
+      <div className="home-skeleton" style={{ height: 60, borderRadius: 12, marginBottom: '0.75rem' }} />
+      <div className="home-skeleton" style={{ height: 60, borderRadius: 12, marginBottom: '0.75rem' }} />
+      <div className="home-skeleton" style={{ height: 60, borderRadius: 12 }} />
     </div>
   )
 }
@@ -89,12 +111,12 @@ export default function DevDashboard() {
 
   if (authLoading) {
     return (
-      <main id="main-content" className="home-page home-content home-content-center">
-        <div className="home-mesh" aria-hidden="true" />
-        <div className="home-blueprint" aria-hidden="true" />
-        <div className="home-spotlight" aria-hidden="true" />
-        <div className="home-grain" aria-hidden="true" />
-        <div className="home-wrap"><p className="home-lede">Loading…</p></div>
+      <main id="main-content" className="home-page home-content">
+        <Backdrop />
+        <div className="home-wrap" style={{ maxWidth: 900 }} role="status" aria-label="Loading">
+          <div className="home-skeleton" style={{ width: 240, height: 30, marginBottom: '2.5rem' }} />
+          <OverviewSkeleton />
+        </div>
       </main>
     )
   }
@@ -104,84 +126,90 @@ export default function DevDashboard() {
 
   return (
     <main id="main-content" className="home-page home-content">
-      <div className="home-mesh" aria-hidden="true" />
-      <div className="home-blueprint" aria-hidden="true" />
-      <div className="home-spotlight" aria-hidden="true" />
-      <div className="home-grain" aria-hidden="true" />
+      <Backdrop />
       <div ref={ref} className={`home-wrap home-reveal ${visible ? 'is-visible' : ''}`} style={{ maxWidth: 900 }}>
-        <div className="home-page-eyebrow-row">
-          <div className="home-eyebrow"><span className="home-dot" aria-hidden="true" /> Internal</div>
-        </div>
+        <span className="home-eyebrow">Internal</span>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', marginBottom: '2.5rem' }}>
           <h1 style={{ fontSize: '1.5rem' }}>Devs dashboard</h1>
-          <button className="home-btn home-btn-outline home-btn-sm" type="button" onClick={load}>
+          <button className="home-btn home-btn-secondary home-btn-sm" type="button" onClick={load}>
             Refresh
           </button>
         </div>
 
-        {status === 'loading' && <StatSkeleton />}
+        {status === 'loading' && <OverviewSkeleton />}
         {status === 'error' && <div className="home-alert home-alert-error" role="alert">{error}</div>}
 
         {status === 'ready' && overview && (
           <>
             <div className="home-stat-grid">
-              <div className="home-stat-tile home-reveal-child" style={{ transitionDelay: visible ? '0ms' : '0ms' }}>
+              <div className="home-stat-tile">
                 <div className="home-stat-tile-label">Servers</div>
                 <div className="home-stat-tile-value">{overview.guildCount}</div>
               </div>
-              <div className="home-stat-tile home-reveal-child" style={{ transitionDelay: visible ? '60ms' : '0ms' }}>
+              <div className="home-stat-tile">
                 <div className="home-stat-tile-label">Bot token</div>
                 <div className="home-stat-tile-value is-good">Valid</div>
               </div>
-              <div className="home-stat-tile home-reveal-child" style={{ transitionDelay: visible ? '120ms' : '0ms' }}>
+              <div className="home-stat-tile">
                 <div className="home-stat-tile-label">Last deploy</div>
                 <div className="home-stat-tile-value">
-                  {overview.deployment ? overview.deployment.status : '—'}
+                  {overview.deployment ? overview.deployment.status : 'None'}
                 </div>
               </div>
-              <div className="home-stat-tile home-reveal-child" style={{ transitionDelay: visible ? '180ms' : '0ms' }}>
+              <div className="home-stat-tile">
                 <div className="home-stat-tile-label">Deployed</div>
                 <div className="home-stat-tile-value">
-                  {overview.deployment ? timeAgo(overview.deployment.createdAt) : '—'}
+                  {overview.deployment ? timeAgo(overview.deployment.createdAt) : 'Never'}
                 </div>
               </div>
             </div>
 
             {!overview.railwayConfigured && (
               <div className="home-alert home-alert-info" role="alert">
-                Log viewer isn&rsquo;t set up yet — set <code>RAILWAY_API_TOKEN</code> (and the related
+                Log viewer isn&rsquo;t set up yet. Set <code>RAILWAY_API_TOKEN</code> (and the related
                 project/environment/service IDs) on the API service to enable it.
               </div>
             )}
 
             {overview.railwayConfigured && (
               <>
-                <LogPanel title="Recent errors" logs={errorLogs} empty="No recent errors. 🎉" />
+                <LogPanel
+                  title="Recent errors"
+                  logs={errorLogs}
+                  empty="No recent errors"
+                  emptyBody="Nothing has been logged at error level. New errors show up here as the bot reports them."
+                />
                 <LogPanel
                   title="Recent moderation / command activity"
                   logs={activityLogs}
-                  empty="Nothing flagged recently."
+                  empty="Nothing flagged recently"
+                  emptyBody="Moderation actions and command runs appear here as members use the bot."
                 />
               </>
             )}
 
             <h2 style={{ fontSize: '1.05rem', fontWeight: 600, marginBottom: '1rem' }}>
-              Servers ({overview.guildCount})
+              Servers (<span className="home-num">{overview.guildCount}</span>)
             </h2>
             {overview.guilds.length === 0 ? (
-              <p style={{ color: 'var(--home-ink-muted)' }}>A.L.I.C.E isn&rsquo;t in any servers right now.</p>
+              <div className="home-empty">
+                <h3>Not in any servers</h3>
+                <p>
+                  A.L.I.C.E isn&rsquo;t in any servers right now. Invite it to one and it
+                  will show up in this list.
+                </p>
+                <a href={INVITE_URL} target="_blank" rel="noopener" className="home-btn home-btn-primary">
+                  {INVITE_LABEL}
+                </a>
+              </div>
             ) : (
               <ul className="home-panel-list">
-                {overview.guilds.map((guild, i) => (
-                  <li
-                    key={guild.id}
-                    className="home-panel-row home-reveal-child"
-                    style={{ transitionDelay: visible ? `${i * 60}ms` : '0ms' }}
-                  >
+                {overview.guilds.map((guild) => (
+                  <li key={guild.id} className="home-panel-row">
                     {guild.icon ? (
                       <img src={guild.icon} alt="" width={28} height={28} className="home-avatar" />
                     ) : (
-                      <div className="home-avatar-placeholder" style={{ width: 28, height: 28 }} aria-hidden="true" />
+                      <div className="home-avatar home-avatar-placeholder" style={{ width: 28, height: 28 }} aria-hidden="true" />
                     )}
                     <span>{guild.name}</span>
                   </li>

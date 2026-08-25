@@ -125,21 +125,21 @@ export default function DevDashboard() {
         {status === 'ready' && overview && (
           <>
             <div className="home-stat-grid">
-              <div className="home-stat-tile">
+              <div className="home-stat-tile home-reveal-child" style={{ transitionDelay: visible ? '0ms' : '0ms' }}>
                 <div className="home-stat-tile-label">Servers</div>
                 <div className="home-stat-tile-value">{overview.guildCount}</div>
               </div>
-              <div className="home-stat-tile">
+              <div className="home-stat-tile home-reveal-child" style={{ transitionDelay: visible ? '60ms' : '0ms' }}>
                 <div className="home-stat-tile-label">Bot token</div>
                 <div className="home-stat-tile-value is-good">Valid</div>
               </div>
-              <div className="home-stat-tile">
+              <div className="home-stat-tile home-reveal-child" style={{ transitionDelay: visible ? '120ms' : '0ms' }}>
                 <div className="home-stat-tile-label">Last deploy</div>
                 <div className="home-stat-tile-value">
                   {overview.deployment ? overview.deployment.status : '—'}
                 </div>
               </div>
-              <div className="home-stat-tile">
+              <div className="home-stat-tile home-reveal-child" style={{ transitionDelay: visible ? '180ms' : '0ms' }}>
                 <div className="home-stat-tile-label">Deployed</div>
                 <div className="home-stat-tile-value">
                   {overview.deployment ? timeAgo(overview.deployment.createdAt) : '—'}

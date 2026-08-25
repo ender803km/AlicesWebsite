@@ -184,6 +184,11 @@
 }
 .home-nav-links a:hover { color: var(--home-ink); }
 .home-nav-links a.is-current { color: var(--home-accent-soft); }
+.home-nav-links a:focus-visible {
+  outline: 2px solid var(--home-accent-soft);
+  outline-offset: 4px;
+  border-radius: 0.25rem;
+}
 
 .home-nav-cta {
   display: inline-flex;
@@ -201,6 +206,10 @@
 }
 .home-nav-cta:hover { transform: translateY(-2px); box-shadow: 0 10px 24px -8px rgba(255, 255, 255, 0.25); }
 .home-nav-cta:active { transform: translateY(-2px) scale(0.96); }
+.home-nav-cta:focus-visible {
+  outline: 2px solid var(--home-accent-soft);
+  outline-offset: 3px;
+}
 .home-nav-cta .home-icon-chip { width: 22px; height: 22px; border-radius: 50%; background: rgba(6, 7, 10, 0.12); display: flex; align-items: center; justify-content: center; }
 .home-nav-cta .home-icon-chip svg { width: 11px; height: 11px; }
 
@@ -215,7 +224,9 @@
   cursor: pointer;
   flex: none;
   padding: 0;
+  transition: transform 0.3s var(--home-ease-spring), background 0.3s ease;
 }
+.home-hamburger:hover { background: rgba(255, 255, 255, 0.06); }
 .home-hamburger span {
   position: absolute;
   left: 11px;
@@ -231,6 +242,11 @@
 .home-hamburger.is-open span:nth-child(1) { top: 20px; transform: rotate(45deg); }
 .home-hamburger.is-open span:nth-child(2) { opacity: 0; }
 .home-hamburger.is-open span:nth-child(3) { top: 20px; transform: rotate(-45deg); }
+.home-hamburger:focus-visible {
+  outline: 2px solid var(--home-accent-soft);
+  outline-offset: 2px;
+}
+.home-hamburger:active { transform: scale(0.92); }
 
 /* full-screen mobile menu */
 .home-mobile-menu {
@@ -361,6 +377,10 @@
   will-change: transform;
 }
 .home-btn:active { transform: scale(0.97); }
+.home-btn:focus-visible {
+  outline: 2px solid var(--home-accent-soft);
+  outline-offset: 3px;
+}
 
 .home-btn-primary {
   gap: 0.75rem;
@@ -492,9 +512,18 @@
 .home-section-head h2 { font-size: clamp(1.9rem, 3vw, 2.6rem); font-weight: 700; text-wrap: balance; }
 .home-section-head p { margin-top: 1rem; color: var(--home-ink-muted); font-size: 1.02rem; max-width: 46ch; }
 
+/* Row tracks are sized explicitly rather than left to grid's auto-stretch
+   algorithm. Without this, the "mod" card's 2-row span (its 20rem
+   min-height, set below) gets satisfied by inflating whichever row has
+   the least competing content — in practice that stretched the give/eco
+   row far taller than its own copy needed, opening an oversized, uneven
+   gap under those two cards relative to star/conf beneath. Naming three
+   explicit tracks (top-heavy for mod+stat, matching second row, a
+   shorter closing row) makes the rhythm deliberate instead of accidental. */
 .home-bento {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: minmax(10.5rem, auto) minmax(10.5rem, auto) minmax(9rem, auto);
   grid-template-areas:
     'mod  mod  stat stat'
     'mod  mod  give eco'
@@ -578,6 +607,7 @@
   .home-portrait-shell { max-width: 22rem; }
   .home-bento {
     grid-template-columns: 1fr;
+    grid-template-rows: none;
     grid-template-areas: 'mod' 'stat' 'give' 'eco' 'star' 'conf';
   }
   .home-b-mod .home-card-core { min-height: 0; }
@@ -723,6 +753,10 @@
   transform: translateY(-2px);
 }
 .home-toc a:active { transform: translateY(-2px) scale(0.95); }
+.home-toc a:focus-visible {
+  outline: 2px solid var(--home-accent-soft);
+  outline-offset: 2px;
+}
 
 .home-cmd-module {
   scroll-margin-top: 7rem;
@@ -890,6 +924,11 @@
   border-radius: var(--home-radius-core);
   padding: 1.1rem 1.25rem;
   box-shadow: var(--home-elevation-glass);
+  transition: transform 0.5s var(--home-ease-spring), box-shadow 0.4s ease;
+}
+.home-stat-tile:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--home-elevation-glass-strong);
 }
 .home-stat-tile-label {
   color: var(--home-ink-faint);
@@ -956,6 +995,11 @@
   transition: box-shadow 0.3s var(--home-ease-spring);
 }
 .home-textarea { resize: vertical; min-height: 4.5rem; }
+.home-input:hover,
+.home-select:hover,
+.home-textarea:hover {
+  box-shadow: var(--home-glass-edge-strong), var(--home-glass-highlight);
+}
 .home-input:focus,
 .home-select:focus,
 .home-textarea:focus {
@@ -992,6 +1036,11 @@
   border-radius: 0.85rem;
   background: rgba(255, 255, 255, 0.02);
   box-shadow: var(--home-glass-edge);
+  transition: background 0.3s ease;
+}
+.home-switch-row:has(.home-switch:hover),
+.home-switch-row:has(.home-switch:focus-visible) {
+  background: rgba(255, 255, 255, 0.045);
 }
 .home-switch-row label {
   font-size: 0.85rem;
@@ -1054,6 +1103,11 @@
   transition: color 0.3s ease;
 }
 .home-footer-links a:hover { color: var(--home-ink); }
+.home-footer-links a:focus-visible {
+  outline: 2px solid var(--home-accent-soft);
+  outline-offset: 3px;
+  border-radius: 0.2rem;
+}
 .home-footer-copy {
   color: var(--home-ink-faint);
   font-size: 0.8rem;

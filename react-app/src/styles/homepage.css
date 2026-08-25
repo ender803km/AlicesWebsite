@@ -143,7 +143,13 @@
   justify-content: space-between;
   gap: 1.25rem;
   padding: 0.6rem 0.6rem 0.6rem 1.25rem;
-  background: rgba(10, 13, 19, 0.6);
+  /* High-opacity on purpose: this pill sits fixed above scrolling content
+     (z-index 1050), so headings and body copy regularly pass directly
+     behind it. At low opacity that scrolling text ghosts through, blurred
+     and enlarged-looking, which reads as a rendering bug rather than a
+     frosted-glass effect. 0.6 was too transparent for that; this keeps a
+     soft blur/saturate frost without letting page content bleed through. */
+  background: rgba(8, 10, 15, 0.92);
   border-radius: 999px;
   backdrop-filter: blur(24px) saturate(140%);
   -webkit-backdrop-filter: blur(24px) saturate(140%);

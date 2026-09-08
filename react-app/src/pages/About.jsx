@@ -23,7 +23,7 @@ export default function About() {
         <p className="home-lede">
           Artificial Learning and Intelligent Community Engine. One Discord bot covering the
           jobs most servers otherwise hand to five or six separate ones: moderation, an
-          economy, an RPG, giveaways, community games and activity tracking.
+          economy, an RPG, a poker table, giveaways, community games and activity tracking.
         </p>
 
         <h2>Why it exists</h2>
@@ -35,37 +35,45 @@ export default function About() {
         </p>
         <p>
           A.L.I.C.E is built around both halves of that. The economy, pets, daily challenges,
-          counting game and RPG exist to give people a small reason to check in. Automod and
-          the anonymous warning system exist so that keeping the place civil does not fall on
-          one person who then burns out.
+          the weekly rotation, alliances, the counting game and the RPG exist to give people a
+          small reason to check in, and a slightly different one each day. Automod and the
+          anonymous warning system exist so that keeping the place civil does not fall on one
+          person who then burns out.
         </p>
 
         <h2>How it is built</h2>
         <p>
           Every system shares one MongoDB-backed core rather than running as separate bots.
           That is the reason coins earned in one place count toward an achievement somewhere
-          else, and the reason there is one dashboard rather than six.
+          else, and the reason there is one dashboard rather than six. Each module registers
+          a manifest saying what it owns and what it depends on, so turning one off tells you
+          what else it would take with it instead of quietly breaking something.
         </p>
         <dl className="home-facts">
           <dt>Runtime</dt>
           <dd>Node.js with discord.js</dd>
           <dt>Storage</dt>
-          <dd>MongoDB, one shared core across all {MODULE_COUNT} systems</dd>
+          <dd>MongoDB, one shared core across all {MODULE_COUNT} modules</dd>
           <dt>Hosting</dt>
           <dd>Railway, running continuously rather than on demand</dd>
           <dt>Moderation</dt>
           <dd>
-            Rule-based automod, plus a language model layer that reads context before it acts
-            rather than matching keywords
+            Rule-based automod, plus an opt-in language model layer that reads context before
+            it acts rather than matching keywords, with self-harm and child-safety flags
+            routed to their own private alert channels
           </dd>
           <dt>Interface</dt>
-          <dd>Discord slash commands, plus this site for per-server configuration</dd>
+          <dd>
+            Discord slash commands and a ? text-prefix shortcut, an in-Discord settings
+            dashboard, and this site
+          </dd>
         </dl>
 
         <h2>What is in it</h2>
         <p>
-          {COMMAND_COUNT} commands across {MODULE_COUNT} systems, grouped into five categories.
-          Every one is documented.
+          {COMMAND_COUNT} commands across {MODULE_COUNT} modules, grouped into{' '}
+          {CATEGORIES.length} categories. Every one is documented, and the list is generated
+          from the bot&rsquo;s own source rather than kept by hand.
         </p>
         <ul className="home-list">
           {CATEGORIES.map((category) => (
@@ -77,8 +85,8 @@ export default function About() {
 
         <h2>Who runs it</h2>
         <p>
-          One developer. A.L.I.C.E is free, with no paid tier and no commands held back behind
-          one. If something breaks, or you want a system that is not here yet, the{' '}
+          One developer. Every command works today, with nothing held back. If something
+          breaks, or you want a system that is not here yet, the{' '}
           <a
             href={SUPPORT_SERVER_URL}
             target="_blank"

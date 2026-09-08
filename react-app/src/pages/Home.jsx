@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
   ArrowUpRight,
+  ArrowsClockwise,
+  Cards,
   Coins,
   GameController,
   PaperPlaneTilt,
@@ -44,21 +46,21 @@ const CATEGORY_ICONS = {
 /* Hand-picked so each cell shows commands a server owner would actually
    recognise, rather than whichever ones happen to be declared first. */
 const CATEGORY_SHOWCASE = {
-  economy: ['/daily', '/work', '/blackjack', '/bankrob', '/petshop', '/challenges'],
-  moderation: ['/warn', '/warns', '/setup channels', '/setup starboard'],
-  adventure: ['/start', '/quests', '/equip', '/travel'],
-  community: ['/giveaway start', '/count', '/stats', '/milestones'],
+  economy: ['/daily', '/work', '/fish', '/blackjack', '/petmenu', '/alliance', '/challenges'],
+  moderation: ['/warn', 'Warn Message', '/warns', '/setup dashboard'],
+  adventure: ['/start', '/quests', '/travel', '/launch'],
+  community: ['/giveaway start', '/count', '/leaderboard', '/stats', '/milestones'],
   utilities: ['/steal', '/export-chat-history'],
 }
 
 const CATEGORY_PITCH = {
   economy:
-    'Coins to earn, jobs to work, a bank that pays interest, blackjack to lose it all at, pets that keep earning while your members are offline, and a fresh set of challenges every day. This is the part that turns a quiet server into a daily habit.',
+    'Coins to earn, jobs to work, a bank that pays interest, blackjack to lose it all at, fishing and hunting with tools that wear out, and pets that keep earning while your members are offline. On top of that sit daily challenges, a weekly rotation that scores a different theme every day, and six-person alliances competing for the Sunday standings.',
   moderation:
-    'Automod clears slurs, invite links, caps and spam on its own. Three warnings inside 24 hours jails a member automatically, and every action lands in a numbered mod log. Warnings are anonymous, so your mods stop being the target.',
-  adventure: 'A full text RPG living inside your server. Fight, quest, mine, forge gear, and unlock new areas.',
-  community: 'Giveaways weighted by how active people actually are, a counting game, a starboard, and public leaderboards.',
-  utilities: 'The small things you would otherwise add a fourth bot for.',
+    'Two tiers of automod: a plain-text pass that clears slurs, invite links, caps and spam on its own, and an opt-in AI check that reads context before acting. Three warnings inside 24 hours jails a member automatically. Warnings are anonymous, so your mods stop being the target — and everything is configured from one dashboard.',
+  adventure: 'A turn-based RPG with its own gold, gear and areas to unlock, plus a real Texas Hold\'em table running as a Discord Activity.',
+  community: 'Giveaways weighted by how active people actually are, a counting game, a starboard, a one-word collaborative story, reaction GIFs, and one leaderboard hub covering all six boards.',
+  utilities: 'The small things you would otherwise add a fourth bot for — including a ? text-prefix shortcut for every economy command.',
 }
 
 const PROBLEMS = [
@@ -78,7 +80,34 @@ const PROBLEMS = [
     problem: 'Six bots, six dashboards',
     answer: 'One bot, one dashboard',
     detail:
-      'Twelve systems on one core, configured from one web dashboard, holding one set of permissions in your server settings.',
+      `${MODULE_COUNT} modules on one core, configured from one dashboard, holding one set of permissions in your server settings.`,
+  },
+]
+
+/* The three systems that most change what a server can do with the bot, and
+   the ones no other module explains on its own. Ordered by how much of the
+   server they involve: a whole alliance, a whole week, a whole table. */
+const HIGHLIGHTS = [
+  {
+    icon: UsersThree,
+    title: 'Alliances',
+    lede: 'Six people, one treasury',
+    body:
+      'Up to six members pool their weekly points into one alliance with a shared treasury, a rank ladder, and a Tech Center of upgrades. Founding one is deliberately expensive — it is a clubhouse, not a click. Nothing you can buy multiplies your points, so the richest alliance cannot compound its lead.',
+  },
+  {
+    icon: ArrowsClockwise,
+    title: 'Weekly Rotation',
+    lede: 'A different game every day',
+    body:
+      'Monday scores hustling and pets, Tuesday social and gifts, Wednesday expansion, Thursday the casino, Friday voice, Saturday the heist. Sunday is Results Day: the standings post and the top three take the winner role, then it starts again.',
+  },
+  {
+    icon: Cards,
+    title: 'Poker',
+    lede: 'A real table, inside Discord',
+    body:
+      "Texas Hold'em as a Discord Activity — a live table rendered in Discord's own panel, buying in against the same balance your members earn everywhere else.",
   },
 ]
 
@@ -91,7 +120,7 @@ const STEPS = [
   {
     icon: SlidersHorizontal,
     title: 'Configure',
-    body: 'Run /setup to pick your log channels, jailed role, starboard and counting channel. Or use the dashboard.',
+    body: 'Run /setup dashboard to switch modules on or off and set your channels and roles, all from one screen. Or use the web dashboard.',
   },
   {
     icon: GameController,
@@ -269,7 +298,7 @@ export default function Home() {
               style={{ transitionDelay: heroVisible ? '90ms' : '0ms' }}
             >
               A.L.I.C.E runs the economy, games, giveaways and moderation that keep a Discord
-              server busy. Twelve systems, one bot.
+              server busy. {MODULE_COUNT} modules, one bot.
             </p>
             <div
               className={`home-cta-row home-reveal ${heroShown}`}
@@ -330,7 +359,9 @@ export default function Home() {
         <div className="home-wrap">
           <Reveal className="home-section-head">
             <span className="home-eyebrow">What it does</span>
-            <h2 id="features-heading">Twelve systems, grouped five ways.</h2>
+            <h2 id="features-heading">
+              {MODULE_COUNT} modules, grouped {CATEGORIES.length} ways.
+            </h2>
             <p>
               Everything runs on the same MongoDB core, so progress, coins and stats follow a
               member across every system instead of living in separate bots.
@@ -370,6 +401,33 @@ export default function Home() {
                 </Reveal>
               )
             })}
+          </div>
+        </div>
+      </section>
+
+      {/* 4b. The three systems worth a closer look */}
+      <section className="home-section" aria-labelledby="highlights-heading">
+        <div className="home-wrap">
+          <Reveal className="home-section-head">
+            <span className="home-eyebrow">Worth the tour</span>
+            <h2 id="highlights-heading">Three systems most bots do not have.</h2>
+            <p>
+              The economy is the habit. These are the reasons it stays interesting once
+              everyone already has coins.
+            </p>
+          </Reveal>
+
+          <div className="home-triad">
+            {HIGHLIGHTS.map((item, i) => (
+              <Reveal className="home-triad-item" key={item.title} delay={i * 90}>
+                <span className="home-card-icon" aria-hidden="true">
+                  <item.icon size={20} weight="duotone" />
+                </span>
+                <div className="home-triad-problem">{item.title}</div>
+                <div className="home-triad-answer">{item.lede}</div>
+                <p className="home-triad-detail">{item.body}</p>
+              </Reveal>
+            ))}
           </div>
         </div>
       </section>
@@ -439,8 +497,8 @@ export default function Home() {
           <Reveal className="home-closer">
             <h2 id="closer-heading">Add it to your server.</h2>
             <p>
-              Free, no tiers, no premium commands held back. Turn off whatever you do not want
-              from the dashboard.
+              Free to add, and every command works from day one. Turn off whatever you do not
+              want from the dashboard.
             </p>
             <div className="home-cta-row">
               <InviteButton size="home-btn-lg" />

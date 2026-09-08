@@ -1,25 +1,40 @@
 // Structured command reference for A.L.I.C.E.
 //
-// Transcribed from the hand-written Commands page. Module `id`s match the
-// anchors used by the old table of contents so existing deep links keep
-// working. `access` mirrors the permission badge shown on the old page and
-// `kind` records how a command is actually invoked in Discord.
+// GENERATED FROM THE BOT SOURCE, not written by hand. Every command name,
+// argument list, description and permission below was read out of the bot
+// repo's own command builders (`new SlashCommandBuilder()` /
+// `ContextMenuCommandBuilder`), and every module name and description tracks
+// the `meta` manifest each module registers with the bot's feature registry
+// (core/features.js). Module `id`s match the anchors the old table of
+// contents used, so existing deep links keep working.
 //
 // access: 'everyone' | 'mods' | 'admin' | 'manageExpressions'
 // kind:   'slash' | 'prefix' | 'context' | 'both'
+//         'both' marks a slash command that also answers to the `?` text
+//         prefix — see the Text Prefix Bridge module for the alias list.
 
 export const CATEGORIES = [
   {
     id: 'moderation',
     name: 'Moderation',
-    blurb: 'Automod, anonymous warnings, and the single setup command that wires every other module into your server.',
+    blurb:
+      'Automod across two tiers, anonymous warnings, a hard safety lock, and the ' +
+      'single dashboard that configures every other module.',
     modules: [
       {
         id: 'moderation',
         name: 'Moderation',
         emoji: '🛡',
         description:
-          'Automatic message filtering plus an anonymous warning system: three warnings within 24 hours automatically jails the member for 3 hours. Automod deletes the message and issues a warning on its own for blocked words, Discord invite links, emoji spam, excessive caps, repeated messages, and rapid short-message spam, with no command needed. Channels can be exempted from the spam checks (slurs and invites still apply everywhere) via /setup spam-exempt.',
+          'A two-tier filter plus an anonymous warning system. Tier 1 is a plain-text ' +
+          'pass that deletes and warns on its own for slurs, Discord invite links, ' +
+          'emoji spam, excessive caps, repeated messages and rapid short-message spam — ' +
+          'no command needed, and its thresholds are tunable per server. Tier 2 is an ' +
+          'opt-in LLM check that reads context before acting, and routes anything it ' +
+          'flags as self-harm or child-safety to their own private alert channels ' +
+          'rather than burying it in the mod log. Three warnings inside 24 hours jails ' +
+          'a member for 3 hours. Channels can be exempted from the spam checks (slurs ' +
+          'and invites still apply everywhere).',
         groups: [
           {
             title: null,
@@ -28,28 +43,32 @@ export const CATEGORIES = [
               {
                 name: '/warn',
                 args: '<user> <reason> [message_id]',
-                desc: 'Anonymously warn a user. Optionally reference a message in the current channel to delete it along with the warning.',
+                desc:
+                  'Anonymously warn a user. Optionally reference a message in the current ' +
+                  'channel to delete it along with the warning.',
                 access: 'mods',
                 kind: 'slash',
               },
               {
                 name: 'Warn Message',
                 args: null,
-                desc: "Context-menu action that warns a message's author directly, with the message auto-filled and deleted, same as /warn.",
+                desc:
+                  'Context-menu action that warns a message\'s author directly, with the message ' +
+                  'auto-filled and deleted, same as /warn.',
                 access: 'mods',
                 kind: 'context',
               },
               {
                 name: '/warns',
                 args: '[user]',
-                desc: 'Check how many warnings (out of 3) a user has and when they reset.',
+                desc: 'Check warnings for a user, and when they reset.',
                 access: 'everyone',
                 kind: 'slash',
               },
               {
                 name: '/clearwarns',
                 args: '<user>',
-                desc: 'Clear all warnings for a user.',
+                desc: 'Clear warnings for a user (mods only).',
                 access: 'mods',
                 kind: 'slash',
               },
@@ -62,61 +81,74 @@ export const CATEGORIES = [
         name: 'Server Setup',
         emoji: '⚙️',
         description:
-          'One command to configure everything else on this list: moderation channels, the jailed role, the starboard, the counting channel, automod exemptions, and the Interactions pack. Every subcommand requires Administrator permission.',
+          'Everything a server admin configures now lives behind one command. /setup ' +
+          'dashboard opens an interactive screen listing every module, with ' +
+          'Enable/Disable and a Configure page per module — log and announcement ' +
+          'channels, the jailed role, the starboard threshold, the counting and ' +
+          'one-word-story channels, giveaway host role, economy sub-toggles, and the ' +
+          'Weekly Rotation\'s winner role. It replaced the old per-thing subcommands ' +
+          '(/setup channels, /setup starboard, /setup counting and the rest), so there ' +
+          'is one place to look rather than eight.',
+        groups: [
+          {
+            title: null,
+            note:
+              'Disabling a module warns you about anything that depends on it, and modules ' +
+              'that hard-require another one cannot be enabled until it is on.',
+            commands: [
+              {
+                name: '/setup dashboard',
+                args: null,
+                desc: 'Open the interactive settings dashboard for this server.',
+                access: 'admin',
+                kind: 'slash',
+              },
+              {
+                name: '/setup challenges-launch',
+                args: null,
+                desc:
+                  'Start this server\'s Weekly Rotation phase clock. One-time and cannot be ' +
+                  'undone — standalone challenges go live immediately, the rotation itself ' +
+                  'unlocks 7 days later.',
+                access: 'admin',
+                kind: 'slash',
+              },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'safetylock',
+        name: 'Safety Lock',
+        emoji: '🔒',
+        description:
+          'A hard safe word for a designated channel. Saying it — in any spelling or ' +
+          'spacing — immediately removes Send Messages from the configured role in that ' +
+          'channel, with no reliance on anyone choosing to stop. Configured from the ' +
+          'dashboard; it has no commands of its own on purpose, so it cannot be ' +
+          'triggered or bypassed by one.',
         groups: [
           {
             title: null,
             note: null,
             commands: [
-              {
-                name: '/setup channels',
-                args: '[mod_warn] [hall_of_shame] [general] [logs]',
-                desc: 'Set the channels used for /warn, full warn details, light warn notices, and numbered mod-log cases (warn/jail/unjail/timeout).',
-                access: 'admin',
-                kind: 'slash',
-              },
-              {
-                name: '/setup role',
-                args: '<jailed>',
-                desc: "Set the role applied automatically on a member's 3rd warning.",
-                access: 'admin',
-                kind: 'slash',
-              },
-              {
-                name: '/setup starboard',
-                args: '[channel] [threshold]',
-                desc: 'Set the starboard channel and/or how many ⭐ reactions are needed (default 3).',
-                access: 'admin',
-                kind: 'slash',
-              },
-              {
-                name: '/setup counting',
-                args: '<channel>',
-                desc: 'Set the channel the counting game runs in. This is required before /count, /buysave, or /saves do anything.',
-                access: 'admin',
-                kind: 'slash',
-              },
-              {
-                name: '/setup spam-exempt',
-                args: '<add|remove> <channel>',
-                desc: "Exempt a channel from automod's spam checks (slur and invite detection still apply).",
-                access: 'admin',
-                kind: 'slash',
-              },
-              {
-                name: '/setup interactions',
-                args: '<mature_commands> <command_gifs>',
-                desc: 'Turn on the Interactions pack (see below) for this server, choosing whether to also allow 18+ commands and whether replies attach GIFs.',
-                access: 'admin',
-                kind: 'slash',
-              },
-              {
-                name: '/setup view',
-                args: null,
-                desc: "View this server's current configuration.",
-                access: 'admin',
-                kind: 'slash',
-              },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'membercleanup',
+        name: 'Member Cleanup',
+        emoji: '🧹',
+        description:
+          'Wipes a departed member\'s stats and economy data after a grace period, so a ' +
+          'server that churns does not carry ghost entries on its leaderboards forever. ' +
+          'Runs on its own. Requires Stat Bot and Economy to be enabled.',
+        groups: [
+          {
+            title: null,
+            note: null,
+            commands: [
             ],
           },
         ],
@@ -126,14 +158,21 @@ export const CATEGORIES = [
   {
     id: 'economy',
     name: 'Economy',
-    blurb: 'Coins, banking, grinding, gambling, heists, shops, pets, and daily rose challenges.',
+    blurb:
+      'Coins, jobs, gambling, fishing and hunting, pets that earn while you sleep, ' +
+      'gifting, six-person alliances, and a different scoring theme every day of ' +
+      'the week.',
     modules: [
       {
         id: 'economy',
         name: 'Economy',
         emoji: '💰',
         description:
-          'A wallet-and-bank currency system with daily rewards, a full grind loop, a shop, heists, and a few ways to gamble it all away. Tip: most commands below also work as a ?-prefix shortcut (e.g. ?bal, ?daily, ?slots 50). Run /econhelp in Discord for the full alias list. The Pets and Roses & Challenges commands below, plus /toolbench, /dailyshop, and /buydaily, are slash-only.',
+          'The currency hub, and the reason people open the server every day. Coins are ' +
+          'earned by talking, working, grinding and gambling, banked at interest, spent ' +
+          'in three different shops, and quietly generated in the background by pets on ' +
+          'display. Fishing and hunting need real tools that wear out, get enhanced and ' +
+          'can be deployed from a Tool Shed while you are offline.',
         groups: [
           {
             title: 'Currency & Banking',
@@ -142,35 +181,35 @@ export const CATEGORIES = [
               {
                 name: '/balance',
                 args: '[user]',
-                desc: 'Check wallet and bank balance. Bank balances over 100 coins earn 1% interest daily (1.5% with the Vault Upgrade).',
-                access: 'everyone',
-                kind: 'both',
-              },
-              {
-                name: '/leaderboard',
-                args: null,
-                desc: 'See the richest members in the server (wallet + bank combined).',
+                desc: 'Check your wallet and bank balance.',
                 access: 'everyone',
                 kind: 'both',
               },
               {
                 name: '/deposit',
-                args: '<amount|all>',
-                desc: 'Move coins from your wallet into your bank.',
+                args: '<amount>',
+                desc: 'Deposit coins from your wallet into the bank.',
                 access: 'everyone',
                 kind: 'both',
               },
               {
                 name: '/withdraw',
-                args: '<amount|all>',
-                desc: 'Move coins from your bank into your wallet.',
+                args: '<amount>',
+                desc: 'Withdraw coins from your bank to your wallet.',
                 access: 'everyone',
                 kind: 'both',
               },
               {
                 name: '/transfer',
                 args: '<user> <amount>',
-                desc: 'Send coins from your wallet to another member.',
+                desc: 'Send coins from your wallet to another user.',
+                access: 'everyone',
+                kind: 'both',
+              },
+              {
+                name: '/daily',
+                args: null,
+                desc: 'Claim your daily coins.',
                 access: 'everyone',
                 kind: 'both',
               },
@@ -178,15 +217,10 @@ export const CATEGORIES = [
           },
           {
             title: 'Grinding',
-            note: null,
+            note:
+              'Every command here feeds daily challenges and, once launched, the Weekly ' +
+              'Rotation.',
             commands: [
-              {
-                name: '/daily',
-                args: null,
-                desc: 'Claim 500 coins, plus a streak bonus (+5% per consecutive day, capped at +100%). Resets every 24 hours, with a 48-hour grace period to keep your streak alive.',
-                access: 'everyone',
-                kind: 'both',
-              },
               {
                 name: '/work',
                 args: null,
@@ -197,72 +231,78 @@ export const CATEGORIES = [
               {
                 name: '/apply',
                 args: '<job>',
-                desc: 'Apply for a job. It is purely cosmetic and flavors the results of your /work.',
+                desc: 'Apply for a job — purely cosmetic, flavors your /work results.',
                 access: 'everyone',
                 kind: 'both',
               },
               {
                 name: '/beg',
                 args: null,
-                desc: 'Beg for spare change: low risk, low reward.',
+                desc: 'Pick a spot and hold out your hand.',
                 access: 'everyone',
                 kind: 'both',
               },
               {
                 name: '/crime',
                 args: null,
-                desc: 'Commit a crime for quick cash. It is riskier than /daily, but a bigger payout if it succeeds. Failing costs a fine.',
+                desc: 'Pick a job and hope it isn\'t the one that goes wrong.',
                 access: 'everyone',
                 kind: 'both',
               },
               {
                 name: '/dig',
                 args: null,
-                desc: 'Dig through the dumpster for whatever you can find.',
+                desc: 'Pick somewhere to dig through and see what\'s in it.',
                 access: 'everyone',
                 kind: 'both',
               },
               {
                 name: '/search',
                 args: null,
-                desc: 'Search around for spare coins: safer than /beg, but a smaller reward.',
+                desc: 'Pick somewhere to search and hope you picked right.',
                 access: 'everyone',
                 kind: 'both',
               },
               {
                 name: '/fish',
                 args: null,
-                desc: 'Cast your line and see what you catch. Requires a Fishing Rod from /shop.',
+                desc: 'Cast your line and see what you catch — requires a Fishing Rod.',
                 access: 'everyone',
                 kind: 'both',
               },
               {
                 name: '/hunt',
                 args: null,
-                desc: 'Head into the woods and see what you bag. Requires a Rifle from /shop. Can come back empty-handed.',
+                desc: 'Head into the woods and see what you bag — requires a Rifle.',
                 access: 'everyone',
                 kind: 'both',
               },
               {
                 name: '/sell',
-                args: '[item] [quantity|all]',
-                desc: 'Sell fish or hunted animals from your inventory for coins. Omit the item to open an interactive sell menu.',
+                args: '[item] [quantity]',
+                desc:
+                  'Sell fish or hunted animals from your inventory for coins — omit the item ' +
+                  'for a menu.',
                 access: 'everyone',
                 kind: 'both',
               },
               {
-                name: '/fishdex',
+                name: '/creaturedex',
                 args: null,
-                desc: 'View every fish species, its rarity, catch odds, and sell price.',
+                desc:
+                  'Browse every huntable and fishable creature, including Tool Shed deployment ' +
+                  'catches.',
                 access: 'everyone',
                 kind: 'both',
               },
               {
-                name: '/huntdex',
+                name: '/flow start',
                 args: null,
-                desc: 'View every huntable animal, its rarity, catch odds, and sell price.',
+                desc:
+                  'Open your grind panel — run the repeatable earners from buttons instead of ' +
+                  'retyping commands.',
                 access: 'everyone',
-                kind: 'both',
+                kind: 'slash',
               },
             ],
           },
@@ -271,23 +311,23 @@ export const CATEGORIES = [
             note: null,
             commands: [
               {
+                name: '/blackjack',
+                args: '<amount>',
+                desc: 'Play a game of blackjack.',
+                access: 'everyone',
+                kind: 'both',
+              },
+              {
                 name: '/coinflip',
-                args: '<heads|tails> <amount|all>',
-                desc: 'Bet on a coin flip: double or nothing.',
+                args: '<side> <amount>',
+                desc: 'Bet on heads or tails.',
                 access: 'everyone',
                 kind: 'both',
               },
               {
                 name: '/slots',
-                args: '<amount|all>',
-                desc: 'Spin a 3-reel slot machine. Two matching symbols pay a small multiplier, three of a kind hits the jackpot.',
-                access: 'everyone',
-                kind: 'both',
-              },
-              {
-                name: '/blackjack',
-                args: '<amount|all>',
-                desc: 'Play blackjack against the dealer using Hit / Stand / Double Down buttons.',
+                args: '<amount>',
+                desc: 'Spin the slot machine.',
                 access: 'everyone',
                 kind: 'both',
               },
@@ -298,23 +338,27 @@ export const CATEGORIES = [
             note: null,
             commands: [
               {
-                name: '/bankrob',
+                name: '/rob',
                 args: '<user>',
-                desc: `Attempt to rob a user's bank. It works solo, but others can click "Join Heist" within 30 seconds to improve the odds. Failing costs everyone involved a fine.`,
+                desc: 'Attempt to steal coins from another user\'s wallet — riskier than /crime.',
                 access: 'everyone',
                 kind: 'both',
               },
               {
-                name: '/rob',
+                name: '/bankrob',
                 args: '<user>',
-                desc: "Attempt to steal coins straight from another member's wallet: instant and solo, riskier than /crime. Failing costs a fine.",
+                desc:
+                  'Attempt to rob a user\'s bank. Works solo, but others can join to improve the ' +
+                  'odds.',
                 access: 'everyone',
                 kind: 'both',
               },
               {
                 name: '/passive',
                 args: null,
-                desc: "Toggle Passive Mode. It protects you from being robbed, but restricts your own robbing and lowers grind earnings while it's active.",
+                desc:
+                  'Toggle Passive Mode — protects you from /rob and /bankrob, but stops you ' +
+                  'robbing and lowers your earnings.',
                 access: 'everyone',
                 kind: 'both',
               },
@@ -327,49 +371,51 @@ export const CATEGORIES = [
               {
                 name: '/shop',
                 args: '[category]',
-                desc: 'Browse items available to buy: Tools, Consumables, or permanent Upgrades.',
+                desc: 'Browse items available to buy.',
                 access: 'everyone',
                 kind: 'both',
               },
               {
                 name: '/buy',
-                args: '<item> [quantity]',
-                desc: 'Buy an item from the shop (quantity is ignored for one-time upgrades).',
-                access: 'everyone',
-                kind: 'both',
-              },
-              {
-                name: '/inventory',
-                args: null,
-                desc: 'See your tools, consumables, collectables, and upgrades.',
-                access: 'everyone',
-                kind: 'both',
-              },
-              {
-                name: '/use',
-                args: '<item> [quantity]',
-                desc: `Use one or more of a consumable (Coffee, Lucky Charm, Disguise, etc.) for a boost on your next matching command. Specify a number or "all" (defaults to 1).`,
+                args: '<item> [quantity] [max]',
+                desc: 'Buy an item from the shop.',
                 access: 'everyone',
                 kind: 'both',
               },
               {
                 name: '/dailyshop',
                 args: null,
-                desc: "View today's rotating shop selection: a second, separately-stocked shop from /shop that refreshes daily.",
+                desc: 'View today\'s rotating shop selection.',
                 access: 'everyone',
                 kind: 'slash',
               },
               {
                 name: '/buydaily',
                 args: '<item> [quantity]',
-                desc: "Buy an item from today's rotating shop.",
+                desc: 'Buy an item from today\'s rotating shop.',
                 access: 'everyone',
                 kind: 'slash',
               },
               {
+                name: '/inventory',
+                args: null,
+                desc: 'See your tools, consumables, giftables, collectibles and upgrades.',
+                access: 'everyone',
+                kind: 'both',
+              },
+              {
+                name: '/use',
+                args: '<item> [quantity]',
+                desc: 'Use a consumable from your inventory.',
+                access: 'everyone',
+                kind: 'both',
+              },
+              {
                 name: '/toolbench',
                 args: null,
-                desc: 'Purchase, enhance, and upgrade your Fishing Rod and Rifle through an interactive button menu.',
+                desc:
+                  'Purchase, enhance and upgrade your Fishing Rod and Rifle, and run Tool Shed ' +
+                  'deployments.',
                 access: 'everyone',
                 kind: 'slash',
               },
@@ -377,110 +423,221 @@ export const CATEGORIES = [
           },
           {
             title: 'Pets',
-            note: null,
+            note:
+              'Placed pets keep producing coins while their owner is offline, and get ' +
+              'fatigued until they are fed.',
             commands: [
               {
-                name: '/petshop',
+                name: '/petmenu',
                 args: null,
-                desc: `View the current pet shop rotation (refreshes every few minutes): 5 slots, one of which can roll a rarer "wildcard" tier.`,
-                access: 'everyone',
-                kind: 'slash',
-              },
-              {
-                name: '/buypet',
-                args: '<slot>',
-                desc: 'Buy the pet sitting in a given /petshop slot (1-5).',
-                access: 'everyone',
-                kind: 'slash',
-              },
-              {
-                name: '/petdex',
-                args: null,
-                desc: 'Browse every pet tier and species: spawn odds, price range, and coin-earn rate.',
+                desc: 'Open the pet menu — buy pets and manage your display.',
                 access: 'everyone',
                 kind: 'slash',
               },
               {
                 name: '/pets view',
                 args: '[user]',
-                desc: 'List every pet you (or another member) own, both on display and in storage.',
+                desc: 'List every pet you own, placed and in storage.',
                 access: 'everyone',
                 kind: 'slash',
               },
               {
                 name: '/pets sell',
                 args: '<pet>',
-                desc: 'Sell an owned pet for coins, by its number from /pets view.',
+                desc: 'Sell an owned pet for coins.',
                 access: 'everyone',
                 kind: 'slash',
               },
               {
                 name: '/pets feed',
                 args: '<pet>',
-                desc: 'Feed a Pet Treat to a fatigued pet to restore it. Pets stop earning once fully fatigued.',
+                desc: 'Feed a Pet Treat to a fatigued pet to restore it.',
                 access: 'everyone',
                 kind: 'slash',
               },
               {
                 name: '/display view',
                 args: '[user]',
-                desc: "View your (or another member's) display slots and how much coin production is waiting to be collected.",
+                desc: 'View your display slots and stored coin production.',
                 access: 'everyone',
                 kind: 'slash',
               },
               {
                 name: '/display place',
                 args: '<pet> <slot>',
-                desc: 'Place an owned pet into a display slot so it starts earning coins passively.',
+                desc: 'Place an owned pet into a display slot.',
                 access: 'everyone',
                 kind: 'slash',
               },
               {
                 name: '/display remove',
                 args: '<slot>',
-                desc: 'Remove the pet in a display slot and send it back to storage.',
+                desc: 'Remove the pet in a display slot back into storage.',
                 access: 'everyone',
                 kind: 'slash',
               },
               {
                 name: '/display collect',
                 args: null,
-                desc: "Collect your pet display's accrued coin production.",
+                desc: 'Collect your pet display\'s accrued coin production.',
                 access: 'everyone',
                 kind: 'slash',
               },
               {
-                name: '/petmenu',
+                name: '/petshop',
                 args: null,
-                desc: 'A single button-and-menu hub for buying, viewing, placing, feeding, and selling pets. No typing required.',
+                desc: 'View the currently rotating pet shop selection.',
+                access: 'everyone',
+                kind: 'slash',
+              },
+              {
+                name: '/buypet',
+                args: '<slot>',
+                desc: 'Buy a pet from the current pet shop rotation.',
+                access: 'everyone',
+                kind: 'slash',
+              },
+              {
+                name: '/petdex',
+                args: null,
+                desc:
+                  'View every pet tier, its spawn rate, price range, earn rate and fatigue ' +
+                  'window.',
                 access: 'everyone',
                 kind: 'slash',
               },
             ],
           },
           {
-            title: 'Roses & Challenges',
+            title: 'Gifting',
+            note:
+              'Gifting is off until an admin enables it and sets a gift channel. Roses are ' +
+              'the exception — they are paid from your earned rose balance and post ' +
+              'nowhere.',
+            commands: [
+              {
+                name: '/gift',
+                args: '<user> <gift>',
+                desc:
+                  'Send a gift from the catalog to another user. Gifts build Bond Points ' +
+                  'between the two of you.',
+                access: 'everyone',
+                kind: 'slash',
+              },
+              {
+                name: '/gifts',
+                args: null,
+                desc: 'Browse the full gift catalog, from cheapest to most expensive.',
+                access: 'everyone',
+                kind: 'slash',
+              },
+              {
+                name: '/rings',
+                args: null,
+                desc:
+                  'Preview the ring catalog. Admin-only, and temporary — a preview until the ' +
+                  'real Ring Shop ships.',
+                access: 'admin',
+                kind: 'slash',
+              },
+            ],
+          },
+          {
+            title: 'Help',
+            note: null,
+            commands: [
+              {
+                name: '/econhelp',
+                args: null,
+                desc: 'Show every economy command, grouped by category.',
+                access: 'everyone',
+                kind: 'both',
+              },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'alliances',
+        name: 'Alliances',
+        emoji: '🤝',
+        description:
+          'Up to six members pool their weekly points into one alliance with a shared ' +
+          'treasury, a rank ladder, and a Tech Center of upgrades bought with coins — a ' +
+          'charter and motto, a private channel, treasury redistribution. Founding one ' +
+          'costs 50,000,000 coins by default, deliberately steep: it is a six-person ' +
+          'clubhouse, not something to start on a whim. The cost is tunable per server, ' +
+          'and the whole system can be switched off from the dashboard. Upgrades are ' +
+          'cosmetic or redistributive on purpose — nothing you can buy multiplies your ' +
+          'Weekly Rotation points.',
+        groups: [
+          {
+            title: null,
+            note: null,
+            commands: [
+              {
+                name: '/alliance',
+                args: null,
+                desc:
+                  'View your alliance, or start one. Everything else — invites, ranks, ' +
+                  'treasury, upgrades — runs from buttons on that screen.',
+                access: 'everyone',
+                kind: 'slash',
+              },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'challenges',
+        name: 'Challenges & Weekly Rotation',
+        emoji: '🔄',
+        description:
+          'Two layers of recurring goals. Daily challenges refresh every day and pay ' +
+          'coins, a completion bonus, and giveaway entries. On top of them sits the ' +
+          'Weekly Rotation: each day of the week scores a different theme — Monday ' +
+          'Hustle + Pets, Tuesday Social + Gifts, Wednesday Expansion, Thursday Casino, ' +
+          'Friday Voice, Saturday the Heist — with Sunday as Results Day, when the ' +
+          'standings post and the top three take the winner role. A server starts its ' +
+          'own clock with /setup challenges-launch; standalone challenges are live ' +
+          'immediately and the rotation unlocks seven days later.',
+        groups: [
+          {
+            title: null,
             note: null,
             commands: [
               {
                 name: '/challenges',
                 args: null,
-                desc: "View today's daily challenges (send messages, count correctly, gamble, shop, and more). Complete enough of them and you earn a 🌹 rose.",
+                desc:
+                  'View today\'s daily challenges and your progress, and preview the Weekly ' +
+                  'Rotation, your points and your rank.',
                 access: 'everyone',
                 kind: 'slash',
               },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'packs',
+        name: 'Packs & Premium',
+        emoji: '💎',
+        description:
+          'An in-Discord storefront listing planned premium subscriptions and one-time ' +
+          'item packs across gold, rings, pets, gifts and RPG upgrades, with a link out ' +
+          'to the website. It is informational only — nothing here processes a payment ' +
+          'or grants an item, and no feature is gated behind payment today.',
+        groups: [
+          {
+            title: null,
+            note: null,
+            commands: [
               {
-                name: '/gift-rose',
-                args: '<user> <amount>',
-                desc: "Gift roses you've earned to another member. Gifted roses can't be re-gifted, so they can't be passed around indefinitely.",
-                access: 'everyone',
-                kind: 'slash',
-              },
-              {
-                name: '/econhelp',
+                name: '/pack shop',
                 args: null,
-                desc: 'Show every economy command, grouped by category, along with its prefix-command aliases.',
-                access: 'everyone',
+                desc: 'Browse the subscription tiers and item packs.',
+                access: 'admin',
                 kind: 'slash',
               },
             ],
@@ -492,14 +649,20 @@ export const CATEGORIES = [
   {
     id: 'adventure',
     name: 'Adventure',
-    blurb: 'A text-based RPG with monsters, quests, crafting, gear, and unlockable areas to explore.',
+    blurb:
+      'A turn-based RPG with its own gold and gear, and a real poker table running ' +
+      'as a Discord Activity.',
     modules: [
       {
         id: 'rpg',
-        name: 'RPG Game',
+        name: 'Ashwood (RPG)',
         emoji: '⚔️',
         description:
-          "A text-based adventure: explore, fight monsters, complete quests, gear up (including a blacksmith's forge for crafting weapons and armor from mined ore), and chase achievements across multiple unlockable areas.",
+          'A turn-based RPG living inside your server, with its own gold separate from ' +
+          'the economy\'s coins. Make a character, fight through areas you unlock one at ' +
+          'a time, take quests, forge and enchant gear, and climb the Ashwood board on ' +
+          'the leaderboard hub. Combat, stats and the Ashwood inventory all run from ' +
+          'buttons on the fight and profile screens rather than separate commands.',
         groups: [
           {
             title: null,
@@ -508,56 +671,37 @@ export const CATEGORIES = [
               {
                 name: '/start',
                 args: null,
-                desc: 'Create your character and begin the adventure.',
+                desc: 'Create your RPG character.',
                 access: 'everyone',
                 kind: 'slash',
               },
               {
-                name: '/rpgstats',
+                name: '/resume',
                 args: null,
-                desc: 'View your level, XP, gold, HP, attack, and equipped title.',
-                access: 'everyone',
-                kind: 'slash',
-              },
-              {
-                name: '/achievements',
-                args: null,
-                desc: 'Browse your unlocked (and still-locked) RPG quest achievements, a separate system from the server-wide /milestones (see Achievements above).',
-                access: 'everyone',
-                kind: 'slash',
-              },
-              {
-                name: '/rpglb',
-                args: null,
-                desc: "Show this server's RPG leaderboard.",
-                access: 'everyone',
-                kind: 'slash',
-              },
-              {
-                name: '/rpginventory',
-                args: null,
-                desc: 'Browse your inventory by category: weapons, armor, consumables, tools, materials, items, and titles.',
+                desc:
+                  'Resend your last fight, gold find, or nothing result if you lost track of ' +
+                  'it.',
                 access: 'everyone',
                 kind: 'slash',
               },
               {
                 name: '/quests',
                 args: null,
-                desc: 'View available quests and accept or claim them.',
+                desc: 'View your available quests.',
                 access: 'everyone',
                 kind: 'slash',
               },
               {
-                name: '/rpguse',
-                args: '<item> [quantity]',
-                desc: 'Use a consumable item from your inventory.',
+                name: '/progress',
+                args: null,
+                desc: 'Move on to the next area, if you meet the requirements.',
                 access: 'everyone',
                 kind: 'slash',
               },
               {
-                name: '/rpgsell',
-                args: '<item> [amount]',
-                desc: 'Sell an item from your inventory for gold.',
+                name: '/travel',
+                args: '<destination>',
+                desc: 'Freely travel between areas you have already discovered.',
                 access: 'everyone',
                 kind: 'slash',
               },
@@ -571,70 +715,72 @@ export const CATEGORIES = [
               {
                 name: '/unequip',
                 args: '<slot>',
-                desc: 'Unequip whatever is currently in a gear slot.',
+                desc: 'Unequip whatever is in a gear slot.',
                 access: 'everyone',
                 kind: 'slash',
               },
               {
-                name: '/travel',
-                args: '<destination>',
-                desc: "Freely travel between areas you've already discovered (unlocked after defeating the Bear King).",
+                name: '/rpguse',
+                args: '<item> [quantity]',
+                desc: 'Use an item.',
                 access: 'everyone',
                 kind: 'slash',
               },
               {
-                name: '/progress',
+                name: '/rpgsell',
+                args: '<item> [amount]',
+                desc: 'Sell an item from your inventory for gold.',
+                access: 'everyone',
+                kind: 'slash',
+              },
+              {
+                name: '/achievements',
                 args: null,
-                desc: 'Move on to the next area, once you meet its level and item requirements.',
-                access: 'everyone',
-                kind: 'slash',
-              },
-              {
-                name: '/resume',
-                args: null,
-                desc: 'Resend your last fight, gold find, or exploration result if you lost track of it.',
-                access: 'everyone',
-                kind: 'slash',
-              },
-              {
-                name: '/reset',
-                args: null,
-                desc: 'Permanently delete your character so you can /start over.',
+                desc: 'View your Ashwood achievements.',
                 access: 'everyone',
                 kind: 'slash',
               },
             ],
           },
           {
-            title: 'Admin Commands',
+            title: 'Admin',
             note: null,
             commands: [
               {
-                name: '/give',
-                args: '<user> <item> [amount]',
-                desc: 'Give an item directly to a player.',
-                access: 'admin',
+                name: '/reset',
+                args: '[user]',
+                desc:
+                  'Permanently delete your character so you can /start over. Passing another ' +
+                  'user requires Administrator.',
+                access: 'everyone',
                 kind: 'slash',
               },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'poker',
+        name: 'Poker',
+        emoji: '🃏',
+        description:
+          'Texas Hold\'em played as a Discord Activity — a real table rendered in ' +
+          'Discord\'s own Activity panel, running as its own service and sharing your ' +
+          'server\'s economy balance for buy-ins. Note that Discord registers the launch ' +
+          'button globally rather than per server, so unlike every other module this ' +
+          'one cannot be switched off for a single server from the dashboard.',
+        groups: [
+          {
+            title: null,
+            note: null,
+            commands: [
               {
-                name: '/givetitle',
-                args: '<user> <title>',
-                desc: 'Give a title directly to a player.',
-                access: 'admin',
-                kind: 'slash',
-              },
-              {
-                name: '/setlevel',
-                args: '<user> <level>',
-                desc: "Set a player's level directly.",
-                access: 'admin',
-                kind: 'slash',
-              },
-              {
-                name: '/fightmonster',
-                args: '<monster> [user]',
-                desc: 'Start a fight against a specific monster, for yourself or another member.',
-                access: 'admin',
+                name: '/launch',
+                args: null,
+                desc:
+                  'Open the Texas Hold\'em poker table. Registered by Discord\'s Activities ' +
+                  'system rather than by the bot.',
+                access: 'everyone',
                 kind: 'slash',
               },
             ],
@@ -646,67 +792,77 @@ export const CATEGORIES = [
   {
     id: 'community',
     name: 'Community',
-    blurb: 'Giveaways, counting, starboard, social interactions, activity stats, and server-wide achievement milestones.',
+    blurb:
+      'Giveaways weighted by real activity, a counting game, a starboard, a ' +
+      'collaborative story, reaction GIFs, stats and one leaderboard hub for all of ' +
+      'it.',
     modules: [
       {
         id: 'giveaway',
         name: 'Giveaway',
         emoji: '🎁',
         description:
-          'Timed giveaways with weighted entries: messages sent, voice time, and daily-challenge completions can each earn tickets (all three on by default, independently toggleable per giveaway). Members enter by typing !giveaway in the giveaway channel while one is active, which is a prefix command rather than a slash command. The channel becomes entry-only while a giveaway is running; non-mod messages posted there are automatically deleted.',
+          'Giveaways weighted by how active people actually are, rather than who ' +
+          'clicked first. Entries can be earned from messages sent, hours in voice, and ' +
+          'daily challenge completions, each at a rate you choose, with channels ' +
+          'excludable from the message count. The entry channel stays clean ' +
+          'automatically — anything that is not an entry is removed. Beyond ' +
+          'Administrator, a host role can be given permission to run giveaways.',
         groups: [
           {
             title: null,
             note: null,
             commands: [
               {
-                name: '/giveaway start',
-                args: '<channel> <duration> <winners> <prize> [track_messages] [messages_per_entry] [track_voice] [hours_per_entry] [track_dailies]',
-                desc: 'Start a new giveaway: set how long it runs (e.g. 3d, 12h30m), how many winners, and the prize. Optionally toggle which activity earns entries and adjust how much of it earns one ticket.',
-                access: 'admin',
-                kind: 'slash',
-              },
-              {
-                name: '/giveaway end',
+                name: '!giveaway',
                 args: null,
-                desc: 'Force-end the active giveaway immediately and draw winners.',
-                access: 'admin',
-                kind: 'slash',
+                desc:
+                  'Typed in the giveaway channel to enter. Not a slash command — the message ' +
+                  'and its confirmation are both cleaned up after a few seconds.',
+                access: 'everyone',
+                kind: 'prefix',
               },
               {
-                name: '/giveaway reroll',
-                args: '<user>',
-                desc: "Reroll a specific winner from the giveaway that just ended, for example if they didn't claim their prize in time.",
-                access: 'admin',
-                kind: 'slash',
-              },
-              {
-                name: '/giveaway config',
-                args: '<action> [channel]',
-                desc: 'Add, remove, or view the channels excluded from message-count tracking (e.g. bot-command channels).',
+                name: '/giveaway start',
+                args: '<channel> <winners> <prize> [duration] [end_date] [track_messages] [messages_per_entry] [track_voice] [hours_per_entry] [track_dailies]',
+                desc: 'Start a new giveaway and choose which activity earns entries.',
                 access: 'admin',
                 kind: 'slash',
               },
               {
                 name: '/giveaway status',
                 args: null,
-                desc: "View the active giveaway's details and your own current entry count.",
+                desc: 'View the active giveaway and your own entries.',
                 access: 'everyone',
+                kind: 'slash',
+              },
+              {
+                name: '/giveaway end',
+                args: null,
+                desc: 'Force-end the active giveaway right now.',
+                access: 'admin',
+                kind: 'slash',
+              },
+              {
+                name: '/giveaway reroll',
+                args: '<user>',
+                desc: 'Reroll a specific winner (e.g. they didn\'t respond).',
+                access: 'admin',
+                kind: 'slash',
+              },
+              {
+                name: '/giveaway config',
+                args: '<action> [channel]',
+                desc: 'Manage the giveaway message-count exclusion list.',
+                access: 'admin',
                 kind: 'slash',
               },
               {
                 name: '/giveaway entries',
                 args: '[user]',
-                desc: 'See ticket totals and the message/voice/daily breakdown for every entrant, or for one specific member.',
+                desc: 'See ticket totals and breakdowns for the active giveaway.',
                 access: 'admin',
                 kind: 'slash',
-              },
-              {
-                name: '!giveaway',
-                args: null,
-                desc: 'Enter the active giveaway by typing this in the giveaway channel while one is running. It is a prefix command, not a slash command.',
-                access: 'everyone',
-                kind: 'prefix',
               },
             ],
           },
@@ -717,7 +873,10 @@ export const CATEGORIES = [
         name: 'Counting',
         emoji: '🔢',
         description:
-          'A community counting game in a designated channel (set via /setup counting). Count up one number at a time, one member at a time. Post the wrong number, or count twice in a row, and the count resets to 1, unless a save covers the mistake.',
+          'One number per message in a dedicated channel, counting up as a server. ' +
+          'Breaking the streak resets it — unless someone has bought a save, which ' +
+          'absorbs the mistake. Counting correctly also scores on Monday of the Weekly ' +
+          'Rotation.',
         groups: [
           {
             title: null,
@@ -726,23 +885,23 @@ export const CATEGORIES = [
               {
                 name: '/count',
                 args: null,
-                desc: "Check the server's current count, what's next, and the highest count ever reached.",
+                desc: 'Check the server\'s current count.',
                 access: 'everyone',
-                kind: 'slash',
+                kind: 'both',
               },
               {
                 name: '/buysave',
                 args: null,
-                desc: 'Buy a save for 1,000 coins. It automatically forgives your next wrong-number or counted-twice mistake without resetting the count.',
+                desc: 'Buy a counting save with coins.',
                 access: 'everyone',
-                kind: 'slash',
+                kind: 'both',
               },
               {
                 name: '/saves',
                 args: '[user]',
-                desc: "Check your (or another member's) counting save balance.",
+                desc: 'Check your (or another user\'s) counting saves balance.',
                 access: 'everyone',
-                kind: 'slash',
+                kind: 'both',
               },
             ],
           },
@@ -753,157 +912,189 @@ export const CATEGORIES = [
         name: 'Starboard',
         emoji: '⭐',
         description:
-          'Messages that get enough ⭐ reactions are automatically reposted into a dedicated starboard channel, and the post keeps updating live as more stars come in. Configured entirely through /setup starboard (see Server Setup).',
-        groups: [],
+          'Reposts highly-starred messages into a channel of their own. The star ' +
+          'threshold is set per server from the dashboard. No commands — it reacts to ' +
+          'reactions.',
+        groups: [
+          {
+            title: null,
+            note: null,
+            commands: [
+            ],
+          },
+        ],
       },
       {
         id: 'interactions',
         name: 'Interactions',
         emoji: '🎉',
         description:
-          'A pack of lighthearted social action commands: /hug, /kiss, /dance, and about 20 more. Each one posts a themed message about you (and, for the targeted ones, whoever you aim it at), optionally with an attached GIF. Off by default, so none of these exist as slash commands in a server until an admin runs /setup interactions (see Server Setup above), which also chooses whether to allow 18+ commands and whether replies attach GIFs.',
+          'Reaction commands with GIFs and a running per-person count. These are not ' +
+          'registered globally — they only appear in a server after an admin turns them ' +
+          'on from the dashboard, and 18+ ones stay off unless separately enabled, ' +
+          'flagged so Discord only shows them in age-restricted channels.',
         groups: [
           {
             title: 'Aimed at someone',
-            note: "Each takes a required user option: who it's aimed at.",
+            note: null,
             commands: [
               {
                 name: '/greet',
                 args: '<user>',
-                desc: 'Posts a friendly hello aimed at the member you pick.',
+                desc: 'Greet someone!',
                 access: 'everyone',
                 kind: 'slash',
               },
               {
                 name: '/highfive',
                 args: '<user>',
-                desc: 'Posts a snappy high five landing between you and the member you pick.',
+                desc: 'High Five someone!',
                 access: 'everyone',
                 kind: 'slash',
               },
               {
                 name: '/dap',
                 args: '<user>',
-                desc: 'Posts a casual dap-up with the member you pick.',
+                desc: 'Dap someone!',
                 access: 'everyone',
                 kind: 'slash',
               },
               {
                 name: '/handshake',
                 args: '<user>',
-                desc: 'Posts a formal handshake sealed with the member you pick.',
+                desc: 'Handshake someone!',
                 access: 'everyone',
                 kind: 'slash',
               },
               {
                 name: '/poke',
                 args: '<user>',
-                desc: "Posts a quick poke to get the chosen member's attention.",
+                desc: 'Poke someone!',
                 access: 'everyone',
                 kind: 'slash',
               },
               {
                 name: '/handhold',
                 args: '<user>',
-                desc: 'Posts a shy hand-holding moment with the member you pick.',
+                desc: 'Hand Hold someone!',
                 access: 'everyone',
                 kind: 'slash',
               },
               {
                 name: '/laughwith',
                 args: '<user>',
-                desc: 'Posts the two of you sharing a laugh together.',
+                desc: 'Laugh With someone!',
                 access: 'everyone',
                 kind: 'slash',
               },
               {
                 name: '/laughat',
                 args: '<user>',
-                desc: 'Posts you laughing at the chosen member, entirely at their expense.',
+                desc: 'Laugh At someone!',
                 access: 'everyone',
                 kind: 'slash',
               },
               {
                 name: '/nuzzle',
                 args: '<user>',
-                desc: 'Posts an affectionate nuzzle against the member you pick.',
+                desc: 'Nuzzle someone!',
                 access: 'everyone',
                 kind: 'slash',
               },
               {
                 name: '/smile',
                 args: '<user>',
-                desc: 'Posts a warm smile directed at the member you pick.',
+                desc: 'Smile someone!',
                 access: 'everyone',
                 kind: 'slash',
               },
               {
                 name: '/hug',
                 args: '<user>',
-                desc: 'Posts a big hug wrapped around the member you pick.',
+                desc: 'Hug someone!',
                 access: 'everyone',
                 kind: 'slash',
               },
               {
                 name: '/kiss',
                 args: '<user>',
-                desc: 'Posts a kiss planted on the member you pick.',
+                desc: 'Kiss someone!',
                 access: 'everyone',
                 kind: 'slash',
               },
               {
                 name: '/slap',
                 args: '<user>',
-                desc: "Posts a dramatic slap across the chosen member's face.",
+                desc: 'Slap someone!',
                 access: 'everyone',
                 kind: 'slash',
               },
               {
                 name: '/punch',
                 args: '<user>',
-                desc: 'Posts a cartoon punch thrown at the member you pick.',
+                desc: 'Punch someone!',
                 access: 'everyone',
                 kind: 'slash',
               },
               {
                 name: '/kick',
                 args: '<user>',
-                desc: 'Posts a flying kick launched at the member you pick.',
+                desc: 'Kick someone!',
                 access: 'everyone',
                 kind: 'slash',
               },
               {
                 name: '/bite',
                 args: '<user>',
-                desc: 'Posts a playful bite taken out of the member you pick.',
+                desc: 'Bite someone!',
                 access: 'everyone',
                 kind: 'slash',
               },
               {
                 name: '/lick',
                 args: '<user>',
-                desc: 'Posts an unsettling lick delivered to the member you pick.',
+                desc: 'Lick someone!',
                 access: 'everyone',
                 kind: 'slash',
               },
               {
                 name: '/cuddle',
                 args: '<user>',
-                desc: 'Posts the two of you curled up in a cuddle.',
+                desc: 'Cuddle someone!',
                 access: 'everyone',
                 kind: 'slash',
               },
               {
                 name: '/pat',
                 args: '<user>',
-                desc: "Posts a gentle pat on the chosen member's head.",
+                desc: 'Pat someone!',
                 access: 'everyone',
                 kind: 'slash',
               },
               {
                 name: '/tickle',
                 args: '<user>',
-                desc: 'Posts a relentless tickle attack on the member you pick.',
+                desc: 'Tickle someone!',
+                access: 'everyone',
+                kind: 'slash',
+              },
+            ],
+          },
+          {
+            title: 'Solo or aimed',
+            note: 'These work alone or at someone — the user is optional.',
+            commands: [
+              {
+                name: '/dance',
+                args: '[user]',
+                desc: 'Dance someone!',
+                access: 'everyone',
+                kind: 'slash',
+              },
+              {
+                name: '/pout',
+                args: '[user]',
+                desc: 'Pout someone!',
                 access: 'everyone',
                 kind: 'slash',
               },
@@ -911,50 +1102,97 @@ export const CATEGORIES = [
           },
           {
             title: 'Solo',
-            note: '/dance and /pout take an optional user; the rest take none at all.',
+            note: null,
             commands: [
-              {
-                name: '/dance',
-                args: '[user]',
-                desc: 'Posts you dancing, optionally pulling a chosen member onto the floor with you.',
-                access: 'everyone',
-                kind: 'slash',
-              },
-              {
-                name: '/pout',
-                args: '[user]',
-                desc: 'Posts you sulking, optionally aiming the pout at a chosen member.',
-                access: 'everyone',
-                kind: 'slash',
-              },
               {
                 name: '/laugh',
                 args: null,
-                desc: 'Posts you cracking up all on your own.',
+                desc: 'Laugh!',
                 access: 'everyone',
                 kind: 'slash',
               },
               {
                 name: '/cry',
                 args: null,
-                desc: 'Posts you bursting into dramatic tears.',
+                desc: 'Cry!',
                 access: 'everyone',
                 kind: 'slash',
               },
               {
                 name: '/sing',
                 args: null,
-                desc: 'Posts you belting out a song for the whole channel.',
+                desc: 'Sing!',
                 access: 'everyone',
                 kind: 'slash',
               },
               {
                 name: '/sleep',
                 args: null,
-                desc: 'Posts you dozing off mid-conversation.',
+                desc: 'Sleep!',
                 access: 'everyone',
                 kind: 'slash',
               },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'zgifs',
+        name: 'Z Gifs',
+        emoji: '📼',
+        description:
+          'A small set of A.L.I.C.E. reaction GIFs, kept as its own module so it can be ' +
+          'switched off separately from the interaction commands.',
+        groups: [
+          {
+            title: null,
+            note: null,
+            commands: [
+              {
+                name: '/z gif',
+                args: null,
+                desc: 'Receive a random A.L.I.C.E. GIF.',
+                access: 'everyone',
+                kind: 'slash',
+              },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'ows',
+        name: 'One-Word Story',
+        emoji: '📖',
+        description:
+          'A collaborative story built one word per message in its own channel. Words ' +
+          'are checked against a dictionary, a PG filter and the slur list before they ' +
+          'land, and finished sentences get a grammar rating. A role can be pinged ' +
+          'every fifth sentence. Configured from the dashboard, including how many ' +
+          'sentences make a story; no commands of its own.',
+        groups: [
+          {
+            title: null,
+            note: null,
+            commands: [
+            ],
+          },
+        ],
+      },
+      {
+        id: 'ambientchat',
+        name: 'Ambient Chat',
+        emoji: '💬',
+        description:
+          'An opt-in, for-fun AI chime-in on quiet channels. It reads a short window of ' +
+          'recent messages for context and only speaks when a rate-limit slot is free ' +
+          'right now — it shares that budget with moderation\'s Tier 2 check and takes ' +
+          'lower priority, so a chime-in never delays a moderation call. Off by ' +
+          'default.',
+        groups: [
+          {
+            title: null,
+            note: null,
+            commands: [
             ],
           },
         ],
@@ -964,30 +1202,34 @@ export const CATEGORIES = [
         name: 'Stat Bot',
         emoji: '📈',
         description:
-          'Tracks messages and voice activity for every member and reports back rankings and activity over the last 1, 7, and 14 days.',
+          'Message and voice activity tracking, rank cards, and the per-member profile ' +
+          'the Gift Wall and Bond Leaderboard hang off. Requires Economy to be enabled ' +
+          '— the cards blend live balance data in.',
         groups: [
           {
             title: null,
             note: null,
             commands: [
               {
-                name: '/ping',
-                args: null,
-                desc: 'Check if the bot is alive and see its current latency.',
-                access: 'everyone',
-                kind: 'slash',
-              },
-              {
                 name: '/stats',
                 args: '[user]',
-                desc: 'Show message and voice activity (1d / 7d / 14d) plus server-wide rank for yourself or another member.',
+                desc:
+                  'Show stats for a user, with the Gift Wall and Bond Leaderboard behind its ' +
+                  'buttons.',
                 access: 'everyone',
                 kind: 'slash',
               },
               {
                 name: '/statleaderboard',
                 args: '[count]',
-                desc: "Show the server's top members by messages and voice activity (10 per category by default).",
+                desc: 'Show the server\'s top members by messages and voice activity.',
+                access: 'everyone',
+                kind: 'slash',
+              },
+              {
+                name: '/ping',
+                args: null,
+                desc: 'Check if the bot is alive.',
                 access: 'everyone',
                 kind: 'slash',
               },
@@ -1000,7 +1242,8 @@ export const CATEGORIES = [
         name: 'Achievements',
         emoji: '🏆',
         description:
-          "Tracks activity across the whole bot (messages, voice time, economy habits, counting streaks, gambling, and pets) and unlocks milestones as you go, each with a coin and XP reward. Separate from the RPG game's own quest achievements below, which is why this command is named /milestones and not /achievements: Discord doesn't allow two commands with the same name.",
+          'Milestones across every system, paying coins into the economy wallet as they ' +
+          'unlock, plus an XP rank card. Requires Economy to be enabled.',
         groups: [
           {
             title: null,
@@ -1009,16 +1252,40 @@ export const CATEGORIES = [
               {
                 name: '/milestones',
                 args: '[user]',
-                desc: "Browse your (or another member's) unlocked and still-locked achievements, by category.",
+                desc: 'View your (or another user\'s) achievements.',
                 access: 'everyone',
                 kind: 'slash',
               },
               {
                 name: '/rank',
                 args: '[user]',
-                desc: "View your (or another member's) achievement XP rank card.",
+                desc: 'View your (or another user\'s) achievement XP rank card.',
                 access: 'everyone',
                 kind: 'slash',
+              },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'leaderboards',
+        name: 'Leaderboards',
+        emoji: '📊',
+        description:
+          'One command, six boards behind a dropdown: Assets, Server Bond, Gift Sending ' +
+          'Points, Ashwood, the Weekly Rotation, and Alliance Standings. Replaces the ' +
+          'separate per-system leaderboard commands that used to exist.',
+        groups: [
+          {
+            title: null,
+            note: null,
+            commands: [
+              {
+                name: '/leaderboard',
+                args: null,
+                desc: 'Open the leaderboard hub and switch between the six boards.',
+                access: 'everyone',
+                kind: 'both',
               },
             ],
           },
@@ -1029,13 +1296,13 @@ export const CATEGORIES = [
   {
     id: 'utilities',
     name: 'Utilities',
-    blurb: 'Emoji stealing and full channel history exports for server admins.',
+    blurb: 'The small things you would otherwise add a fourth bot for.',
     modules: [
       {
         id: 'emoji',
         name: 'Emoji Tools',
         emoji: '🎭',
-        description: 'Quickly bring a custom emoji from another server into this one.',
+        description: 'Pull a custom emoji out of another server and into this one.',
         groups: [
           {
             title: null,
@@ -1057,7 +1324,9 @@ export const CATEGORIES = [
         name: 'Chat Export',
         emoji: '🗂️',
         description:
-          "Pulls a channel's full message history out as a JSON file. Gated to Administrator rather than just Moderate Members, since it can expose a lot of message content at once.",
+          'Pulls a channel\'s full message history out as a JSON file. Gated to ' +
+          'Administrator rather than just Moderate Members, since it can expose a lot ' +
+          'of message content at once.',
         groups: [
           {
             title: null,
@@ -1066,10 +1335,41 @@ export const CATEGORIES = [
               {
                 name: '/export-chat-history',
                 args: '[channel]',
-                desc: "Export a channel's full message history as a JSON file (defaults to the current channel).",
+                desc:
+                  'Export a channel\'s full message history as a JSON file (defaults to the ' +
+                  'current channel).',
                 access: 'admin',
                 kind: 'slash',
               },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'prefix',
+        name: 'Text Prefix Bridge',
+        emoji: '⌨️',
+        description:
+          'Every economy command above also answers to a ? prefix typed as a normal ' +
+          'message — ?⁠bal, ?⁠dep 500, ?⁠bj 1000 — with short aliases for the ones ' +
+          'people type most. It is the same handler either way, not a second ' +
+          'implementation, so the two can never drift apart. Commands with a ? form are ' +
+          'badged above. This module can be switched off if you would rather keep the ' +
+          'server slash-only.',
+        groups: [
+          {
+            title: null,
+            note:
+              'Full list: ?⁠balance (?⁠bal, ?⁠wallet) · ?⁠leaderboard (?⁠lb, ?⁠top) · ' +
+              '?⁠deposit (?⁠dep) · ?⁠withdraw (?⁠wd, ?⁠with) · ?⁠transfer (?⁠pay, ?⁠give) · ' +
+              '?⁠daily · ?⁠coinflip (?⁠cf, ?⁠flip) · ?⁠slots (?⁠slot) · ?⁠blackjack (?⁠bj) ' +
+              '· ?⁠crime · ?⁠bankrob (?⁠heist) · ?⁠rob · ?⁠passive · ?⁠buysave (?⁠bs) · ' +
+              '?⁠saves (?⁠save) · ?⁠count · ?⁠beg · ?⁠work · ?⁠apply · ?⁠shop · ?⁠buy · ' +
+              '?⁠sell · ?⁠inventory (?⁠inv, ?⁠items) · ?⁠use · ?⁠fish · ?⁠hunt · ?⁠dig ' +
+              '(?⁠dumpster) · ?⁠creaturedex (?⁠fishdex, ?⁠fishindex, ?⁠fdex, ?⁠huntdex, ' +
+              '?⁠huntindex, ?⁠hdex) · ?⁠search · ?⁠econhelp (?⁠econ, ?⁠ecommands, ' +
+              '?⁠ecohelp).',
+            commands: [
             ],
           },
         ],

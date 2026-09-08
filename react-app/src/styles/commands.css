@@ -2,7 +2,7 @@
    COMMANDS REFERENCE
    -------------------------------------------------------------------
    Built for scanning, not for reading top to bottom. A sticky rail
-   holds position in a 116-command document, search narrows it, and
+   holds position in a long command document, search narrows it, and
    every command renders in the same three-part shape so the eye can
    move down the column without re-learning the layout each time.
 
@@ -96,7 +96,7 @@
   padding: var(--home-sp-3);
   margin-bottom: var(--home-sp-8);
   border-radius: calc(var(--home-r-card) + 0.25rem);
-  /* Opaque by default. 116 command names scroll under this panel, and
+  /* Opaque by default. Every command name scrolls under this panel, and
      any of them showing through reads as a rendering fault. */
   background: var(--home-surface-1);
   box-shadow: var(--home-edge), var(--home-drop-2);

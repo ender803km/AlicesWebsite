@@ -369,10 +369,14 @@
    Two columns of grouped links rather than one long undifferentiated
    list, and a count on each row so the section carries information
    rather than just repeating the category names. */
+/* Columns, not a grid: the module lists are very different lengths
+   (Community carries ten, Adventure two), and grid rows are as tall as
+   their tallest cell, so a two-column grid left a screen-deep hole under
+   the short one. `break-inside: avoid` on the groups below was already
+   here waiting for this. */
 .home-index {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--home-sp-6) var(--home-sp-12);
+  columns: 2;
+  column-gap: var(--home-sp-12);
 }
 
 .home-index-group { break-inside: avoid; }
@@ -494,7 +498,7 @@
   .home-steps { grid-template-columns: 1fr; gap: var(--home-sp-8); }
   .home-steps::before { display: none; }
 
-  .home-index { grid-template-columns: 1fr; gap: 0; }
+  .home-index { columns: 1; }
 }
 
 @media (max-width: 700px) {

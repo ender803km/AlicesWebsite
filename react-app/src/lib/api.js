@@ -41,7 +41,12 @@ async function authedRequest(path, options = {}) {
   }
   if (!res.ok) {
     const body = await res.json().catch(() => null);
-    throw new Error(body?.error || `Request failed (${res.status})`);
+    const err = new Error(body?.error || `Request failed (${res.status})`);
+    err.status = res.status;
+    // Field-level rejections from a config save, so the form can mark the
+    // control that was refused instead of showing one generic message.
+    if (body?.details) err.details = body.details;
+    throw err;
   }
   return res.json();
 }
@@ -50,8 +55,12 @@ function authedGet(path) {
   return authedRequest(path);
 }
 
-function authedPut(path, data) {
-  return authedRequest(path, { method: 'PUT', body: JSON.stringify(data) });
+function authedPatch(path, data) {
+  return authedRequest(path, { method: 'PATCH', body: JSON.stringify(data) });
+}
+
+function authedPost(path, data) {
+  return authedRequest(path, { method: 'POST', body: JSON.stringify(data) });
 }
 
 export function fetchMe() {
@@ -62,18 +71,36 @@ export function fetchGuilds() {
   return authedGet('/api/guilds');
 }
 
-// --- Phase 3: per-server config ---
+// --- per-server config ---
+//
+// The shape of what comes back is decided by the bot, not by this file: the
+// API composes its response from the feature manifest the bot publishes at
+// boot. Nothing here should ever hardcode a feature or a setting name.
 
 export function fetchGuildConfig(guildId) {
   return authedGet(`/api/guilds/${guildId}/config`);
 }
 
-export function saveGuildConfig(guildId, config) {
-  return authedPut(`/api/guilds/${guildId}/config`, config);
+// Partial save — only the fields the user actually changed.
+// `fields` is flat: { starboardChannelId: '123', starThreshold: 5 }.
+export function saveGuildSettings(guildId, fields) {
+  return authedPatch(`/api/guilds/${guildId}/config`, { fields });
+}
+
+// Turning a module on or off is its own request rather than part of a save:
+// it can be refused (an unmet requirement) or have consequences beyond the
+// switch that was clicked (disabling cascades to dependent modules), and the
+// response says which.
+export function setGuildFeature(guildId, key, enabled) {
+  return authedPost(`/api/guilds/${guildId}/features/${encodeURIComponent(key)}`, { enabled });
 }
 
 export function fetchGuildChannels(guildId) {
   return authedGet(`/api/guilds/${guildId}/channels`);
+}
+
+export function fetchGuildRoles(guildId) {
+  return authedGet(`/api/guilds/${guildId}/roles`);
 }
 
 // --- Phase 3: devs dashboard ---

@@ -1054,6 +1054,150 @@
   margin-bottom: var(--home-sp-6);
 }
 
+/* --------------------------------------------------- server configuration
+   The per-server dashboard. Every card on that screen is generated from the
+   feature manifest the bot publishes, so nothing here names a feature — these
+   are shapes for "a module with a master switch and some settings under it",
+   however many of those the bot happens to have. */
+
+/* Like .home-card, minus the hover lift: these aren't links, and a card that
+   rises when the pointer crosses it reads as clickable. */
+.home-feature-card {
+  position: relative;
+  border-radius: var(--home-r-card);
+  background: linear-gradient(168deg, var(--home-surface-2), var(--home-surface-1));
+  box-shadow: var(--home-elev-card);
+  padding: var(--home-sp-5) var(--home-sp-6);
+  margin-bottom: var(--home-sp-4);
+}
+
+/* Dimmed rather than hidden when a module is off: its settings stay readable,
+   which is what tells someone what they'd be turning back on. */
+.home-feature-card[data-enabled='false'] .home-feature-body {
+  opacity: 0.45;
+  filter: saturate(0.6);
+}
+
+.home-feature-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--home-sp-4);
+}
+
+.home-feature-head h3 {
+  font-size: 1.05rem;
+  margin: 0 0 var(--home-sp-1);
+  display: flex;
+  align-items: center;
+  gap: var(--home-sp-2);
+  flex-wrap: wrap;
+}
+
+.home-feature-head p {
+  margin: 0;
+  color: var(--home-ink-muted);
+  font-size: var(--home-fs-sm);
+  max-width: 48ch;
+}
+
+.home-feature-body { margin-top: var(--home-sp-5); }
+.home-feature-body > * + * { margin-top: var(--home-sp-4); }
+
+/* Why a switch is unavailable — an unmet requirement, or core infrastructure. */
+.home-feature-note {
+  font-size: var(--home-fs-xs);
+  color: var(--home-ink-faint);
+  margin: var(--home-sp-2) 0 0;
+}
+
+/* Inline "this also turns off X and Y" step, in place of a browser confirm(). */
+.home-confirm {
+  margin-top: var(--home-sp-4);
+  padding: var(--home-sp-4);
+  border-radius: var(--home-r-inner);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--home-hairline-strong);
+}
+.home-confirm p { margin: 0 0 var(--home-sp-3); font-size: var(--home-fs-sm); }
+.home-confirm-actions { display: flex; gap: var(--home-sp-3); flex-wrap: wrap; }
+
+/* Scrollable checkbox list for multi-channel settings. A <select multiple>
+   is close to unusable on touch and gives no room for channel names. */
+.home-checklist {
+  max-height: 13rem;
+  overflow-y: auto;
+  border-radius: var(--home-r-input);
+  border: 1px solid var(--home-hairline);
+  padding: var(--home-sp-2);
+}
+.home-checklist-row {
+  display: flex;
+  align-items: center;
+  gap: var(--home-sp-3);
+  padding: 0.35rem 0.5rem;
+  border-radius: var(--home-r-chip);
+  font-size: var(--home-fs-sm);
+}
+.home-checklist-row:hover { background: rgba(255, 255, 255, 0.04); }
+
+/* Native checkboxes render as light grey chips on a dark panel, which reads
+   as disabled. Drawn by hand instead so they match the switches. */
+.home-checklist-row input {
+  appearance: none;
+  position: relative;
+  flex: none;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 4px;
+  border: 1px solid var(--home-hairline-strong);
+  background: rgba(255, 255, 255, 0.04);
+  cursor: pointer;
+  transition:
+    background var(--home-dur) var(--home-ease),
+    border-color var(--home-dur) var(--home-ease);
+}
+.home-checklist-row input:hover { border-color: var(--home-edge-accent); }
+.home-checklist-row input:checked {
+  background: var(--home-accent);
+  border-color: var(--home-accent);
+}
+/* The tick, as two borders of an empty rotated box — no icon font, no SVG
+   asset, and it takes its colour from the accent's contrast token. */
+.home-checklist-row input:checked::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 46%;
+  width: 0.24rem;
+  height: 0.48rem;
+  border: solid var(--home-accent-ink);
+  border-width: 0 2px 2px 0;
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+.home-checklist-row input:focus-visible { outline: 2px solid var(--home-accent-bright); outline-offset: 2px; }
+
+/* Save bar. Sticks to the bottom only while there is something to save, so
+   the page isn't permanently wearing a toolbar. */
+.home-savebar {
+  position: sticky;
+  bottom: var(--home-sp-4);
+  z-index: var(--home-z-sticky);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--home-sp-4);
+  flex-wrap: wrap;
+  margin-top: var(--home-sp-8);
+  padding: var(--home-sp-4) var(--home-sp-5);
+  border-radius: var(--home-r-card);
+  background: rgba(13, 15, 24, 0.92);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--home-edge-accent);
+  box-shadow: var(--home-elev-card-hover);
+}
+.home-savebar-count { font-size: var(--home-fs-sm); color: var(--home-ink-muted); }
+
 /* --------------------------------------------------- reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .home-page *,

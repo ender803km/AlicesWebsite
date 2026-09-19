@@ -33,15 +33,25 @@ app.use((req, res) => res.status(404).json({ error: 'Not found' }));
 
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
-  console.error(err);
-  res.status(err.status || 500).json({ error: err.publicMessage || 'Internal server error' });
+  // A 4xx is this service telling a caller no, which is working as intended.
+  // Only unexpected failures are worth a stack trace in the logs.
+  if (!err.status || err.status >= 500) console.error(err);
+
+  const body = { error: err.publicMessage || 'Internal server error' };
+  // Field-level rejections from a config save, so the dashboard can mark the
+  // offending control rather than showing one generic message.
+  if (err.details) body.details = err.details;
+
+  res.status(err.status || 500).json(body);
 });
 
 const port = process.env.PORT || 3000;
 
-// Mongo is optional at boot — connectMongo() logs a warning and returns
-// null if MONGODB_URI isn't set yet, rather than crashing the whole API
-// over a feature (guild config) that isn't wired up on Railway yet.
+// Both databases are optional at boot. connectMongo() warns about whichever
+// URI is missing rather than crashing the API over it: OAuth login and the
+// public endpoints need no database at all, and routes that do need one
+// answer 503 with a message saying which piece isn't configured. See
+// src/services/mongo.js for what each database owns.
 connectMongo()
   .catch((err) => console.error('MongoDB connection failed:', err))
   .finally(() => {

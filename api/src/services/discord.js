@@ -113,6 +113,23 @@ export async function fetchGuildChannels(guildId) {
     .sort((a, b) => a.position - b.position);
 }
 
+// Roles for a given guild, for the pickers behind `role` settings (the
+// giveaway host role, the Weekly Rotation winner role, the jailed role).
+// @everyone is filtered out — it is a role in the API's eyes but never a
+// meaningful answer to "which role should this be", and managed roles are
+// dropped because Discord won't let the bot assign them anyway.
+export async function fetchGuildRoles(guildId) {
+  const res = await fetch(`${API_BASE}/guilds/${guildId}/roles`, {
+    headers: { Authorization: `Bot ${requiredEnv('DISCORD_BOT_TOKEN')}` },
+  });
+  if (!res.ok) throw new Error(`Failed to fetch guild roles (${res.status})`);
+  const roles = await res.json();
+  return roles
+    .filter((r) => r.id !== guildId && !r.managed)
+    .map((r) => ({ id: r.id, name: r.name, color: r.color, position: r.position }))
+    .sort((a, b) => b.position - a.position);
+}
+
 export function userCanManage(guild) {
   if (guild.owner) return true;
   try {

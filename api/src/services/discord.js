@@ -130,6 +130,120 @@ export async function fetchGuildRoles(guildId) {
     .sort((a, b) => b.position - a.position);
 }
 
+// ─── Live permission checks ──────────────────────────────────────────────────
+//
+// userCanManage() below reads the permissions Discord bakes into the OAuth
+// guild list at login. That is fine for building a menu, but it is a snapshot:
+// sessions last 7 days, so someone demoted from Manage Server an hour after
+// logging in keeps that stale "yes" for the rest of the week.
+//
+// These check the live state instead, using the BOT's token rather than the
+// user's. That matters — it means nothing here depends on storing a user's
+// OAuth token anywhere, which a stateless JWT held in the browser is a bad
+// place for. The bot can already see the guild's roles and its members, which
+// is everything the check needs.
+
+// MANAGE_GUILD is already declared at the top of this file, for the OAuth
+// permission bitfield userCanManage() reads.
+const ADMINISTRATOR = 0x8n;
+
+// Roles and ownership change rarely; membership changes more often. Both are
+// cached, mostly so a page that fires several requests at once costs one
+// round trip rather than several, and so a denied client retrying in a loop
+// cannot turn into a rate limit.
+const guildCache = new Map(); // guildId -> { at, guild }
+const memberCache = new Map(); // `${guildId}:${userId}` -> { at, member }
+const GUILD_TTL_MS = 5 * 60_000;
+const MEMBER_TTL_MS = 60_000;
+const MAX_CACHE_ENTRIES = 1_000;
+
+function cacheGet(cache, key, ttl) {
+  const hit = cache.get(key);
+  if (hit && Date.now() - hit.at < ttl) return hit.value;
+  return undefined;
+}
+
+function cacheSet(cache, key, value) {
+  // Bounded rather than clever: at this scale an occasional full clear costs
+  // one extra round trip and cannot leak.
+  if (cache.size >= MAX_CACHE_ENTRIES) cache.clear();
+  cache.set(key, { at: Date.now(), value });
+}
+
+async function botGet(path) {
+  const res = await fetch(`${API_BASE}${path}`, {
+    headers: { Authorization: `Bot ${requiredEnv('DISCORD_BOT_TOKEN')}` },
+  });
+  if (res.status === 404 || res.status === 403) return null;
+  if (!res.ok) throw new Error(`Discord request failed (${res.status}): ${path}`);
+  return res.json();
+}
+
+// Null when the bot is not in the guild.
+async function fetchGuild(guildId) {
+  const cached = cacheGet(guildCache, guildId, GUILD_TTL_MS);
+  if (cached !== undefined) return cached;
+
+  const guild = await botGet(`/guilds/${guildId}`);
+  cacheSet(guildCache, guildId, guild);
+  return guild;
+}
+
+// Null when the user is not a member of the guild.
+async function fetchGuildMember(guildId, userId) {
+  const key = `${guildId}:${userId}`;
+  const cached = cacheGet(memberCache, key, MEMBER_TTL_MS);
+  if (cached !== undefined) return cached;
+
+  const member = await botGet(`/guilds/${guildId}/members/${userId}`);
+  cacheSet(memberCache, key, member);
+  return member;
+}
+
+// Does this user, right now, have the authority to configure this server?
+//
+// Returns a reason rather than a bare boolean so the caller can tell a user
+// who was demoted apart from one who left, and from a server the bot is no
+// longer in — three very different messages.
+export async function checkGuildAuthority(guildId, userId) {
+  const guild = await fetchGuild(guildId);
+  if (!guild) return { ok: false, reason: 'bot_not_in_guild' };
+
+  if (guild.owner_id === userId) return { ok: true, reason: 'owner' };
+
+  const member = await fetchGuildMember(guildId, userId);
+  if (!member) return { ok: false, reason: 'not_a_member' };
+
+  const rolePermissions = new Map(
+    (guild.roles || []).map((role) => [role.id, role.permissions]),
+  );
+
+  for (const roleId of member.roles || []) {
+    const raw = rolePermissions.get(roleId);
+    if (!raw) continue;
+    let bits;
+    try {
+      bits = BigInt(raw);
+    } catch {
+      continue;
+    }
+    // Administrator implies everything, which is how Discord itself treats it.
+    if ((bits & ADMINISTRATOR) === ADMINISTRATOR) return { ok: true, reason: 'administrator' };
+    if ((bits & MANAGE_GUILD) === MANAGE_GUILD) return { ok: true, reason: 'manage_guild' };
+  }
+
+  return { ok: false, reason: 'insufficient_permissions' };
+}
+
+// Called after a write that changes who can do what, so the next request sees
+// the new state instead of waiting out the TTL.
+export function invalidateGuildAuthority(guildId) {
+  guildCache.delete(guildId);
+  for (const key of memberCache.keys()) {
+    if (key.startsWith(`${guildId}:`)) memberCache.delete(key);
+  }
+}
+
 export function userCanManage(guild) {
   if (guild.owner) return true;
   try {

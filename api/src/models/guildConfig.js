@@ -38,6 +38,22 @@ function rawDoc(guildId) {
   return getBotDb().collection(COLLECTION).findOne({ guildId });
 }
 
+// What a field is worth right now, the same way the bot reads it: the value on
+// the document if there is one, otherwise the default the bot publishes for
+// that field.
+//
+// The distinction that matters is `undefined` vs `null`. A field missing from
+// the document means this guild has never configured it, so the bot is using
+// its default — and most of those defaults are `true`, which is why reading a
+// missing field as "off" showed working features as disabled. A field present
+// and explicitly `null` is a cleared channel or role, which is a real choice
+// and must not be quietly refilled with a default.
+function resolveValue(config, setting, field) {
+  if (config[field] !== undefined) return config[field];
+  const fallback = setting.defaults?.[field];
+  return fallback === undefined ? null : fallback;
+}
+
 // The dashboard's whole view of one server: every feature the bot registered,
 // whether it's on here, and the current value of each of its settings.
 //
@@ -63,10 +79,11 @@ export async function getGuildView(guildId) {
       type: setting.type,
       description: setting.description,
       fields: setting.fields,
+      defaults: setting.defaults || {},
       // Keyed by field rather than a single `value` so a setting that writes
       // more than one field needs no special case at either end.
       values: Object.fromEntries(
-        (setting.fields || []).map((field) => [field, config[field] ?? null]),
+        (setting.fields || []).map((field) => [field, resolveValue(config, setting, field)]),
       ),
     })),
   }));

@@ -53,6 +53,22 @@ function RevealCard({ children, enabled }) {
   )
 }
 
+// The switch position is the state, but only if you can read a switch. A word
+// next to it is unambiguous at a glance, survives a colourblind reader, and
+// gives the row something to say when it is skimmed rather than studied.
+// aria-hidden because role="switch" already announces its own state — this is
+// the visual half of the same information, not a second announcement.
+function SwitchState({ on, children }) {
+  return (
+    <span className="home-switch-state">
+      <span className="home-switch-state-text" data-on={on ? 'true' : 'false'} aria-hidden="true">
+        {on ? 'On' : 'Off'}
+      </span>
+      {children}
+    </span>
+  )
+}
+
 // ─── One control, chosen by the type the bot declared ────────────────────────
 
 function SettingField({ id, type, value, onChange, channels, roles }) {
@@ -388,15 +404,17 @@ export default function GuildConfig() {
                     </div>
 
                     {!feature.alwaysOn && (
-                      <input
-                        className="home-switch"
-                        type="checkbox"
-                        role="switch"
-                        aria-label={`Enable ${feature.label}`}
-                        checked={feature.enabled}
-                        disabled={busyFeature === feature.key || blocked}
-                        onChange={(e) => requestToggle(feature, e.target.checked)}
-                      />
+                      <SwitchState on={feature.enabled}>
+                        <input
+                          className="home-switch"
+                          type="checkbox"
+                          role="switch"
+                          aria-label={`Enable ${feature.label}`}
+                          checked={feature.enabled}
+                          disabled={busyFeature === feature.key || blocked}
+                          onChange={(e) => requestToggle(feature, e.target.checked)}
+                        />
+                      </SwitchState>
                     )}
                   </div>
 
@@ -452,14 +470,16 @@ export default function GuildConfig() {
                               <div key={field}>
                                 <div className="home-switch-row" style={{ padding: '0.4rem 0' }}>
                                   <label htmlFor={id}>{label}</label>
-                                  <SettingField
-                                    id={id}
-                                    type={setting.type}
-                                    value={valueOf(field)}
-                                    onChange={(v) => setField(field, v)}
-                                    channels={channels}
-                                    roles={roles}
-                                  />
+                                  <SwitchState on={valueOf(field) === true}>
+                                    <SettingField
+                                      id={id}
+                                      type={setting.type}
+                                      value={valueOf(field)}
+                                      onChange={(v) => setField(field, v)}
+                                      channels={channels}
+                                      roles={roles}
+                                    />
+                                  </SwitchState>
                                 </div>
                                 {i === 0 && setting.description && (
                                   <p className="home-field-hint">{setting.description}</p>

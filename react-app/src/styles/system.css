@@ -1177,6 +1177,26 @@
 }
 .home-checklist-row input:focus-visible { outline: 2px solid var(--home-accent-bright); outline-offset: 2px; }
 
+/* The word beside a switch. Fixed width so a column of them stays aligned
+   and nothing shifts as toggles flip between On and Off. */
+.home-switch-state {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--home-sp-3);
+  flex: none;
+}
+.home-switch-state-text {
+  font-size: var(--home-fs-xs);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  min-width: 1.6rem;
+  text-align: right;
+  color: var(--home-ink-faint);
+  transition: color var(--home-dur) var(--home-ease);
+}
+.home-switch-state-text[data-on='true'] { color: var(--home-accent-bright); }
+
 /* Save bar. Sticks to the bottom only while there is something to save, so
    the page isn't permanently wearing a toolbar. */
 .home-savebar {

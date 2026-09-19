@@ -961,6 +961,32 @@
 .home-list + p,
 .home-list + .home-lede { margin-top: var(--home-sp-6); }
 
+/* ------------------------------------------------------- legal pages
+   Privacy and Terms. Long-form prose, read by someone scanning for one
+   answer rather than reading start to finish, so the job here is short
+   measure and clearly separated sections. */
+.home-legal h1 { margin-bottom: var(--home-sp-2); }
+
+.home-legal-meta {
+  font-family: var(--home-font-mono);
+  font-size: var(--home-fs-xs);
+  color: var(--home-ink-faint);
+  margin-bottom: var(--home-sp-8);
+}
+
+/* Narrower than the 780px wrap: legal text is dense, and a line long enough
+   to be comfortable in marketing copy is tiring here. */
+.home-legal p,
+.home-legal li { max-width: 68ch; }
+
+.home-legal a {
+  color: var(--home-accent-bright);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color var(--home-dur) var(--home-ease);
+}
+.home-legal a:hover { border-bottom-color: currentColor; }
+
 /* -------------------------------------------------- account surfaces */
 .home-avatar { width: 2.75rem; height: 2.75rem; border-radius: var(--home-r-inner); flex: none; }
 .home-avatar-placeholder {
